@@ -1,0 +1,2 @@
+ApplicationMgr.DLLs += {"JpsiToPiKKshortAlg"};
+ApplicationMgr.TopAlg += { "JpsiToPiKKshort" };

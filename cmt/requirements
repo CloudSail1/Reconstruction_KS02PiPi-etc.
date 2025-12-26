@@ -1,0 +1,19 @@
+package JpsiToPiKKshortAlg
+author Zewei Wang  <cloud_sail@stu.zzu.edu.cn>
+
+use McTruth      McTruth-*     Event
+use BesPolicy BesPolicy-01-*
+use GaudiInterface GaudiInterface-01-* External
+use DstEvent     DstEvent-*    Event
+use EventModel   EventModel-*  Event
+use MdcRawEvent  MdcRawEvent-* Mdc
+use ParticleID   ParticleID-*  Analysis
+use VertexFit    VertexFit-*   Analysis
+use BesROOT      BesROOT-00-*     External
+#use BParticleAlg    BParticleAlg-*   Analysis
+
+#use McDecayModeSvc McDecayModeSvc-* Analysis
+
+use RootHistCnv  v*
+apply_pattern component_library
+library JpsiToPiKKshortAlg  *.cxx  components/*.cxx

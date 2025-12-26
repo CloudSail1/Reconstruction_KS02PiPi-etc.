@@ -1,0 +1,3 @@
+ME=`whoami`
+qstat |grep $ME | awk -F' ' {'{system("qdel " $1)}'}
+
