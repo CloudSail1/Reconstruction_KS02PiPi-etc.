@@ -1158,8 +1158,10 @@ StatusCode JpsiToPiKKshort::execute()
 	}
 	// TODO pi0 eta0 highest E gamma
 	// TODO K0 how to Ks
-	// TODO dang
+	// TODO dang 856
 	// TODO second draw
+	// TODO diff about VertexFit::wVirtualTrack() and sum of VertexFit::wtrk()
+	// TODO diff about VertexFit::wtrk() and raw WTrackParameter
 	n_pip_pin_vtxfit_cutted++;
 	if ((temp_dratio[0]-1)*(temp_dratio[1]-1)>0) {
 		log << MSG::DEBUG << __LINE__ << " error ratio collision " << endmsg;
