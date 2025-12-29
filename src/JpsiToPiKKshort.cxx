@@ -1,4 +1,3 @@
-1111
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/ISvcLocator.h"
