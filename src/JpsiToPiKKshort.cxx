@@ -1,3 +1,4 @@
+1111
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/ISvcLocator.h"
@@ -489,6 +490,8 @@ StatusCode JpsiToPiKKshort::execute()
 				}
 				if (!jpsiDecay) continue;
 
+
+				log << MSG::DEBUG << __LINE__ << endmsg;
 				int mcidx = ((*iter_mc)->mother()).trackIndex() - rootIndex;
 				if(strange && ((*iter_mc)->mother()).particleProperty()!=m_idNo) mcidx--;//added
 				int pdgid = (*iter_mc)->particleProperty();
@@ -496,6 +499,7 @@ StatusCode JpsiToPiKKshort::execute()
 				m_trkIdx[m_numParticle]=rootIndex;
 				m_motheridx[m_numParticle] = mcidx;
 				m_numParticle += 1;
+				log << MSG::DEBUG << __LINE__ << endmsg;
 				if(debug)cout<<__LINE__<<endl;
 				///@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 				double mcpx = (*iter_mc)->initialFourMomentum().px(); //最初px
@@ -511,6 +515,7 @@ StatusCode JpsiToPiKKshort::execute()
 				double ppp = p4mc.rho();
 
 				if(debug)cout<<__LINE__<<endl;
+				log << MSG::DEBUG << __LINE__ << endmsg;
 
 				int mctrue_id = (*iter_mc)->particleProperty();
 				int mctrue_mothPID = ((*iter_mc)->mother()).particleProperty();
