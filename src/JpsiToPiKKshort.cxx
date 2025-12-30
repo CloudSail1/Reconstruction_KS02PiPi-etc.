@@ -134,28 +134,36 @@ StatusCode JpsiToPiKKshort::initialize()
 			
                         status = m_tuple_angular->addItem("m_mctruth_P_Pip_Kshort",	m_mctruth_P_Pip_Kshort	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Pin_Kshort",	m_mctruth_P_Pin_Kshort	);
+                        status = m_tuple_angular->addItem("m_mctruth_P_Pin_Kstar",	m_mctruth_P_Pin_Kstar	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Pip_Kstar",	m_mctruth_P_Pip_Kstar	);
+                        status = m_tuple_angular->addItem("m_mctruth_P_Kp_Kstar",	m_mctruth_P_Kp_Kstar	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Kn_Kstar",	m_mctruth_P_Kn_Kstar	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Kshort",		m_mctruth_P_Kshort	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Kstar",		m_mctruth_P_Kstar	);
 	
                         status = m_tuple_angular->addItem("mctruth_M_Pip_Kshort",	m_mctruth_M_Pip_Kshort	);
                         status = m_tuple_angular->addItem("mctruth_M_Pin_Kshort",	m_mctruth_M_Pin_Kshort	);
+                        status = m_tuple_angular->addItem("mctruth_M_Pin_Kstar",	m_mctruth_M_Pin_Kstar	);
                         status = m_tuple_angular->addItem("mctruth_M_Pip_Kstar",	m_mctruth_M_Pip_Kstar	);
+                        status = m_tuple_angular->addItem("mctruth_M_Kp_Kstar",		m_mctruth_M_Kp_Kstar	);
                         status = m_tuple_angular->addItem("mctruth_M_Kn_Kstar",		m_mctruth_M_Kn_Kstar	);
                         status = m_tuple_angular->addItem("mctruth_M_Kshort",		m_mctruth_M_Kshort	);
                         status = m_tuple_angular->addItem("mctruth_M_Kstar",		m_mctruth_M_Kstar	);
                         
 			status = m_tuple_angular->addItem("mctruth_cos_Pip_Kshort",	m_mctruth_cos_Pip_Kshort);
 			status = m_tuple_angular->addItem("mctruth_cos_Pin_Kshort",	m_mctruth_cos_Pin_Kshort);
+			status = m_tuple_angular->addItem("mctruth_cos_Pin_Kstar",	m_mctruth_cos_Pin_Kstar	);
 			status = m_tuple_angular->addItem("mctruth_cos_Pip_Kstar",	m_mctruth_cos_Pip_Kstar	);
+			status = m_tuple_angular->addItem("mctruth_cos_Kp_Kstar",	m_mctruth_cos_Kp_Kstar	);
 			status = m_tuple_angular->addItem("mctruth_cos_Kn_Kstar",	m_mctruth_cos_Kn_Kstar	);
 			status = m_tuple_angular->addItem("mctruth_cos_Kshort",		m_mctruth_cos_Kshort	);
 			status = m_tuple_angular->addItem("mctruth_cos_Kstar",		m_mctruth_cos_Kstar	);
 			
 			status = m_tuple_angular->addItem("mctruth_P4_Pip_Kshort",	4,m_mctruth_P4_Pip_Kshort	);
 			status = m_tuple_angular->addItem("mctruth_P4_Pin_Kshort",	4,m_mctruth_P4_Pin_Kshort	);
+			status = m_tuple_angular->addItem("mctruth_P4_Pin_Kstar",	4,m_mctruth_P4_Pin_Kstar	);
 			status = m_tuple_angular->addItem("mctruth_P4_Pip_Kstar",	4,m_mctruth_P4_Pip_Kstar	);
+			status = m_tuple_angular->addItem("mctruth_P4_Kp_Kstar",	4,m_mctruth_P4_Kp_Kstar		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kn_Kstar",	4,m_mctruth_P4_Kn_Kstar		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kshort",		4,m_mctruth_P4_Kshort		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kstar",		4,m_mctruth_P4_Kstar		);
@@ -367,17 +375,21 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("p_total",		4,m_p_total		);
 			status = m_tuple->addItem("p_Pip_Kshort",	4,m_p_Pip_Kshort	);
 			status = m_tuple->addItem("p_Pin_Kshort",	4,m_p_Pin_Kshort	);
+			status = m_tuple->addItem("p_Pin_Kstar",	4,m_p_Pin_Kstar		);
 			status = m_tuple->addItem("p_Pip_Kstar",	4,m_p_Pip_Kstar		);
+			status = m_tuple->addItem("p_Kp_Kstar",		4,m_p_Kp_Kstar		);
 			status = m_tuple->addItem("p_Kn_Kstar",		4,m_p_Kn_Kstar		);
 			status = m_tuple->addItem("p_Kshort",		4,m_p_Kshort		);
 			status = m_tuple->addItem("p_Kstar",		4,m_p_Kstar		);
-			status = m_tuple->addItem("p_Pip_other",		4,m_p_Pip_other		);
-			status = m_tuple->addItem("p_Pin_other",		4,m_p_Pin_other		);
+			status = m_tuple->addItem("p_Pip_other",	4,m_p_Pip_other		);
+			status = m_tuple->addItem("p_Pin_other",	4,m_p_Pin_other		);
 			status = m_tuple->addItem("p_other",		4,m_p_other		);
 
 			status = m_tuple->addItem("d3_Pip_Kshort",	m_d3_Pip_Kshort	);
 			status = m_tuple->addItem("d3_Pin_Kshort",	m_d3_Pin_Kshort	);
+			status = m_tuple->addItem("d3_Pin_Kstar",	m_d3_Pin_Kstar	);
 			status = m_tuple->addItem("d3_Pip_Kstar",	m_d3_Pip_Kstar	);
+			status = m_tuple->addItem("d3_Kp_Kstar",	m_d3_Kp_Kstar	);
 			status = m_tuple->addItem("d3_Kn_Kstar",	m_d3_Kn_Kstar	);
 			status = m_tuple->addItem("d3_Kshort",		m_d3_Kshort	);
 			status = m_tuple->addItem("d3_Kstar",		m_d3_Kstar	);
@@ -387,7 +399,9 @@ StatusCode JpsiToPiKKshort::initialize()
 
 			status = m_tuple->addItem("m_Pip_Kshort",	m_m_Pip_Kshort	);
 			status = m_tuple->addItem("m_Pin_Kshort",	m_m_Pin_Kshort	);
+			status = m_tuple->addItem("m_Pin_Kstar",	m_m_Pin_Kstar	);
 			status = m_tuple->addItem("m_Pip_Kstar",	m_m_Pip_Kstar	);
+			status = m_tuple->addItem("m_Kp_Kstar",		m_m_Kp_Kstar	);
 			status = m_tuple->addItem("m_Kn_Kstar",		m_m_Kn_Kstar	);
 			status = m_tuple->addItem("m_Kshort",		m_m_Kshort	);
 			status = m_tuple->addItem("m_Kstar",		m_m_Kstar	);
@@ -397,7 +411,9 @@ StatusCode JpsiToPiKKshort::initialize()
 
 			status = m_tuple->addItem("cos_Pip_Kshort",	m_cos_Pip_Kshort);
 			status = m_tuple->addItem("cos_Pin_Kshort",	m_cos_Pin_Kshort);
+			status = m_tuple->addItem("cos_Pin_Kstar",	m_cos_Pin_Kstar );
 			status = m_tuple->addItem("cos_Pip_Kstar",	m_cos_Pip_Kstar );
+			status = m_tuple->addItem("cos_Kp_Kstar",	m_cos_Kp_Kstar  );
 			status = m_tuple->addItem("cos_Kn_Kstar",	m_cos_Kn_Kstar  );
 			status = m_tuple->addItem("cos_Kshort",		m_cos_Kshort    );
 			status = m_tuple->addItem("cos_Kstar",		m_cos_Kstar     );
@@ -407,7 +423,9 @@ StatusCode JpsiToPiKKshort::initialize()
 
 			status = m_tuple->addItem("bkg_m_Pip_kshort",	m_bkg_m_Pip_Kshort);
 			status = m_tuple->addItem("bkg_m_Pin_Kshort",	m_bkg_m_Pin_Kshort);
+			status = m_tuple->addItem("bkg_m_Pin_Kstar",	m_bkg_m_Pin_Kstar );
 			status = m_tuple->addItem("bkg_m_Pip_Kstar",	m_bkg_m_Pip_Kstar );
+			status = m_tuple->addItem("bkg_m_Kp_Kstar",	m_bkg_m_Kp_Kstar  );
 			status = m_tuple->addItem("bkg_m_Kn_Kstar",	m_bkg_m_Kn_Kstar  );
 			status = m_tuple->addItem("bkg_m_Kshort",	m_bkg_m_Kshort    );
 			status = m_tuple->addItem("bkg_m_Kstar",	m_bkg_m_Kstar     );
