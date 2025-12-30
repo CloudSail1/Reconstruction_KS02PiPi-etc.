@@ -84,11 +84,6 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>   	m_mctruth_cos_Kstar;
 
 
-   NTuple::Item<double>   	m_mctruth_cos_Kshort;
-   NTuple::Item<double>   	m_mctruth_cos_Kstar;
-
-
-
    NTuple::Array<double>   mctrue_eta0_P4;
    NTuple::Array<double>   mctrue_eta1_P4;
    NTuple::Array<double>   mctrue_gam0_eta0_P4;
