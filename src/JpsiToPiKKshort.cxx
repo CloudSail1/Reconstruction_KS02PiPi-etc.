@@ -49,7 +49,7 @@ const double xmass[5] =
 ;
 bool debug = false;
 const double mka = xmass[3];
-int n_total_event,n_charge_cutted,n_charged_partical_cutted,Ncut2,n_particle_number_cutted,Ncut4,Ncut5,Ncut6,Ncut7,Ncut8,Ncut9,Ncut10,n_pip_pin_vtxfit_cutted,n_vtxfit_kshort_cutted,n_vtxfit_kstar_cutted,n_kmfit_cutted;
+int n_total_event,n_charge_cutted,n_charged_partical_cutted,Ncut2,n_particle_number_cutted,Ncut4,Ncut5,Ncut6,Ncut7,Ncut8,Ncut9,Ncut10,n_pip_pin_vtxfit_cutted,n_vtxfit_kshort_cutted,n_vtxfit_kstar_cutted,n_kmfit_cutted,n_mass_cutted,n_vtxfit_other_ok;
 ////////////////////////////////////////////////////////////////////
 JpsiToPiKKshort::JpsiToPiKKshort(const std::string& name, ISvcLocator* pSvcLocator) :
 	Algorithm(name, pSvcLocator) 
@@ -365,14 +365,19 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("p_Kp_Kstar",		4,m_p_Kp_Kstar		);
 			status = m_tuple->addItem("p_Kshort",		4,m_p_Kshort		);
 			status = m_tuple->addItem("p_Kstar",		4,m_p_Kstar		);
+			status = m_tuple->addItem("p_Pip_other",		4,m_p_Pip_other		);
+			status = m_tuple->addItem("p_Pin_other",		4,m_p_Pin_other		);
+			status = m_tuple->addItem("p_other",		4,m_p_other		);
 
-			log << MSG::DEBUG << __LINE__ << endmsg;
 			status = m_tuple->addItem("d3_Pip_Kshort",	m_d3_Pip_Kshort	);
 			status = m_tuple->addItem("d3_Pin_Kshort",	m_d3_Pin_Kshort	);
 			status = m_tuple->addItem("d3_Pin_Kstar",	m_d3_Pin_Kstar	);
 			status = m_tuple->addItem("d3_Kp_Kstar",	m_d3_Kp_Kstar	);
 			status = m_tuple->addItem("d3_Kshort",		m_d3_Kshort	);
 			status = m_tuple->addItem("d3_Kstar",		m_d3_Kstar	);
+			status = m_tuple->addItem("d3_Pip_other",		m_d3_Pip_other	);
+			status = m_tuple->addItem("d3_Pin_other",		m_d3_Pin_other	);
+			status = m_tuple->addItem("d3_other",		m_d3_other	);
 
 			status = m_tuple->addItem("m_Pip_Kshort",	m_m_Pip_Kshort	);
 			status = m_tuple->addItem("m_Pin_Kshort",	m_m_Pin_Kshort	);
@@ -380,16 +385,20 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("m_Kp_Kstar",		m_m_Kp_Kstar	);
 			status = m_tuple->addItem("m_Kshort",		m_m_Kshort	);
 			status = m_tuple->addItem("m_Kstar",		m_m_Kstar	);
+			status = m_tuple->addItem("m_Pip_other",		m_m_Pip_other	);
+			status = m_tuple->addItem("m_Pin_other",		m_m_Pin_other	);
+			status = m_tuple->addItem("m_other",		m_m_other	);
 
-			log << MSG::DEBUG << __LINE__ << endmsg;
 			status = m_tuple->addItem("cos_Pip_Kshort",	m_cos_Pip_Kshort);
 			status = m_tuple->addItem("cos_Pin_Kshort",	m_cos_Pin_Kshort);
 			status = m_tuple->addItem("cos_Pin_Kstar",	m_cos_Pin_Kstar );
 			status = m_tuple->addItem("cos_Kp_Kstar",	m_cos_Kp_Kstar  );
 			status = m_tuple->addItem("cos_Kshort",		m_cos_Kshort    );
 			status = m_tuple->addItem("cos_Kstar",		m_cos_Kstar     );
+			status = m_tuple->addItem("cos_Pip_other",		m_cos_Pip_other     );
+			status = m_tuple->addItem("cos_Pin_other",		m_cos_Pin_other     );
+			status = m_tuple->addItem("cos_other",		m_cos_other     );
 
-			log << MSG::DEBUG << __LINE__ << endmsg;
 			status = m_tuple->addItem("bkg_m_Pip_kshort",	m_bkg_m_Pip_Kshort);
 			status = m_tuple->addItem("bkg_m_Pin_Kshort",	m_bkg_m_Pin_Kshort);
 			status = m_tuple->addItem("bkg_m_Pin_Kstar",	m_bkg_m_Pin_Kstar );
@@ -400,6 +409,9 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("bkg_m_Pip_Kp",	m_bkg_m_Pip_Kp    );
 			status = m_tuple->addItem("bkg_m_Pin_Kp",	m_bkg_m_Pin_Kp    );
 			status = m_tuple->addItem("bkg_m_Pip_Pin",	m_bkg_m_Pip_Pin   );
+			status = m_tuple->addItem("bkg_m_Pip_other",	m_bkg_m_Pip_other     );
+			status = m_tuple->addItem("bkg_m_Pin_other",	m_bkg_m_Pin_other     );
+			status = m_tuple->addItem("bkg_m_other",	m_bkg_m_other     );
 		}
 		else   
 		{ 
@@ -480,14 +492,23 @@ StatusCode JpsiToPiKKshort::execute()
 			{
 				log << MSG::DEBUG << __LINE__ << " in mc event loop" << endmsg;
 				if((*iter_mc)->primaryParticle()&&(*iter_mc)->particleProperty()==11&&((*iter_mc)->mother()).particleProperty()==11) { strange =true;}
-				if ((*iter_mc)->primaryParticle()) continue;
-				if (!(*iter_mc)->decayFromGenerator()) continue;
-				if ((*iter_mc)->particleProperty()==m_idNo)
-				{
+				if ((*iter_mc)->primaryParticle()) {
+					log << MSG::DEBUG << __LINE__ << endmsg;
+					continue;
+				}
+				if (!(*iter_mc)->decayFromGenerator()) {
+					log << MSG::DEBUG << __LINE__ << endmsg;
+					continue;
+				}
+				if ((*iter_mc)->particleProperty()==m_idNo) {
+					log << MSG::DEBUG << __LINE__ << endmsg;
 					jpsiDecay = true;
 					rootIndex = (*iter_mc)->trackIndex();
 				}
-				if (!jpsiDecay) continue;
+				if (!jpsiDecay) {
+					log << MSG::DEBUG << __LINE__ << endmsg;
+					continue;
+				}
 
 
 				log << MSG::DEBUG << __LINE__ << endmsg;
@@ -1251,183 +1272,29 @@ StatusCode JpsiToPiKKshort::execute()
 		log << MSG::DEBUG << __LINE__ << " kmfit failure" << endmsg;
 		return sc;
 	}
-	*/
 	n_kmfit_cutted++;
+	*/
+
+
+	// for other selecte
+	VertexFit* vtxfit_other = VertexFit::instance();
+	vtxfit_other->setChisqCut(9999);
+	vtxfit_other->init();
+	vtxfit_other->AddTrack(0,wvpip_kshortTrk);
+	vtxfit_other->AddTrack(1,wvpin_kstarTrk);
+	vtxfit_other->AddVertex(0,vxpar,0,1);
+	if(vtxfit_other->Fit())
+		n_vtxfit_other_ok++;
+	vtxfit_other->BuildVirtualParticle(0);
+	WTrackParameter wpip_other = vtxfit_other->wtrk(0);
+	WTrackParameter wpin_other = vtxfit_other->wtrk(1);
+	WTrackParameter wother = vtxfit_other->wVirtualTrack(0);
+
+
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	// m_chi2 = kmfit->chisq();
 	m_chi2 = 0;
-	
 
-	if(debug)cout<<__LINE__<<endl;
-/* rm kinematic fit for gamma
-	//Apply Kinematic fit  for Signal ------------
-	double chisq_t = 999999.;  
-	double chisq; 
-	int ig1 = -1;
-	int ig2 = -1;
-	int ig3 = -1;
-	int ig4 = -1;
-
-	// TODO KalmanKinematicFit and KinematicFit
-	KalmanKinematicFit * kmfit4C = KalmanKinematicFit::instance();
-	for(int i=0;i<nGam-3;i++)
-	{
-		for(int j=i+1;j<nGam-2;j++)
-		{
-			for(int k=j+1;k<nGam-1;k++)
-			{
-				for(int l=k+1;l<nGam;l++)
-				{
-					RecEmcShower *g1Trk = (*(evtRecTrkCol -> begin() +iGam[i])) -> emcShower();
-					RecEmcShower *g2Trk = (*(evtRecTrkCol -> begin() +iGam[j])) -> emcShower();
-					RecEmcShower *g3Trk = (*(evtRecTrkCol -> begin() +iGam[k])) -> emcShower();
-					RecEmcShower *g4Trk = (*(evtRecTrkCol -> begin() +iGam[l])) -> emcShower();
-					kmfit4C-> init();
-					kmfit4C-> AddTrack(0, wpp);
-					kmfit4C-> AddTrack(1, wpm);
-					kmfit4C-> AddTrack(2, 0.0, g1Trk);
-					kmfit4C-> AddTrack(3, 0.0, g2Trk);
-					kmfit4C-> AddTrack(4, 0.0, g3Trk);  
-					kmfit4C-> AddTrack(5, 0.0, g4Trk);  
-					kmfit4C-> AddFourMomentum(0, psip);
-					bool oksq = kmfit4C -> Fit();
-					if(oksq){
-						double chi2 = kmfit4C->chisq();
-						if (chi2 < chisq_t)
-						{
-							chisq_t = chi2;
-							ig1 =i;
-							ig2 =j;
-							ig3 =k;
-							ig4 =l;
-						}
-					}
-				}
-			}
-		}
-	}
-	if(chisq_t>200)return sc;
-	if( ig1==-1||ig2==-1||ig3==-1||ig4==-1 )return sc;
-	Ncut6++;
-	if(debug)cout<<__LINE__<<endl;
-
-
-	KinematicFit * kmfit = KinematicFit::instance();
-	RecEmcShower *G1Trk = (*(evtRecTrkCol->begin()+iGam[ig1]))->emcShower();
-	RecEmcShower *G2Trk = (*(evtRecTrkCol->begin()+iGam[ig2]))->emcShower();
-	RecEmcShower *G3Trk = (*(evtRecTrkCol->begin()+iGam[ig3]))->emcShower();
-	RecEmcShower *G4Trk = (*(evtRecTrkCol->begin()+iGam[ig4]))->emcShower();
-
-	if(debug)cout<<__LINE__<<endl;
-	kmfit -> init();
-	kmfit -> AddTrack(0, wpp);
-	kmfit -> AddTrack(1, wpm);
-	kmfit -> AddTrack(2, 0.0, G1Trk);
-	kmfit -> AddTrack(3, 0.0, G2Trk);
-	kmfit -> AddTrack(4, 0.0, G3Trk);  
-	kmfit -> AddTrack(5, 0.0, G4Trk);  
-	kmfit -> AddFourMomentum(0, psip);
-	if(!kmfit->Fit()) return sc;
-	Ncut7++;
-	if(debug)cout<<__LINE__<<endl;
-	m_chi2 = kmfit->chisq();
-
-	HepLorentzVector Pp_raw    = kmfit->pfit(0);
-	HepLorentzVector Ppb_raw   = kmfit->pfit(1);
-	HepLorentzVector pgam1_raw = kmfit->pfit(2);
-	HepLorentzVector pgam2_raw = kmfit->pfit(3);
-	HepLorentzVector pgam3_raw = kmfit->pfit(4);
-	HepLorentzVector pgam4_raw = kmfit->pfit(5);
-	if(debug)cout<<__LINE__<<endl;
-	HepLorentzVector p12g_raw=pgam1_raw+pgam2_raw;
-	HepLorentzVector p13g_raw=pgam1_raw+pgam3_raw;
-	HepLorentzVector p14g_raw=pgam1_raw+pgam4_raw;
-
-	HepLorentzVector p23g_raw=pgam2_raw+pgam3_raw;
-	HepLorentzVector p24g_raw=pgam2_raw+pgam4_raw;
-
-	HepLorentzVector p34g_raw=pgam3_raw+pgam4_raw;
-
-	m_m12g_4C= p12g_raw.m();
-	m_m13g_4C= p13g_raw.m();
-	m_m14g_4C= p14g_raw.m();
-
-	m_m23g_4C= p23g_raw.m();
-	m_m24g_4C= p24g_raw.m();
-
-	m_m34g_4C= p34g_raw.m();
-
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@@@@@@@@@@@                       区分两个Eta             @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	// TODO minimizing added mass of two eta
-	//////////////////Added by Jing YUAN to minimize mass of both two eta//////////////
-
-	int eta[4] = {2,3,4,5}; 
-	HepLorentzVector pEta0[3], pEta1[3]  ;
-	HepLorentzVector pg0_eta0[3],pg1_eta0[3],pg0_eta1[3],pg1_eta1[3];
-
-	int npg1[3],npg2[3],npg3[3],npg4[3] ;//1013
-
-
-	for( int i=0; i < 3; i++){
-		for(int j=i+1; j < 4; j++){
-			for(int k=0; k<3; k++){
-				for(int l=k+1; l<3; l++){
-
-					if( (k==i)||(k==j)||(l==i)||(l==j) ) continue;
-					pEta0[i]=kmfit->pfit( eta[i]  ) + kmfit->pfit( eta[j]  );
-					pEta1[i]=kmfit->pfit( eta[k]  ) + kmfit->pfit( eta[l]  );
-					pg0_eta0[i]=kmfit->pfit( eta[i]  );
-					pg1_eta0[i]=kmfit->pfit( eta[j]  );
-					pg0_eta1[i]=kmfit->pfit( eta[k]  );
-					pg1_eta1[i]=kmfit->pfit( eta[l]  );
-
-					npg1[i]=eta[i];//1013
-					npg2[i]=eta[j];//1013
-					npg3[i]=eta[k];//1013
-					npg4[i]=eta[l];//1013
-				}			
-
-			}
-
-
-		}
-
-	}
-
-
-	HepLorentzVector pEta0_4C,pEta1_4C,pGam1_4C, pGam2_4C,pGam3_4C, pGam4_4C;
-	int Npg1=0,Npg2=0,Npg3=0,Npg4=0 ;//1013
-
-	double xmin1=999.;
-	for(int i=0; i<3; i++){
-		double xtmp=fabs(sqrt( ( pEta0[i].m()-0.547)*( pEta0[i].m()-0.547) + ( pEta1[i].m()-0.547)*( pEta1[i].m()-0.547) ) ) ;
-		if(xtmp<xmin1  )
-		{
-			xmin1=xtmp;
-			pEta0_4C= pEta0[i];
-			pEta1_4C= pEta1[i];
-
-
-			pGam1_4C= pg0_eta0[i];
-			pGam2_4C= pg1_eta0[i];
-			pGam3_4C= pg0_eta1[i];
-			pGam4_4C= pg1_eta1[i];
-
-			Npg1=npg1[i];//1013
-			Npg2=npg2[i];//1013
-			Npg3=npg3[i];//1013
-			Npg4=npg4[i];//1013
-
-		}	
-
-	}
-
-	//////////////////Added by Jing YUAN to minimize mass of both two eta___END//////////////
-
-
-*/
 	log << MSG::DEBUG << __LINE__ << " init lorentz vector from vwTrk";
 	Hep3Vector betaLab = psip.boostVector();
 
@@ -1439,6 +1306,18 @@ StatusCode JpsiToPiKKshort::execute()
 	// HepLorentzVector P_Kstar	= P_Pin_Kstar+P_Kp_Kstar;
 	HepLorentzVector P_Kshort	= HepLorentzVector(wkshort.w()[0],wkshort.w()[1],wkshort.w()[2],wkshort.w()[3]).boost(-betaLab);
 	HepLorentzVector P_Kstar	= HepLorentzVector(wkstar.w()[0],wkstar.w()[1],wkstar.w()[2],wkstar.w()[3]).boost(-betaLab);
+	HepLorentzVector P_Pip_other	= HepLorentzVector(wpip_other.w()[0],wpip_other.w()[1],wpip_other.w()[2],wpip_other.w()[3]).boost(-betaLab);
+	HepLorentzVector P_Pin_other	= HepLorentzVector(wpin_other.w()[0],wpin_other.w()[1],wpin_other.w()[2],wpin_other.w()[3]).boost(-betaLab);
+	HepLorentzVector P_other	= HepLorentzVector(wother.w()[0],wother.w()[1],wother.w()[2],wother.w()[3]).boost(-betaLab);
+
+
+	// cut for mass
+	if (fabs(P_Kstar.m()-0.892)>0.12) {
+		log << MSG::DEBUG << __LINE__ << " return with Kstar mass is " << P_Kstar.m() << endmsg;
+		return sc;
+	}
+	n_mass_cutted++;
+
 
 	//HepLorentzVector P_Pip_Kshort = kmfit->pfit(0);
 	//HepLorentzVector P_Pin_Kshort = kmfit->pfit(1);
@@ -1502,100 +1381,40 @@ StatusCode JpsiToPiKKshort::execute()
 	m_p_Kstar[3] = P_Kstar.e();
 	m_d3_Kstar=sqrt( P_Kstar.px()*P_Kstar.px()+P_Kstar.py()*P_Kstar.py()+P_Kstar.pz()*P_Kstar.pz());
 	m_m_Kstar = P_Kstar.m();
-	log << MSG::DEBUG << __LINE__ << " save ok" << endmsg;
-/* rm tuple value save
-	m_cosEta0=fabs( pGam1_4C.e() -  pGam2_4C.e()  )/( pEta0_4C.rho()  ) ;
-	m_cosEta1=fabs( pGam3_4C.e() -  pGam4_4C.e()  )/( pEta1_4C.rho()  ) ;
 
 
-	if(debug)cout<<__LINE__<<endl;
-	HepLorentzVector xptot=(kmfit->pfit(0)+kmfit->pfit(1)+kmfit->pfit(2)+kmfit->pfit(3)+kmfit->pfit(4)+kmfit->pfit(5) );
-	m_P_tot[0]= xptot.px();
-	m_P_tot[1]= xptot.py();
-	m_P_tot[2]= xptot.pz();
-	m_P_tot[3]= xptot.e();
+	m_p_other[0] = P_other.px();
+	m_p_other[1] = P_other.py();
+	m_p_other[2] = P_other.pz();
+	m_p_other[3] = P_other.e();
+	m_d3_other=sqrt( P_other.px()*P_other.px()+P_other.py()*P_other.py()+P_other.pz()*P_other.pz());
+	m_m_other = P_other.m();
+
+	
+	m_p_Pip_other[0] = P_Pip_other.px();
+	m_p_Pip_other[1] = P_Pip_other.py();
+	m_p_Pip_other[2] = P_Pip_other.pz();
+	m_p_Pip_other[3] = P_Pip_other.e();
+	m_d3_Pip_other=sqrt( P_Pip_other.px()*P_Pip_other.px()+P_Pip_other.py()*P_Pip_other.py()+P_Pip_other.pz()*P_Pip_other.pz());
+	m_m_Pip_other = P_Pip_other.m();
+	
+
+	m_p_Pin_other[0] = P_Pin_other.px();
+	m_p_Pin_other[1] = P_Pin_other.py();
+	m_p_Pin_other[2] = P_Pin_other.pz();
+	m_p_Pin_other[3] = P_Pin_other.e();
+	m_d3_Pin_other=sqrt( P_Pin_other.px()*P_Pin_other.px()+P_Pin_other.py()*P_Pin_other.py()+P_Pin_other.pz()*P_Pin_other.pz());
+	m_m_Pin_other = P_Pin_other.m();
+	
+
+	m_p_other[0] = P_other.px();
+	m_p_other[1] = P_other.py();
+	m_p_other[2] = P_other.pz();
+	m_p_other[3] = P_other.e();
+	m_d3_other=sqrt( P_other.px()*P_other.px()+P_other.py()*P_other.py()+P_other.pz()*P_other.pz());
+	m_m_other = P_other.m();
 
 
-	HepLorentzVector  P_pp= kmfit->pfit(0);
-	HepLorentzVector  P_pm= kmfit->pfit(1);
-	m_P_pp[0]= P_pp.px();
-	m_P_pp[1]= P_pp.py();
-	m_P_pp[2]= P_pp.pz();
-	m_P_pp[3]= P_pp.e();
-	m_mPP=P_pp.m();
-	m_mPM=P_pm.m();
-	m_d3_pp=sqrt( P_pp.px()*P_pp.px()+P_pp.py()*P_pp.py()+P_pp.pz()*P_pp.pz());
-
-
-	m_P_pm[0]= P_pm.px();
-	m_P_pm[1]= P_pm.py();
-	m_P_pm[2]= P_pm.pz();
-	m_P_pm[3]= P_pm.e();
-	m_d3_pm=sqrt( P_pm.px()*P_pm.px()+P_pm.py()*P_pm.py()+P_pm.pz()*P_pm.pz());
-
-
-	m_P_eta0[0]= pEta0_4C.px();
-	m_P_eta0[1]= pEta0_4C.py();
-	m_P_eta0[2]= pEta0_4C.pz();
-	m_P_eta0[3]= pEta0_4C.e();
-	m_d3_eta0=sqrt( pEta0_4C.px()*pEta0_4C.px()+pEta0_4C.py()*pEta0_4C.py()+pEta0_4C.pz()*pEta0_4C.pz());
-
-
-	m_P_eta1[0]= pEta1_4C.px();
-	m_P_eta1[1]= pEta1_4C.py();
-	m_P_eta1[2]= pEta1_4C.pz();
-	m_P_eta1[3]= pEta1_4C.e();
-	m_d3_eta1=sqrt( pEta1_4C.px()*pEta1_4C.px()+pEta1_4C.py()*pEta1_4C.py()+pEta1_4C.pz()*pEta1_4C.pz());
-
-
-	m_P_gam0_eta0[0]= pGam1_4C.px();//gam1
-	m_P_gam0_eta0[1]= pGam1_4C.py();
-	m_P_gam0_eta0[2]= pGam1_4C.pz();
-	m_P_gam0_eta0[3]= pGam1_4C.e();
-	m_d3_gam0_eta0=sqrt( pGam1_4C.px()*pGam1_4C.px()+pGam1_4C.py()*pGam1_4C.py()+pGam1_4C.pz()*pGam1_4C.pz());
-
-
-
-	m_P_gam1_eta0[0]= pGam2_4C.px();//gam2
-	m_P_gam1_eta0[1]= pGam2_4C.py();
-	m_P_gam1_eta0[2]= pGam2_4C.pz();
-	m_P_gam1_eta0[3]= pGam2_4C.e();
-	m_d3_gam1_eta0=sqrt( pGam2_4C.px()*pGam2_4C.px()+pGam2_4C.py()*pGam2_4C.py()+pGam2_4C.pz()*pGam2_4C.pz());
-
-
-
-	m_P_gam0_eta1[0]= pGam3_4C.px();//gam3
-	m_P_gam0_eta1[1]= pGam3_4C.py();
-	m_P_gam0_eta1[2]= pGam3_4C.pz();
-	m_P_gam0_eta1[3]= pGam3_4C.e();
-	m_d3_gam0_eta1=sqrt( pGam3_4C.px()*pGam3_4C.px()+pGam3_4C.py()*pGam3_4C.py()+pGam3_4C.pz()*pGam3_4C.pz());
-
-
-
-	m_P_gam1_eta1[0]= pGam4_4C.px();//gam4
-	m_P_gam1_eta1[1]= pGam4_4C.py();
-	m_P_gam1_eta1[2]= pGam4_4C.pz();
-	m_P_gam1_eta1[3]= pGam4_4C.e();
-	m_d3_gam1_eta1=sqrt( pGam4_4C.px()*pGam4_4C.px()+pGam4_4C.py()*pGam4_4C.py()+pGam4_4C.pz()*pGam4_4C.pz());
-
-
-	m_mg13_wc=(pGam1_4C+pGam3_4C).m();
-	m_mg14_wc=(pGam1_4C+pGam4_4C).m();
-	m_mg23_wc=(pGam2_4C+pGam3_4C).m();
-	m_mg24_wc=(pGam2_4C+pGam4_4C).m();
-
-
-	m_mEta0_4C = pEta0_4C.m();
-	m_mEta1_4C = pEta1_4C.m();
-	m_m2Etarec_bkg=(psip- pEta0_4C - pEta1_4C).m();
-
-	m_eEta0_4C = pEta0_4C.e();
-	m_eEta1_4C = pEta1_4C.e();
-	m_pEta0_4C = sqrt( pEta0_4C.px()*pEta0_4C.px() + pEta0_4C.py()*pEta0_4C.py() + pEta0_4C.pz()*pEta0_4C.pz() );
-	m_pEta1_4C = sqrt( pEta1_4C.px()*pEta1_4C.px() + pEta1_4C.py()*pEta1_4C.py() + pEta1_4C.pz()*pEta1_4C.pz() );
-*/
-	// recoil
-	log << MSG::DEBUG << __LINE__ << " save recoil data to ntuple" << endmsg;
 	m_bkg_m_Pip_Kshort	=(psip-P_Pip_Kshort		).m();
 	m_bkg_m_Pin_Kshort	=(psip-P_Pin_Kshort		).m();
 	m_bkg_m_Pin_Kstar	=(psip-P_Pin_Kstar		).m();
@@ -1606,58 +1425,11 @@ StatusCode JpsiToPiKKshort::execute()
 	m_bkg_m_Pip_Kp		=(psip-P_Pip_Kshort-P_Kp_Kstar	).m();
 	m_bkg_m_Pin_Kp		=(psip-P_Pin_Kshort-P_Kp_Kstar	).m();
 	m_bkg_m_Pip_Pin		=(psip-P_Pip_Kshort-P_Pin_Kstar	).m();
+	m_bkg_m_other		=(psip-P_other			).m();
+	m_bkg_m_Pip_other	=(psip-P_Pip_other		).m();
+	m_bkg_m_Pin_other	=(psip-P_Pin_other		).m();
 	log << MSG::DEBUG << __LINE__ << " save ok" << endmsg;
 
-/* rm recoil
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@          Gam 反冲
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	m_mgamrec1_bkg=(psip-pGam1_4C).m();
-	m_mgamrec2_bkg=(psip-pGam2_4C).m();
-	m_mgamrec3_bkg=(psip-pGam3_4C).m();
-	m_mgamrec4_bkg=(psip-pGam4_4C).m();
-
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@          Eta 反冲及其最小化
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	m_mEtarec0_bkg = ( psip - pEta0_4C ).m();
-	m_mEtarec1_bkg = ( psip - pEta1_4C ).m();
-
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@          2gam 反冲及其最小化
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	m_m2gamrec1_bkg=(psip- pGam1_4C - pGam2_4C ).m();
-	m_m2gamrec2_bkg=(psip- pGam1_4C - pGam3_4C ).m();
-	m_m2gamrec3_bkg=(psip- pGam1_4C - pGam4_4C ).m();
-	m_m2gamrec4_bkg=(psip- pGam2_4C - pGam3_4C ).m();
-	m_m2gamrec5_bkg=(psip- pGam2_4C - pGam4_4C ).m();
-	m_m2gamrec6_bkg=(psip- pGam3_4C - pGam4_4C ).m();
-
-
-	m_mpEta0  = ( pEta0_4C + kmfit->pfit(0) ).m();
-	m_mpEta1  = ( pEta1_4C + kmfit->pfit(0) ).m();
-
-	m_mpbEta0 = ( pEta0_4C + kmfit->pfit(1) ).m();
-	m_mpbEta1 = ( pEta1_4C + kmfit->pfit(1) ).m();
-
-	m_mppbEta0 = ( pEta0_4C + kmfit->pfit(1) + kmfit->pfit(0)).m();
-	m_mppbEta1 = ( pEta1_4C + kmfit->pfit(1) + kmfit->pfit(0)).m();
-
-	m_mgamppbEta0_eta1= ( pEta0_4C + kmfit->pfit(1) + kmfit->pfit(0) + pGam3_4C ).m();
-	m_mgamppbEta1_eta1= ( pEta0_4C + kmfit->pfit(1) + kmfit->pfit(0) + pGam4_4C ).m();
-
-	m_mgamppbEta0_eta0= ( pEta1_4C + kmfit->pfit(1) + kmfit->pfit(0) + pGam1_4C ).m();
-	m_mgamppbEta1_eta0= ( pEta1_4C + kmfit->pfit(1) + kmfit->pfit(0) + pGam2_4C ).m();
-
-	m_mppb =( kmfit ->pfit(0) + kmfit->pfit(1) ).m();
-	m_mppb2Eta =( kmfit ->pfit(0) + kmfit->pfit(1) + pEta0_4C + pEta1_4C  ).m();
-
-	m_m2Eta = ( pEta0_4C + pEta1_4C  ).m();
-*/
-	if(debug)cout<<__LINE__<<endl;
-	//==*******************************==//
-	//==*     COS极化角的填入 [Method I]
-	//==*******************************==//
 
 	log << MSG::DEBUG << __LINE__ << " save polarization angle to ntuple" << endmsg;
 
@@ -1693,453 +1465,10 @@ StatusCode JpsiToPiKKshort::execute()
 	*/
 	log << MSG::DEBUG << __LINE__ << " save ok" << endmsg;
 
-/* rm cos polarization angle
-	//==*******************************==//
-	//==*     COS极化角的填入 [Method I]
-	//==*******************************==//
-	if(debug)cout<<__LINE__<<endl;
-        HepLorentzVector temPpp=P_pp;
-        HepLorentzVector temPpm=P_pm;
-        HepLorentzVector temxpEta0_4C=pEta0_4C;
-        HepLorentzVector temxpEta1_4C=pEta1_4C;
-        HepLorentzVector temxgam1= pGam1_4C;
-        HepLorentzVector temxgam2= pGam2_4C;
-        HepLorentzVector temxgam3= pGam3_4C;
-        HepLorentzVector temxgam4= pGam4_4C;
-        Hep3Vector betaLab = psip.boostVector();
-        temPpp.boost(-betaLab);
-        temPpm.boost(-betaLab);
-        temxpEta0_4C.boost(-betaLab);
-        temxpEta1_4C.boost(-betaLab);
-        temxgam1.boost(-betaLab);
-        temxgam2.boost(-betaLab);
-        temxgam3.boost(-betaLab);
-        temxgam4.boost(-betaLab);
-
-        m_cos_pp=(temPpp).cosTheta();
-        m_cos_pm=(temPpm).cosTheta();
-        m_cos_Eta0=(temxpEta0_4C).cosTheta();
-        m_cos_Eta1=(temxpEta1_4C).cosTheta();
-
-        m_cos_gam1_Eta0=(temxgam1).cosTheta();
-        m_cos_gam2_Eta0=(temxgam2).cosTheta();
-        m_cos_gam1_Eta1=(temxgam3).cosTheta();
-        m_cos_gam2_Eta1=(temxgam4).cosTheta();
-*/
-
-/* rm dang of proton and gamma
-	if(debug)cout<<__LINE__<<endl;
-	int Gam[4];
-	Gam[0] = iGam[ig1] ;
-	Gam[1] = iGam[ig2] ;
-	Gam[2] = iGam[ig3] ;
-	Gam[3] = iGam[ig4] ;
-
-	int good_proton[2] = {ipp[0],ipm[0]};
-
-	if(debug)cout<<"ipp = "<<ipp[0]<<" ipm = "<<ipm[0]<<endl;
-
-	double dang_proton_tmp=9999;
-	if(debug)cout<<__LINE__<<endl;
-
-	for(int i=0; i<4; i++)
-	{
-		EvtRecTrackIterator itTrk=evtRecTrkCol->begin() + Gam[i];
-		if(!(*itTrk)->isEmcShowerValid()) continue;
-		RecEmcShower *emcTrk = (*itTrk)->emcShower();
-		Hep3Vector emcpos(emcTrk->x(), emcTrk->y(), emcTrk->z());
-
-		if(debug)cout<<__LINE__<<endl;
-		for(int j=0; j<2; j++)
-		{
-			EvtRecTrackIterator jtTrk = evtRecTrkCol->begin() + good_proton[j];
-			if(!(*jtTrk)->isExtTrackValid()) continue;
-			RecExtTrack *extTrk = (*jtTrk)->extTrack();
-			if(extTrk->emcVolumeNumber() == -1) continue;
-			Hep3Vector extpos = extTrk->emcPosition();
-			double angd = extpos.angle(emcpos);
-			if(angd < dang_proton_tmp)dang_proton_tmp = angd;
-		}
-		if(debug)cout<<__LINE__<<endl;
-	}
-	m_dang_proton = dang_proton_tmp * 180 / (CLHEP::pi);
-	if(debug)cout<<__LINE__<<endl;
-*/
-/* rm other branch
-	//@@@@@@@@@@@@=====================================@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@    Eta Eta ----  6C  
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@=====================================@@@@@@@@@@@@@@@@@@@@@@@@
-	if(Npg1*Npg2*Npg3*Npg4!=0 ){
-		KinematicFit * kmfit6C = KinematicFit::instance();
-
-		kmfit6C-> init();
-		kmfit6C-> AddTrack(0, wpp);
-		kmfit6C-> AddTrack(1, wpm);
-		kmfit6C-> AddTrack(2, 0.0, G1Trk);
-		kmfit6C-> AddTrack(3, 0.0, G2Trk);
-		kmfit6C-> AddTrack(4, 0.0, G3Trk);  
-		kmfit6C-> AddTrack(5, 0.0, G4Trk);  
-		kmfit6C-> AddResonance(0, 0.547, Npg1,Npg2);
-		kmfit6C-> AddResonance(1, 0.547, Npg3,Npg4);
-		kmfit6C-> AddFourMomentum(2, psip);
-		bool oksq6C = kmfit6C->Fit();
-		if(oksq6C){
-			m_chi2_6C = kmfit6C->chisq();
-		}else{
-			m_chi2_6C = 200;
-		}
-
-	}
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	// TODO PDG J/psi \Gamma79 \Gamma249 \Gamma211
-	//@@@@@@@@@@@@@@@@ pi0 pi0 ppbar  Selection
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	// TODO HepLorentzVector var_name[3] and var_name[4]
-	HepLorentzVector pPi0a[3], pPi0b[3]  ;
-	HepLorentzVector pg0_pi0a[3],pg1_pi0a[3],pg0_pi0b[3],pg1_pi0b[3];
-	int xnpg1[3],xnpg2[3],xnpg3[3],xnpg4[3] ;//1013
-	for( int i=0; i < 3; i++){
-		for(int j=i+1; j < 4; j++){
-			for(int k=0; k<3; k++){
-				for(int l=k+1; l<3; l++){
-
-					if( (k==i)||(k==j)||(l==i)||(l==j) ) continue;
-					pPi0a[i]=kmfit->pfit( eta[i]  ) + kmfit->pfit( eta[j]  );
-					pPi0b[i]=kmfit->pfit( eta[k]  ) + kmfit->pfit( eta[l]  );
-					pg0_pi0a[i]=kmfit->pfit( eta[i]  );
-					pg1_pi0a[i]=kmfit->pfit( eta[j]  );
-					pg0_pi0b[i]=kmfit->pfit( eta[k]  );
-					pg1_pi0b[i]=kmfit->pfit( eta[l]  );
-
-					xnpg1[i]=eta[i];//1013
-					xnpg2[i]=eta[j];//1013
-					xnpg3[i]=eta[k];//1013
-					xnpg4[i]=eta[l];//1013
-				}			
-
-			}
-
-
-		}
-
-	}
-
-
-
-	int xNpg1=0,xNpg2=0,xNpg3=0,xNpg4=0 ;//1013
-
-	double xmin2=999.;
-	for(int i=0; i<3; i++){
-		double xtmp=fabs(sqrt( ( pPi0a[i].m()-0.135)*( pPi0a[i].m()-0.135) + ( pPi0b[i].m()-0.135)*( pPi0b[i].m()-0.135) ) ) ;
-		if(xtmp<xmin2  )
-		{
-			xmin2=xtmp;
-
-			m_mPi0_bkg0_6C= pPi0a[i].m();
-			m_mPi0_bkg1_6C= pPi0b[i].m();
-
-
-			xNpg1=xnpg1[i];//1013
-			xNpg2=xnpg2[i];//1013
-			xNpg3=xnpg3[i];//1013
-			xNpg4=xnpg4[i];//1013
-
-		}	
-
-	}
-
-	if( xNpg1*xNpg2*xNpg3*xNpg4!=0 ){
-		KinematicFit * xkmfit6C = KinematicFit::instance();
-
-		xkmfit6C-> init();
-		xkmfit6C-> AddTrack(0, wpp);
-		xkmfit6C-> AddTrack(1, wpm);
-		xkmfit6C-> AddTrack(2, 0.0, G1Trk);
-		xkmfit6C-> AddTrack(3, 0.0, G2Trk);
-		xkmfit6C-> AddTrack(4, 0.0, G3Trk);  
-		xkmfit6C-> AddTrack(5, 0.0, G4Trk);  
-		xkmfit6C-> AddResonance(0, 0.135, xNpg1,xNpg2);
-		xkmfit6C-> AddResonance(1, 0.135, xNpg3,xNpg4);
-		xkmfit6C-> AddFourMomentum(2, psip);
-		bool xoksq6C = xkmfit6C->Fit();
-		if( xoksq6C){
-			m_chi2_2pi0_6C = xkmfit6C->chisq();
-		}else{
-			m_chi2_2pi0_6C = 200;
-		}
-
-	}
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@@@@@  pi0 Eta ppbar  Selection
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	HepLorentzVector pPI0[6], pETA[6]  ;
-	HepLorentzVector pg0_PI0[6],pg1_PI0[6],pg0_ETA[6],pg1_ETA[6];
-	int xxnpg1[6],xxnpg2[6],xxnpg3[6],xxnpg4[6] ;//1013
-	for( int i=0; i < 3; i++){
-		for(int j=i+1; j < 4; j++){
-			for(int k=0; k<3; k++){
-				for(int l=k+1; l<4; l++){
-
-					if( (k==i)||(k==j)||(l==i)||(l==j) ) continue;
-
-					if (i==0&&j==1&&k==2&&l==3){
-						pPI0[0]=kmfit->pfit( eta[i]  ) + kmfit->pfit( eta[j]  );
-						pETA[0]=kmfit->pfit( eta[k]  ) + kmfit->pfit( eta[l]  );
-						pg0_PI0[0]=kmfit->pfit( eta[i]  );
-						pg1_PI0[0]=kmfit->pfit( eta[j]  );
-						pg0_ETA[0]=kmfit->pfit( eta[k]  );
-						pg1_ETA[0]=kmfit->pfit( eta[l]  );
-
-						xxnpg1[0]=eta[i];xxnpg2[0]=eta[j];xxnpg3[0]=eta[k];xxnpg4[0]=eta[l];
-					}
-
-					if (i==0&&j==2&&k==1&&l==3){
-						pPI0[1]=kmfit->pfit( eta[i]  ) + kmfit->pfit( eta[j]  );
-						pETA[1]=kmfit->pfit( eta[k]  ) + kmfit->pfit( eta[l]  );
-						pg0_PI0[1]=kmfit->pfit( eta[i]  );
-						pg1_PI0[1]=kmfit->pfit( eta[j]  );
-						pg0_ETA[1]=kmfit->pfit( eta[k]  );
-						pg1_ETA[1]=kmfit->pfit( eta[l]  );
-						xxnpg1[1]=eta[i];xxnpg2[1]=eta[j];xxnpg3[1]=eta[k];xxnpg4[1]=eta[l];
-					}
-					if (i==0&&j==3&&k==1&&l==2){
-						pPI0[2]=kmfit->pfit( eta[i]  ) + kmfit->pfit( eta[j]  );
-						pETA[2]=kmfit->pfit( eta[k]  ) + kmfit->pfit( eta[l]  );
-						pg0_PI0[2]=kmfit->pfit( eta[i]  );
-						pg1_PI0[2]=kmfit->pfit( eta[j]  );
-						pg0_ETA[2]=kmfit->pfit( eta[k]  );
-						pg1_ETA[2]=kmfit->pfit( eta[l]  );
-						xxnpg1[2]=eta[i];xxnpg2[2]=eta[j];xxnpg3[2]=eta[k];xxnpg4[2]=eta[l];
-					}
-					if (i==1&&j==2&&k==0&&l==3){
-						pPI0[3]=kmfit->pfit( eta[i]  ) + kmfit->pfit( eta[j]  );
-						pETA[3]=kmfit->pfit( eta[k]  ) + kmfit->pfit( eta[l]  );
-						pg0_PI0[3]=kmfit->pfit( eta[i]  );
-						pg1_PI0[3]=kmfit->pfit( eta[j]  );
-						pg0_ETA[3]=kmfit->pfit( eta[k]  );
-						pg1_ETA[3]=kmfit->pfit( eta[l]  );
-						xxnpg1[3]=eta[i];xxnpg2[3]=eta[j];xxnpg3[3]=eta[k];xxnpg4[3]=eta[l];
-					}
-					if (i==1&&j==3&&k==0&&l==2){
-						pPI0[4]=kmfit->pfit( eta[i]  ) + kmfit->pfit( eta[j]  );
-						pETA[4]=kmfit->pfit( eta[k]  ) + kmfit->pfit( eta[l]  );
-						pg0_PI0[4]=kmfit->pfit( eta[i]  );
-						pg1_PI0[4]=kmfit->pfit( eta[j]  );
-						pg0_ETA[4]=kmfit->pfit( eta[k]  );
-						pg1_ETA[4]=kmfit->pfit( eta[l]  );
-						xxnpg1[4]=eta[i];xxnpg2[4]=eta[j];xxnpg3[4]=eta[k];xxnpg4[4]=eta[l];
-					}
-					if (i==2&&j==3&&k==0&&l==1){
-						pPI0[5]=kmfit->pfit( eta[i]  ) + kmfit->pfit( eta[j]  );
-						pETA[5]=kmfit->pfit( eta[k]  ) + kmfit->pfit( eta[l]  );
-						pg0_PI0[5]=kmfit->pfit( eta[i]  );
-						pg1_PI0[5]=kmfit->pfit( eta[j]  );
-						pg0_ETA[5]=kmfit->pfit( eta[k]  );
-						pg1_ETA[5]=kmfit->pfit( eta[l]  );
-						xxnpg1[5]=eta[i];xxnpg2[5]=eta[j];xxnpg3[5]=eta[k];xxnpg4[5]=eta[l];
-					}
-
-
-				}			
-
-			}
-
-
-		}
-
-	}
-
-
-
-	int xxNpg1=0,xxNpg2=0,xxNpg3=0,xxNpg4=0 ;//1013
-
-	double xmin3=999.;
-	for(int i=0; i<6; i++){
-		double xtmp=fabs(sqrt( ( pPI0[i].m()-0.135)*( pPI0[i].m()-0.135) + ( pETA[i].m()-0.547)*( pETA[i].m()-0.547) ) ) ;
-		if(xtmp<xmin3  )
-		{
-			xmin3=xtmp;
-
-			m_mPI0_bkg_6C= pPI0[i].m();
-			m_mETA_bkg_6C= pETA[i].m();
-
-
-			xxNpg1=xxnpg1[i];//1013
-			xxNpg2=xxnpg2[i];//1013
-			xxNpg3=xxnpg3[i];//1013
-			xxNpg4=xxnpg4[i];//1013
-
-		}	
-
-	}
-
-	if( xxNpg1*xxNpg2*xxNpg3*xxNpg4!=0 ){
-		KinematicFit * xxkmfit6C = KinematicFit::instance();
-
-		xxkmfit6C-> init();
-		xxkmfit6C-> AddTrack(0, wpp);
-		xxkmfit6C-> AddTrack(1, wpm);
-		xxkmfit6C-> AddTrack(2, 0.0, G1Trk);
-		xxkmfit6C-> AddTrack(3, 0.0, G2Trk);
-		xxkmfit6C-> AddTrack(4, 0.0, G3Trk);  
-		xxkmfit6C-> AddTrack(5, 0.0, G4Trk);  
-		xxkmfit6C-> AddResonance(0, 0.135, xxNpg1,xxNpg2);
-		xxkmfit6C-> AddResonance(1, 0.547, xxNpg3,xxNpg4);
-		xxkmfit6C-> AddFourMomentum(2, psip);
-		bool xxoksq6C = xxkmfit6C->Fit();
-		if(xxoksq6C){
-			m_chi2_pi0Eta_6C = xxkmfit6C->chisq();
-		}else{
-			m_chi2_pi0Eta_6C = 200;
-		}
-	}
-
-
-
-
-
-	//@@@@@@@@@@@@=====================================@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	//@@@@@@@@@@@@=====================================@@@@@@@@@@@@@@@@@@@@@@@@
-
-
-
-
-	// TODO
-
-	double chisq_t3g=9999,chisq_t4g=9999,chisq_t5g=9999;
-	for(int i=0;i<nGam-2;i++)
-	{
-		for(int j=i+1;j<nGam-1;j++)
-		{
-			for(int k=j+1;k<nGam;k++)
-			{
-				RecEmcShower *g1Trk = (*(evtRecTrkCol -> begin() +iGam[i])) -> emcShower();
-				RecEmcShower *g2Trk = (*(evtRecTrkCol -> begin() +iGam[j])) -> emcShower();
-				RecEmcShower *g3Trk = (*(evtRecTrkCol -> begin() +iGam[k])) -> emcShower();
-				kmfit -> init();
-				kmfit -> AddTrack(0, wpp);
-				kmfit -> AddTrack(1, wpm);
-				kmfit -> AddTrack(2, 0.0, g1Trk);
-				kmfit -> AddTrack(3, 0.0, g2Trk);
-				kmfit -> AddTrack(4, 0.0, g3Trk);  
-				kmfit -> AddFourMomentum(0, psip);
-
-				bool oksq = kmfit -> Fit();
-				if(oksq){
-					double chi2=kmfit->chisq();
-					if (chi2 < chisq_t3g)
-					{
-						chisq_t3g = chi2;
-					}
-				}
-			}
-		}
-	}
-	m_chi23g=chisq_t3g;
-
-
-
-	for(int i=0;i<nGam-4;i++)
-	{
-		for(int j=i+1;j<nGam-3;j++)
-		{
-			for(int k=j+1;k<nGam-2;k++)
-			{
-				for(int m=k+1;m<nGam-1;m++)
-				{
-					for(int n=m+1;n<nGam;n++)
-					{
-						RecEmcShower *g1Trk = (*(evtRecTrkCol -> begin() +iGam[i])) -> emcShower();
-						RecEmcShower *g2Trk = (*(evtRecTrkCol -> begin() +iGam[j])) -> emcShower();
-						RecEmcShower *g3Trk = (*(evtRecTrkCol -> begin() +iGam[k])) -> emcShower();
-						RecEmcShower *g4Trk = (*(evtRecTrkCol -> begin() +iGam[m])) -> emcShower();
-						RecEmcShower *g5Trk = (*(evtRecTrkCol -> begin() +iGam[n])) -> emcShower();
-						kmfit -> init();
-						kmfit -> AddTrack(0, wpp);
-						kmfit -> AddTrack(1, wpm);
-						kmfit -> AddTrack(2, 0.0, g1Trk);
-						kmfit -> AddTrack(3, 0.0, g2Trk);
-						kmfit -> AddTrack(4, 0.0, g3Trk);  
-						kmfit -> AddTrack(5, 0.0, g4Trk);  
-						kmfit -> AddTrack(6, 0.0, g5Trk);  
-						kmfit -> AddFourMomentum(0, psip);
-
-						bool oksq = kmfit -> Fit();
-						if(oksq){
-							double chi2 = kmfit->chisq();
-							if (chi2 < chisq_t5g)
-							{
-								chisq_t5g = chi2;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	m_chi25g=chisq_t5g;
-
-
-	double chisq_t6g=9999;
-	for(int i=0;i<nGam-5;i++)
-	{
-		for(int j=i+1;j<nGam-4;j++)
-		{
-			for(int k=j+1;k<nGam-3;k++)
-			{
-				for(int m=k+1;m<nGam-2;m++)
-				{
-					for(int n=m+1;n<nGam-1;n++)
-					{
-
-						for(int p=n+1;p<nGam;p++)
-						{
-							RecEmcShower *g1Trk = (*(evtRecTrkCol -> begin() +iGam[i])) -> emcShower();
-							RecEmcShower *g2Trk = (*(evtRecTrkCol -> begin() +iGam[j])) -> emcShower();
-							RecEmcShower *g3Trk = (*(evtRecTrkCol -> begin() +iGam[k])) -> emcShower();
-							RecEmcShower *g4Trk = (*(evtRecTrkCol -> begin() +iGam[m])) -> emcShower();
-							RecEmcShower *g5Trk = (*(evtRecTrkCol -> begin() +iGam[n])) -> emcShower();
-							RecEmcShower *g6Trk = (*(evtRecTrkCol -> begin() +iGam[p])) -> emcShower();
-							kmfit -> init();
-							kmfit -> AddTrack(0, wpp);
-							kmfit -> AddTrack(1, wpm);
-							kmfit -> AddTrack(2, 0.0, g1Trk);
-							kmfit -> AddTrack(3, 0.0, g2Trk);
-							kmfit -> AddTrack(4, 0.0, g3Trk);  
-							kmfit -> AddTrack(5, 0.0, g4Trk);  
-							kmfit -> AddTrack(6, 0.0, g5Trk);  
-							kmfit -> AddTrack(7, 0.0, g6Trk);  
-							kmfit -> AddFourMomentum(0, psip);
-
-							bool oksq = kmfit -> Fit();
-							if(oksq){
-								double chi2 = kmfit->chisq();
-								if (chi2 < chisq_t6g)
-								{
-									chisq_t6g = chi2;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	m_chi26g=chisq_t6g;
-*/
-
-
-
-
-
 
 	log << MSG::DEBUG << __LINE__ << " write ntuple" << endmsg;
 	m_tuple->write();
+	m_tuple_angular->write();
 	log << MSG::DEBUG << __LINE__ << " write ok" << endmsg;
 	log << MSG::INFO  << "excute() done" << endmsg;
 	return StatusCode::SUCCESS;
@@ -2156,7 +1485,9 @@ StatusCode JpsiToPiKKshort::finalize()
 	log << MSG::INFO << "npin==2&&vtexfitted_npin==2	" << n_pip_pin_vtxfit_cutted	<< endmsg;
 	log << MSG::INFO << "vertex fit for kshort success	" << n_vtxfit_kshort_cutted	<< endmsg;
 	log << MSG::INFO << "vertex fit for kstar success	" << n_vtxfit_kstar_cutted	<< endmsg;
+	log << MSG::INFO << "vertex fit for other success	" << n_vtxfit_other_ok		<< endmsg;
 	log << MSG::INFO << "kinematic fit success		" << n_kmfit_cutted		<< endmsg;
+	log << MSG::INFO << "mass check succes			" << n_mass_cutted		<< endmsg;
 	//log <<"pi0 list:			" << Ncut4  << endmsg;
 	//log <<"VertexFit:			" << Ncut5  << endmsg;
 	//log <<"6C:				" << Ncut6  << endmsg;

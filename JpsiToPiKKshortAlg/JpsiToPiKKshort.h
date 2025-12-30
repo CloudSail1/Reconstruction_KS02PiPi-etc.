@@ -77,8 +77,6 @@ class JpsiToPiKKshort : public Algorithm
 
 
 
-
-
    NTuple::Array<double>   mctrue_eta0_P4;
    NTuple::Array<double>   mctrue_eta1_P4;
    NTuple::Array<double>   mctrue_gam0_eta0_P4;
@@ -175,6 +173,24 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>   m_cos_Kp_Kstar	;
    NTuple::Item<double>   m_cos_Kshort		;
    NTuple::Item<double>   m_cos_Kstar		;
+
+   NTuple::Array<double>  m_p_other;
+   NTuple::Item<double>   m_d3_other;
+   NTuple::Item<double>   m_m_other;
+   NTuple::Item<double>   m_cos_other;
+   NTuple::Item<double>   m_bkg_m_other; 
+
+   NTuple::Array<double>  m_p_Pip_other;
+   NTuple::Item<double>   m_d3_Pip_other;
+   NTuple::Item<double>   m_m_Pip_other;
+   NTuple::Item<double>   m_cos_Pip_other;
+   NTuple::Item<double>   m_bkg_m_Pip_other; 
+ 
+   NTuple::Array<double>  m_p_Pin_other;
+   NTuple::Item<double>   m_d3_Pin_other;
+   NTuple::Item<double>   m_m_Pin_other;
+   NTuple::Item<double>   m_cos_Pin_other;
+   NTuple::Item<double>   m_bkg_m_Pin_other; 
 
    NTuple::Item<double>  m_bkg_m_Pip_Kshort     ; 
    NTuple::Item<double>  m_bkg_m_Pin_Kshort     ; 
