@@ -1201,11 +1201,17 @@ StatusCode JpsiToPiKKshort::execute()
 	}
 	// TODO pi0 eta0 highest E gamma
 	// TODO K0 how to Ks
-	// TODO dang 856
-	// TODO second draw
-	// TODO diff about VertexFit::wVirtualTrack() and sum of VertexFit::wtrk()
-	// TODO diff about VertexFit::wtrk() and raw WTrackParameter
-	n_pip_pin_vtxfit_cutted++;
+	// TODO draw other Kstar and othre Kshort
+	// TODO draw chisq and setChisqCut
+	// TODO remove vtxfit for Kstar
+	// TODO remove fabs using in ratio of SecondVertexFit for Kshort
+	// TODO change Kshort selete from ratio>1 to most ratio
+	// TODO add kinematic fit with AddFourMomument(0,psip,0,1,2,3)
+	// TODO compare kinematic fit with Kshort(Pi+ Pi-) and Pi(Kstar) K(Kstar)
+	// TODO refactor ntuple about Kstar final states
+	// TODO foofit
+	// TODO topologic topoana.exe inMC_DpDm.card in /besfs5/groups/psipp/psippgroup/public/zhanghan/DpKsKlpi/04_all_newroot/topo
+	n_pip_pin_vtxfit_cutte++;
 	if ((temp_dratio[0]-1)*(temp_dratio[1]-1)>0) {
 		log << MSG::DEBUG << __LINE__ << " error ratio collision " << endmsg;
 		if (temp_dchi[0]<temp_dchi[1]) {
