@@ -1079,7 +1079,7 @@ StatusCode JpsiToPiKKshort::execute()
 			RecMdcKalTrack::setPidType(RecMdcKalTrack::pion);
 			ipin.push_back(iChrgn[i]);
 		}
-		if(m_prob_K>m_prob_pi && m_prob_pi>m_prob_p) {
+		if(m_prob_K>m_prob_pi && m_prob_K>m_prob_p) {
 			RecMdcKalTrack* mdcKalTrk = (*itTrk)->mdcKalTrack();//After ParticleID, use RecMdcKalTrack su
 			RecMdcKalTrack::setPidType(RecMdcKalTrack::kaon);
 			ikn.push_back(iChrgn[i]);
