@@ -164,7 +164,7 @@ StatusCode JpsiToPiKKshort::initialize()
 		}
 		else
 		{
-			log << MSG::ERROR << "Cannot book N-tuple: " << long(m_tuple_angular) << endmsg;
+			log << MSG::FATAL << "Cannot book N-tuple: " << long(m_tuple_angular) << endmsg;
 
 			return StatusCode::FAILURE;
 		}
@@ -368,6 +368,10 @@ StatusCode JpsiToPiKKshort::initialize()
 
 			status = m_tuple->addItem("chisq_Kshort" ,m_chisq_Kshort);
 			status = m_tuple->addItem("chisq_kmfit" ,m_chisq_kmfit);
+			status = m_tuple->addItem("chisq_other_Kshort" ,m_chisq_other_Kshort);
+			status = m_tuple->addItem("chisq_other_Kstar" ,m_chisq_other_Kstar);
+			status = m_tuple->addItem("ratio_Kshort",m_ratio_Kshort);
+			status = m_tuple->addItem("ratio_other", m_ratio_other);
 
 			status = m_tuple->addItem("p_total",		4,m_p_total		);
 			status = m_tuple->addItem("p_Pip_Kshort",	4,m_p_Pip_Kshort	);
@@ -385,19 +389,19 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("p_Pin_other_Kstar",	4,m_p_Pin_other_Kstar	);
 			status = m_tuple->addItem("p_other_Kstar",	4,m_p_other_Kstar	);
 
-			status = m_tuple->addItem("d3_Pip_Kshort",	m_d3_Pip_Kshort	);
-			status = m_tuple->addItem("d3_Pin_Kshort",	m_d3_Pin_Kshort	);
-			status = m_tuple->addItem("d3_Pin_Kstar",	m_d3_Pin_Kstar	);
-			status = m_tuple->addItem("d3_Pip_Kstar",	m_d3_Pip_Kstar	);
-			status = m_tuple->addItem("d3_Kp_Kstar",	m_d3_Kp_Kstar	);
-			status = m_tuple->addItem("d3_Kn_Kstar",	m_d3_Kn_Kstar	);
-			status = m_tuple->addItem("d3_Kshort",		m_d3_Kshort	);
-			status = m_tuple->addItem("d3_Kstar",		m_d3_Kstar	);
+			status = m_tuple->addItem("d3_Pip_Kshort",	m_d3_Pip_Kshort		);
+			status = m_tuple->addItem("d3_Pin_Kshort",	m_d3_Pin_Kshort		);
+			status = m_tuple->addItem("d3_Pin_Kstar",	m_d3_Pin_Kstar		);
+			status = m_tuple->addItem("d3_Pip_Kstar",	m_d3_Pip_Kstar		);
+			status = m_tuple->addItem("d3_Kp_Kstar",	m_d3_Kp_Kstar		);
+			status = m_tuple->addItem("d3_Kn_Kstar",	m_d3_Kn_Kstar		);
+			status = m_tuple->addItem("d3_Kshort",		m_d3_Kshort		);
+			status = m_tuple->addItem("d3_Kstar",		m_d3_Kstar		);
 			status = m_tuple->addItem("d3_Pip_other_Kshort",m_d3_Pip_other_Kshort	);
 			status = m_tuple->addItem("d3_Pin_other_Kshort",m_d3_Pin_other_Kshort	);
 			status = m_tuple->addItem("d3_other_Kshort",	m_d3_other_Kshort	);
-			status = m_tuple->addItem("d3_Kp_other_Kstar",m_d3_Kp_other_Kstar	);
-			status = m_tuple->addItem("d3_Pin_other_Kstar",m_d3_Pin_other_Kstar	);
+			status = m_tuple->addItem("d3_Kp_other_Kstar",	m_d3_Kp_other_Kstar	);
+			status = m_tuple->addItem("d3_Pin_other_Kstar",	m_d3_Pin_other_Kstar	);
 			status = m_tuple->addItem("d3_other_Kstar",	m_d3_other_Kstar	);
 
 			status = m_tuple->addItem("m_Pip_Kshort",	m_m_Pip_Kshort	);
@@ -451,8 +455,7 @@ StatusCode JpsiToPiKKshort::initialize()
 		}
 		else   
 		{ 
-			log << MSG::ERROR << "    Cannot book N-tuple:" << long(m_tuple) <<
-				endmsg;
+			log << MSG::FATAL << "    Cannot book N-tuple:" << long(m_tuple) << endmsg;
 			return StatusCode::FAILURE;
 		}
 	}
@@ -776,18 +779,31 @@ StatusCode JpsiToPiKKshort::execute()
 	iChrgp.clear();
 	iChrgn.clear();
 	int nCharge = 0;
+
+
 	Hep3Vector xorigin(0,0,0);
-	IVertexDbSvc*  vtxsvc;
+	HepSymMatrix xoriginEx(3, 0);
+	IVertexDbSvc* vtxsvc;
 	Gaudi::svcLocator()->service("VertexDbSvc", vtxsvc);
-	bool status = vtxsvc->isVertexValid();
-	if(status)
+	if(vtxsvc->isVertexValid())
 	{
 		double* dbv = vtxsvc->PrimaryVertex();     //vertex[0] = vx; vertex[1]= vy; vertex[2] = vz;
 		double* dbvsigma = vtxsvc->SigmaPrimaryVertex();
 		xorigin.setX(dbv[0]);
 		xorigin.setY(dbv[1]);
 		xorigin.setZ(dbv[2]);
+		xoriginEx[0][0] = dbvsigma[0] * dbvsigma[0];
+		xoriginEx[1][1] = dbvsigma[1] * dbvsigma[1];
+		xoriginEx[2][2] = dbvsigma[2] * dbvsigma[2];
+	} else {
+		log << MSG::DEBUG << __LINE__ << " returned when set IP" << endmsg;
+		return StatusCode::SUCCESS;
 	}
+	VertexParameter bs;
+	bs.setVx(xorigin);
+	bs.setEvx(xoriginEx);
+
+
 	int cc=0;
 	for(int i = 0;i < evtRecEvent->totalCharged(); i++)
 	{
@@ -843,7 +859,7 @@ StatusCode JpsiToPiKKshort::execute()
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	int ntot=iGood.size();
 	if((ntot != 4)||(nCharge != 0)) {
-		log << MSG::FATAL << __LINE__ << " failure with ntot " << ntot << " and nCharge " << nCharge << endmsg;
+		log << MSG::DEBUG << __LINE__ << " failure with ntot " << ntot << " and nCharge " << nCharge << endmsg;
 		return sc;
 	}
 	n_charge_cutted++;
@@ -851,7 +867,7 @@ StatusCode JpsiToPiKKshort::execute()
 	int nChp=iChrgp.size();
 	int nChn=iChrgn.size();
 	if((nChp != 2)||(nChn != 2)) {
-		log << MSG::FATAL << __LINE__ << " failure with nChp " << nChp << " and nChn " << nChn << endmsg;
+		log << MSG::DEBUG << __LINE__ << " failure with nChp " << nChp << " and nChn " << nChn << endmsg;
 		return sc;
 	}
 	n_charged_partical_cutted++;
@@ -1123,21 +1139,13 @@ StatusCode JpsiToPiKKshort::execute()
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	// if(npp*npm !=1) return sc;//add  0721 
 	if (npip*npin != 2 || (nkp+nkn) != 1) {
-		log << MSG::FATAL << __LINE__ << " failure with npip " << npip << " and npin " << npin << " and nkp " << nkp << " and nkn " << nkn << endmsg;
+		log << MSG::DEBUG << __LINE__ << " failure with npip " << npip << " and npin " << npin << " and nkp " << nkp << " and nkn " << nkn << endmsg;
 		return sc;
 	}
 	n_particle_number_cutted++;
-	if(debug)cout<<__LINE__<<endl;
-	log << MSG::DEBUG << __LINE__ << "" << endmsg;
 
 	//-----------------PID END--------------------------------------------------------------------------------//    
-	//pi0 list
 
-	Ncut4++; 
-
-	//                Test vertex                        /////////////
-
-	////////// add 0721//////////
 	HepPoint3D vx(0.0, 0.0, 0.0);//初始化顶点
 	HepSymMatrix Evx(3, 0);
 	double bx = 1E+6;
@@ -1152,7 +1160,6 @@ StatusCode JpsiToPiKKshort::execute()
 	vxpar.setEvx(Evx);
 
 	log << MSG::DEBUG << __LINE__ << "" << endmsg;
-	
 	Vint temp_ipip, temp_ipin;
 	temp_ipip.clear(); temp_ipin.clear();
 	Vdouble temp_dchi, temp_dratio;
@@ -1160,10 +1167,6 @@ StatusCode JpsiToPiKKshort::execute()
 
 	for (int i=0;i<ipip.size();i++) {
 		log << MSG::DEBUG << __LINE__ << " in loop with index i " << i << endmsg;
-		VertexFit* vtxfit = VertexFit::instance();
-		double deltmin=999.;
-
-		RecMdcKalTrack::setPidType(RecMdcKalTrack::pion);
 		RecMdcKalTrack *pipTrk = (*(evtRecTrkCol->begin()+ipip[i]))->mdcKalTrack();
 		WTrackParameter wvPipTrk = WTrackParameter(xmass[2], pipTrk->getZHelixP(), pipTrk->getZErrorP());
 
@@ -1172,32 +1175,26 @@ StatusCode JpsiToPiKKshort::execute()
 			RecMdcKalTrack *pinTrk = (*(evtRecTrkCol->begin()+ipin[j]))->mdcKalTrack();
 			WTrackParameter wvPinTrk = WTrackParameter(xmass[2], pinTrk->getZHelixP(), pinTrk->getZErrorP());
 		
+			VertexFit* vtxfit = VertexFit::instance();
 			vtxfit->init();
 			vtxfit->AddTrack(0, wvPipTrk);
 			vtxfit->AddTrack(1, wvPinTrk);
 			vtxfit->AddVertex(0, vxpar,0,1);
 			if (vtxfit->Fit()) {
-				vtxfit->Swim(0);
-		
-				WTrackParameter wpip = vtxfit->wtrk(0);
-				WTrackParameter wpin = vtxfit->wtrk(1);
-		
-				HepPoint3D xorigin1 = vtxfit->vx(0);//add
-				HepSymMatrix xem1 = vtxfit->Evx(0);//add
-				VertexParameter vpar = vtxfit->vpar(0);
-		
 				vtxfit->BuildVirtualParticle(0);
 				WTrackParameter wvKshortTrk = vtxfit->wVirtualTrack(0);
 		
 				SecondVertexFit* svtxfit = SecondVertexFit::instance();
 				svtxfit->init();
-				svtxfit->setPrimaryVertex(vxpar);
+				svtxfit->setPrimaryVertex(bs);
 				svtxfit->AddTrack(0, wvKshortTrk);
-				svtxfit->setVpar(vpar);
-				// When decay length error bar cover origin, abs of ratio will less than 1
-				temp_dratio.push_back(svtxfit->decayLength()/svtxfit->decayLengthError());
+				svtxfit->setVpar(vtxfit->vpar(0));
+				if(svtxfit->Fit())
+					temp_dratio.push_back(svtxfit->decayLength()/svtxfit->decayLengthError());
+				else 
+					temp_dratio.push_back(0);
 			} else {	
-				temp_dratio.push_back(0.0);
+				temp_dratio.push_back(0);
 			}
 			temp_ipip.push_back(ipip[i]);
 			temp_ipin.push_back(ipin[j]);
@@ -1230,11 +1227,18 @@ StatusCode JpsiToPiKKshort::execute()
 		id_pip_kshort = temp_ipip[0];
 		id_pin_kshort = temp_ipin[0];
 		id_pin_kstar  = temp_ipin[1];
-
+		if temp_dratio[0]<1
+			return status;
+		m_ratio_Kshort= temp_dratio[0];
+		m_ratio_other = temp_dratio[1];
 	} else {
 		id_pip_kshort = temp_ipip[1];
 		id_pin_kshort = temp_ipin[1];
 		id_pin_kstar  = temp_ipin[0];
+		if temp_dratio[1]<1
+			return status;
+		m_ratio_Kshort= temp_dratio[1];
+		m_ratio_other = temp_dratio[0];
 	}
 
 	log << MSG::DEBUG << __LINE__ << " id print: pip_kshort pin_kshort pin_kstar" << id_pip_kshort << " " << id_pin_kshort << " " << id_pin_kstar << endmsg;
@@ -1250,13 +1254,13 @@ StatusCode JpsiToPiKKshort::execute()
 
 	VertexFit* vtxfit_Kshort = VertexFit::instance();
 	vtxfit_Kshort->init();
-	vtxfit_Kshort->setChisqCut(9999); // debug
+	vtxfit_Kshort->setChisqCut(5);
 	vtxfit_Kshort->AddTrack(0,wvpip_kshortTrk);
 	vtxfit_Kshort->AddTrack(1,wvpin_kshortTrk);
 	vtxfit_Kshort->AddVertex(0,vxpar,0,1);
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	if(!vtxfit_Kshort->Fit()) {
-		log << MSG::FATAL << __LINE__ << " vtxfit_kshort failure with chisq " << vtxfit_Kshort->chisq() << endmsg;
+		log << MSG::DEBUG << __LINE__ << " vtxfit_kshort failure with chisq " << vtxfit_Kshort->chisq() << endmsg;
 		return sc;
 	}
 	m_chisq_Kshort = vtxfit_Kshort->chisq();
@@ -1298,6 +1302,7 @@ StatusCode JpsiToPiKKshort::execute()
 	WTrackParameter wpip_other_Kshort = vtxfit_other_Kshort->wtrk(0);
 	WTrackParameter wpin_other_Kshort = vtxfit_other_Kshort->wtrk(1);
 	WTrackParameter wother_Kshort = vtxfit_other_Kshort->wVirtualTrack(0);
+	m_chisq_other_Kshort = vtxfit_other_Kshort->chisq();
 
 
 	VertexFit* vtxfit_other_Kstar = VertexFit::instance();
@@ -1312,6 +1317,7 @@ StatusCode JpsiToPiKKshort::execute()
 	WTrackParameter wpip_other_Kstar = vtxfit_other_Kstar->wtrk(0);
 	WTrackParameter wpin_other_Kstar = vtxfit_other_Kstar->wtrk(1);
 	WTrackParameter wother_Kstar = vtxfit_other_Kstar->wVirtualTrack(0);
+	m_chisq_other_Kstar = vtxfit_other_Kstar->chisq();
 	
 
 	log << MSG::DEBUG << __LINE__ << endmsg;
