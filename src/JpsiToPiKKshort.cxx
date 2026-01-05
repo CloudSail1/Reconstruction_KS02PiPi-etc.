@@ -49,7 +49,7 @@ const double xmass[5] =
 ;
 bool debug = false;
 const double mka = xmass[3];
-int n_total_event,n_charge_cutted,n_charged_partical_cutted,Ncut2,n_particle_number_cutted,Ncut4,Ncut5,Ncut6,Ncut7,Ncut8,Ncut9,Ncut10,n_pip_pin_vtxfit_cutted,n_vtxfit_kshort_cutted,n_vtxfit_kstar_cutted,n_kmfit_cutted,n_mass_cutted,n_vtxfit_other_ok;
+int n_total_event,n_charge_cutted,n_charged_partical_cutted,Ncut2,n_particle_number_cutted,Ncut4,Ncut5,Ncut6,Ncut7,Ncut8,Ncut9,Ncut10,n_pip_pin_vtxfit_cutted,n_vtxfit_kshort_cutted,n_vtxfit_kstar_cutted,n_kmfit_cutted,n_mass_cutted,n_vtxfit_other_Kshort_ok,n_vtxfit_other_Kstar_ok;
 ////////////////////////////////////////////////////////////////////
 JpsiToPiKKshort::JpsiToPiKKshort(const std::string& name, ISvcLocator* pSvcLocator) :
 	Algorithm(name, pSvcLocator) 
@@ -366,6 +366,9 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("n_kp" ,m_nkp );
 			status = m_tuple->addItem("n_kn" ,m_nkn );
 
+			status = m_tuple->addItem("chisq_Kshort" ,m_chisq_Kshort);
+			status = m_tuple->addItem("chisq_kmfit" ,m_chisq_kmfit);
+
 			status = m_tuple->addItem("p_total",		4,m_p_total		);
 			status = m_tuple->addItem("p_Pip_Kshort",	4,m_p_Pip_Kshort	);
 			status = m_tuple->addItem("p_Pin_Kshort",	4,m_p_Pin_Kshort	);
@@ -375,9 +378,12 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("p_Kn_Kstar",		4,m_p_Kn_Kstar		);
 			status = m_tuple->addItem("p_Kshort",		4,m_p_Kshort		);
 			status = m_tuple->addItem("p_Kstar",		4,m_p_Kstar		);
-			status = m_tuple->addItem("p_Pip_other",	4,m_p_Pip_other		);
-			status = m_tuple->addItem("p_Pin_other",	4,m_p_Pin_other		);
-			status = m_tuple->addItem("p_other",		4,m_p_other		);
+			status = m_tuple->addItem("p_Pip_other_Kshort",	4,m_p_Pip_other_Kshort	);
+			status = m_tuple->addItem("p_Pin_other_Kshort",	4,m_p_Pin_other_Kshort	);
+			status = m_tuple->addItem("p_other_Kshort",	4,m_p_other_Kshort	);
+			status = m_tuple->addItem("p_Kp_other_Kstar",	4,m_p_Kp_other_Kstar	);
+			status = m_tuple->addItem("p_Pin_other_Kstar",	4,m_p_Pin_other_Kstar	);
+			status = m_tuple->addItem("p_other_Kstar",	4,m_p_other_Kstar	);
 
 			status = m_tuple->addItem("d3_Pip_Kshort",	m_d3_Pip_Kshort	);
 			status = m_tuple->addItem("d3_Pin_Kshort",	m_d3_Pin_Kshort	);
@@ -387,9 +393,12 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("d3_Kn_Kstar",	m_d3_Kn_Kstar	);
 			status = m_tuple->addItem("d3_Kshort",		m_d3_Kshort	);
 			status = m_tuple->addItem("d3_Kstar",		m_d3_Kstar	);
-			status = m_tuple->addItem("d3_Pip_other",		m_d3_Pip_other	);
-			status = m_tuple->addItem("d3_Pin_other",		m_d3_Pin_other	);
-			status = m_tuple->addItem("d3_other",		m_d3_other	);
+			status = m_tuple->addItem("d3_Pip_other_Kshort",m_d3_Pip_other_Kshort	);
+			status = m_tuple->addItem("d3_Pin_other_Kshort",m_d3_Pin_other_Kshort	);
+			status = m_tuple->addItem("d3_other_Kshort",	m_d3_other_Kshort	);
+			status = m_tuple->addItem("d3_Kp_other_Kstar",m_d3_Kp_other_Kstar	);
+			status = m_tuple->addItem("d3_Pin_other_Kstar",m_d3_Pin_other_Kstar	);
+			status = m_tuple->addItem("d3_other_Kstar",	m_d3_other_Kstar	);
 
 			status = m_tuple->addItem("m_Pip_Kshort",	m_m_Pip_Kshort	);
 			status = m_tuple->addItem("m_Pin_Kshort",	m_m_Pin_Kshort	);
@@ -399,9 +408,12 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("m_Kn_Kstar",		m_m_Kn_Kstar	);
 			status = m_tuple->addItem("m_Kshort",		m_m_Kshort	);
 			status = m_tuple->addItem("m_Kstar",		m_m_Kstar	);
-			status = m_tuple->addItem("m_Pip_other",		m_m_Pip_other	);
-			status = m_tuple->addItem("m_Pin_other",		m_m_Pin_other	);
-			status = m_tuple->addItem("m_other",		m_m_other	);
+			status = m_tuple->addItem("m_Pip_other_Kshort",		m_m_Pip_other_Kshort	);
+			status = m_tuple->addItem("m_Pin_other_Kshort",		m_m_Pin_other_Kshort	);
+			status = m_tuple->addItem("m_other_Kshort",		m_m_other_Kshort	);
+			status = m_tuple->addItem("m_Kp_other_Kstar",		m_m_Kp_other_Kstar	);
+			status = m_tuple->addItem("m_Pin_other_Kstar",		m_m_Pin_other_Kstar	);
+			status = m_tuple->addItem("m_other_Kstar",		m_m_other_Kstar	);
 
 			status = m_tuple->addItem("cos_Pip_Kshort",	m_cos_Pip_Kshort);
 			status = m_tuple->addItem("cos_Pin_Kshort",	m_cos_Pin_Kshort);
@@ -411,9 +423,12 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("cos_Kn_Kstar",	m_cos_Kn_Kstar  );
 			status = m_tuple->addItem("cos_Kshort",		m_cos_Kshort    );
 			status = m_tuple->addItem("cos_Kstar",		m_cos_Kstar     );
-			status = m_tuple->addItem("cos_Pip_other",		m_cos_Pip_other     );
-			status = m_tuple->addItem("cos_Pin_other",		m_cos_Pin_other     );
-			status = m_tuple->addItem("cos_other",		m_cos_other     );
+			status = m_tuple->addItem("cos_Pip_other_Kshort",	m_cos_Pip_other_Kshort     );
+			status = m_tuple->addItem("cos_Pin_other_Kshort",	m_cos_Pin_other_Kshort     );
+			status = m_tuple->addItem("cos_other_Kshort",		m_cos_other_Kshort     );
+			status = m_tuple->addItem("cos_Kp_other_Kstar",		m_cos_Kp_other_Kstar     );
+			status = m_tuple->addItem("cos_Pin_other_Kstar",	m_cos_Pin_other_Kstar     );
+			status = m_tuple->addItem("cos_other_Kstar",		m_cos_other_Kstar     );
 
 			status = m_tuple->addItem("bkg_m_Pip_kshort",	m_bkg_m_Pip_Kshort);
 			status = m_tuple->addItem("bkg_m_Pin_Kshort",	m_bkg_m_Pin_Kshort);
@@ -427,9 +442,12 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("bkg_m_Pip_Kp",	m_bkg_m_Pip_Kp    );
 			status = m_tuple->addItem("bkg_m_Pin_Kp",	m_bkg_m_Pin_Kp    );
 			status = m_tuple->addItem("bkg_m_Pip_Pin",	m_bkg_m_Pip_Pin   );
-			status = m_tuple->addItem("bkg_m_Pip_other",	m_bkg_m_Pip_other     );
-			status = m_tuple->addItem("bkg_m_Pin_other",	m_bkg_m_Pin_other     );
-			status = m_tuple->addItem("bkg_m_other",	m_bkg_m_other     );
+			status = m_tuple->addItem("bkg_m_Pip_other_Kshort",	m_bkg_m_Pip_other_Kshort     );
+			status = m_tuple->addItem("bkg_m_Pin_other_Kshort",	m_bkg_m_Pin_other_Kshort     );
+			status = m_tuple->addItem("bkg_m_other_Kshort",		m_bkg_m_other_Kshort     );
+			status = m_tuple->addItem("bkg_m_Kp_other_Kstar",	m_bkg_m_Kp_other_Kstar     );
+			status = m_tuple->addItem("bkg_m_Pin_other_Kstar",	m_bkg_m_Pin_other_Kstar     );
+			status = m_tuple->addItem("bkg_m_other_Kstar",		m_bkg_m_other_Kstar     );
 		}
 		else   
 		{ 
@@ -1211,30 +1229,16 @@ StatusCode JpsiToPiKKshort::execute()
 	// TODO refactor ntuple about Kstar final states
 	// TODO foofit
 	// TODO topologic topoana.exe inMC_DpDm.card in /besfs5/groups/psipp/psippgroup/public/zhanghan/DpKsKlpi/04_all_newroot/topo
-	n_pip_pin_vtxfit_cutte++;
-	if ((temp_dratio[0]-1)*(temp_dratio[1]-1)>0) {
-		log << MSG::DEBUG << __LINE__ << " error ratio collision " << endmsg;
-		if (temp_dchi[0]<temp_dchi[1]) {
-			id_pip_kshort = temp_ipip[0];
-			id_pin_kshort = temp_ipin[0];
-			id_pin_kstar  = temp_ipin[1];
-		} else {
-			id_pip_kshort = temp_ipip[1];
-			id_pin_kshort = temp_ipin[1];
-			id_pin_kstar  = temp_ipin[0];
-		}
-	} else {
-		log << MSG::DEBUG << __LINE__ << " error ratio NO collision" << endmsg;
-		if (temp_dratio[0]>1&&temp_dratio[1]<1) {
-			id_pip_kshort = temp_ipip[0];
-			id_pin_kshort = temp_ipin[0];
-			id_pin_kstar  = temp_ipin[1];
+	n_pip_pin_vtxfit_cutted++;
+	if (temp_dratio[0]>temp_dratio[1]) {
+		id_pip_kshort = temp_ipip[0];
+		id_pin_kshort = temp_ipin[0];
+		id_pin_kstar  = temp_ipin[1];
 
-		} else {
-			id_pip_kshort = temp_ipip[1];
-			id_pin_kshort = temp_ipin[1];
-			id_pin_kstar  = temp_ipin[0];
-		}
+	} else {
+		id_pip_kshort = temp_ipip[1];
+		id_pin_kshort = temp_ipin[1];
+		id_pin_kstar  = temp_ipin[0];
 	}
 
 	log << MSG::DEBUG << __LINE__ << " id print: pip_kshort pin_kshort pin_kstar" << id_pip_kshort << " " << id_pin_kshort << " " << id_pin_kstar << endmsg;
@@ -1250,6 +1254,7 @@ StatusCode JpsiToPiKKshort::execute()
 
 	VertexFit* vtxfit_Kshort = VertexFit::instance();
 	vtxfit_Kshort->init();
+	vtxfit_Kshort->setChisqCut(9999); // debug
 	vtxfit_Kshort->AddTrack(0,wvpip_kshortTrk);
 	vtxfit_Kshort->AddTrack(1,wvpin_kshortTrk);
 	vtxfit_Kshort->AddVertex(0,vxpar,0,1);
@@ -1258,6 +1263,7 @@ StatusCode JpsiToPiKKshort::execute()
 		log << MSG::FATAL << __LINE__ << " vtxfit_kshort failure with chisq " << vtxfit_Kshort->chisq() << endmsg;
 		return sc;
 	}
+	m_chisq_Kshort = vtxfit_Kshort->chisq();
 	n_vtxfit_kshort_cutted++;
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	WTrackParameter wpip_kshort = vtxfit_Kshort->wtrk(0);
@@ -1265,55 +1271,50 @@ StatusCode JpsiToPiKKshort::execute()
 	vtxfit_Kshort->BuildVirtualParticle(0);
 	WTrackParameter wkshort = vtxfit_Kshort->wVirtualTrack(0);
 
-	VertexFit *vtxfit_Kstar = VertexFit::instance();
-	vtxfit_Kstar->init();
-	vtxfit_Kstar->AddTrack(0,wvpin_kstarTrk);
-	vtxfit_Kstar->AddTrack(1,wvkp_kstarTrk);
-	vtxfit_Kstar->AddVertex(0,vxpar,0,1);
-	log << MSG::DEBUG << __LINE__ << endmsg;
-	if(!vtxfit_Kstar->Fit()) {
-		log << MSG::FATAL << __LINE__ << " vtxfit_kstar failure with chisq " << vtxfit_Kstar->chisq() << endmsg;
-		return sc;
-	}
-	n_vtxfit_kstar_cutted++;
-	log << MSG::DEBUG << __LINE__ << endmsg;
-	// TODO
-	WTrackParameter wpin_kstar = vtxfit_Kstar->wtrk(0);
-	WTrackParameter wkp_kstar  = vtxfit_Kstar->wtrk(1);
-	// TODO
-	vtxfit_Kstar->BuildVirtualParticle(0);
-	WTrackParameter wkstar = vtxfit_Kstar->wVirtualTrack(0);
-	/*
 	KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
 	kmfit->init();
 	kmfit->AddTrack(0,wpip_kshort);
 	kmfit->AddTrack(1,wpin_kshort);
-	kmfit->AddTrack(2,wpin_kstar);
-	kmfit->AddTrack(3,wkp_kstar);
+	kmfit->AddTrack(2,wvpin_kstarTrk);
+	kmfit->AddTrack(3,wvkp_kstarTrk);
 	kmfit->AddFourMomentum(0, psip);
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	if(!kmfit->Fit()) {
 		log << MSG::DEBUG << __LINE__ << " kmfit failure" << endmsg;
-		return sc;
-	}
-	n_kmfit_cutted++;
-	*/
+		// return sc;
+	} else
+		n_kmfit_cutted++;
+	m_chisq_kmfit = kmfit->chisq();
 
 
 	// for other selecte
-	VertexFit* vtxfit_other = VertexFit::instance();
-	vtxfit_other->setChisqCut(9999);
-	vtxfit_other->init();
-	vtxfit_other->AddTrack(0,wvpip_kshortTrk);
-	vtxfit_other->AddTrack(1,wvpin_kstarTrk);
-	vtxfit_other->AddVertex(0,vxpar,0,1);
-	if(vtxfit_other->Fit())
-		n_vtxfit_other_ok++;
-	vtxfit_other->BuildVirtualParticle(0);
-	WTrackParameter wpip_other = vtxfit_other->wtrk(0);
-	WTrackParameter wpin_other = vtxfit_other->wtrk(1);
-	WTrackParameter wother = vtxfit_other->wVirtualTrack(0);
+	VertexFit* vtxfit_other_Kshort = VertexFit::instance();
+	vtxfit_other_Kshort->setChisqCut(9999);
+	vtxfit_other_Kshort->init();
+	vtxfit_other_Kshort->AddTrack(0,wvpip_kshortTrk);
+	vtxfit_other_Kshort->AddTrack(1,wvpin_kstarTrk);
+	vtxfit_other_Kshort->AddVertex(0,vxpar,0,1);
+	if(vtxfit_other_Kshort->Fit())
+		n_vtxfit_other_Kshort_ok++;
+	vtxfit_other_Kshort->BuildVirtualParticle(0);
+	WTrackParameter wpip_other_Kshort = vtxfit_other_Kshort->wtrk(0);
+	WTrackParameter wpin_other_Kshort = vtxfit_other_Kshort->wtrk(1);
+	WTrackParameter wother_Kshort = vtxfit_other_Kshort->wVirtualTrack(0);
 
+
+	VertexFit* vtxfit_other_Kstar = VertexFit::instance();
+	vtxfit_other_Kstar->setChisqCut(9999);
+	vtxfit_other_Kstar->init();
+	vtxfit_other_Kstar->AddTrack(0,wvkp_kstarTrk);
+	vtxfit_other_Kstar->AddTrack(1,wvpin_kstarTrk);
+	vtxfit_other_Kstar->AddVertex(0,vxpar,0,1);
+	if(vtxfit_other_Kstar->Fit())
+		n_vtxfit_other_Kstar_ok++;
+	vtxfit_other_Kstar->BuildVirtualParticle(0);
+	WTrackParameter wpip_other_Kstar = vtxfit_other_Kstar->wtrk(0);
+	WTrackParameter wpin_other_Kstar = vtxfit_other_Kstar->wtrk(1);
+	WTrackParameter wother_Kstar = vtxfit_other_Kstar->wVirtualTrack(0);
+	
 
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	// m_chi2 = kmfit->chisq();
@@ -1324,15 +1325,18 @@ StatusCode JpsiToPiKKshort::execute()
 
 	HepLorentzVector P_Pip_Kshort	= HepLorentzVector(wpip_kshort.w()[0],wpip_kshort.w()[1],wpip_kshort.w()[2],wpip_kshort.w()[3]).boost(-betaLab);
 	HepLorentzVector P_Pin_Kshort	= HepLorentzVector(wpin_kshort.w()[0],wpin_kshort.w()[1],wpin_kshort.w()[2],wpin_kshort.w()[3]).boost(-betaLab);
-	HepLorentzVector P_Pin_Kstar	= HepLorentzVector(wpin_kstar.w()[0],wpin_kstar.w()[1],wpin_kstar.w()[2],wpin_kstar.w()[3]).boost(-betaLab);
-	HepLorentzVector P_Kp_Kstar	= HepLorentzVector(wkp_kstar.w()[0],wkp_kstar.w()[1],wkp_kstar.w()[2],wkp_kstar.w()[3]).boost(-betaLab);
-	// HepLorentzVector P_Kshort	= P_Pip_Kshort+P_Pin_Kshort;
-	// HepLorentzVector P_Kstar	= P_Pin_Kstar+P_Kp_Kstar;
+	HepLorentzVector P_Pin_Kstar	= HepLorentzVector(wvpin_kstarTrk.w()[0],wvpin_kstarTrk.w()[1],wvpin_kstarTrk.w()[2],wvpin_kstarTrk.w()[3]).boost(-betaLab);
+	HepLorentzVector P_Kp_Kstar	= HepLorentzVector(wvkp_kstarTrk.w()[0],wvkp_kstarTrk.w()[1],wvkp_kstarTrk.w()[2],wvkp_kstarTrk.w()[3]).boost(-betaLab);
 	HepLorentzVector P_Kshort	= HepLorentzVector(wkshort.w()[0],wkshort.w()[1],wkshort.w()[2],wkshort.w()[3]).boost(-betaLab);
-	HepLorentzVector P_Kstar	= HepLorentzVector(wkstar.w()[0],wkstar.w()[1],wkstar.w()[2],wkstar.w()[3]).boost(-betaLab);
-	HepLorentzVector P_Pip_other	= HepLorentzVector(wpip_other.w()[0],wpip_other.w()[1],wpip_other.w()[2],wpip_other.w()[3]).boost(-betaLab);
-	HepLorentzVector P_Pin_other	= HepLorentzVector(wpin_other.w()[0],wpin_other.w()[1],wpin_other.w()[2],wpin_other.w()[3]).boost(-betaLab);
-	HepLorentzVector P_other	= HepLorentzVector(wother.w()[0],wother.w()[1],wother.w()[2],wother.w()[3]).boost(-betaLab);
+	HepLorentzVector P_Kstar	= P_Pin_Kstar + P_Kp_Kstar;
+
+	HepLorentzVector P_Pip_other_Kshort	= HepLorentzVector(wpip_other_Kshort.w()[0],wpip_other_Kshort.w()[1],wpip_other_Kshort.w()[2],wpip_other_Kshort.w()[3]).boost(-betaLab);
+	HepLorentzVector P_Pin_other_Kshort	= HepLorentzVector(wpin_other_Kshort.w()[0],wpin_other_Kshort.w()[1],wpin_other_Kshort.w()[2],wpin_other_Kshort.w()[3]).boost(-betaLab);
+	HepLorentzVector P_other_Kshort	= HepLorentzVector(wother_Kshort.w()[0],wother_Kshort.w()[1],wother_Kshort.w()[2],wother_Kshort.w()[3]).boost(-betaLab);
+	
+	HepLorentzVector P_Kp_other_Kstar	= HepLorentzVector(wpip_other_Kstar.w()[0],wpip_other_Kstar.w()[1],wpip_other_Kstar.w()[2],wpip_other_Kstar.w()[3]).boost(-betaLab);
+	HepLorentzVector P_Pin_other_Kstar	= HepLorentzVector(wpin_other_Kstar.w()[0],wpin_other_Kstar.w()[1],wpin_other_Kstar.w()[2],wpin_other_Kstar.w()[3]).boost(-betaLab);
+	HepLorentzVector P_other_Kstar	= HepLorentzVector(wother_Kstar.w()[0],wother_Kstar.w()[1],wother_Kstar.w()[2],wother_Kstar.w()[3]).boost(-betaLab);
 
 
 	// cut for mass
@@ -1407,37 +1411,53 @@ StatusCode JpsiToPiKKshort::execute()
 	m_m_Kstar = P_Kstar.m();
 
 
-	m_p_other[0] = P_other.px();
-	m_p_other[1] = P_other.py();
-	m_p_other[2] = P_other.pz();
-	m_p_other[3] = P_other.e();
-	m_d3_other=sqrt( P_other.px()*P_other.px()+P_other.py()*P_other.py()+P_other.pz()*P_other.pz());
-	m_m_other = P_other.m();
+	m_p_other_Kshort[0] = P_other_Kshort.px();
+	m_p_other_Kshort[1] = P_other_Kshort.py();
+	m_p_other_Kshort[2] = P_other_Kshort.pz();
+	m_p_other_Kshort[3] = P_other_Kshort.e();
+	m_d3_other_Kshort=sqrt( P_other_Kshort.px()*P_other_Kshort.px()+P_other_Kshort.py()*P_other_Kshort.py()+P_other_Kshort.pz()*P_other_Kshort.pz());
+	m_m_other_Kshort = P_other_Kshort.m();
 
 	
-	m_p_Pip_other[0] = P_Pip_other.px();
-	m_p_Pip_other[1] = P_Pip_other.py();
-	m_p_Pip_other[2] = P_Pip_other.pz();
-	m_p_Pip_other[3] = P_Pip_other.e();
-	m_d3_Pip_other=sqrt( P_Pip_other.px()*P_Pip_other.px()+P_Pip_other.py()*P_Pip_other.py()+P_Pip_other.pz()*P_Pip_other.pz());
-	m_m_Pip_other = P_Pip_other.m();
+	m_p_Pip_other_Kshort[0] = P_Pip_other_Kshort.px();
+	m_p_Pip_other_Kshort[1] = P_Pip_other_Kshort.py();
+	m_p_Pip_other_Kshort[2] = P_Pip_other_Kshort.pz();
+	m_p_Pip_other_Kshort[3] = P_Pip_other_Kshort.e();
+	m_d3_Pip_other_Kshort=sqrt( P_Pip_other_Kshort.px()*P_Pip_other_Kshort.px()+P_Pip_other_Kshort.py()*P_Pip_other_Kshort.py()+P_Pip_other_Kshort.pz()*P_Pip_other_Kshort.pz());
+	m_m_Pip_other_Kshort = P_Pip_other_Kshort.m();
 	
 
-	m_p_Pin_other[0] = P_Pin_other.px();
-	m_p_Pin_other[1] = P_Pin_other.py();
-	m_p_Pin_other[2] = P_Pin_other.pz();
-	m_p_Pin_other[3] = P_Pin_other.e();
-	m_d3_Pin_other=sqrt( P_Pin_other.px()*P_Pin_other.px()+P_Pin_other.py()*P_Pin_other.py()+P_Pin_other.pz()*P_Pin_other.pz());
-	m_m_Pin_other = P_Pin_other.m();
+	m_p_Pin_other_Kshort[0] = P_Pin_other_Kshort.px();
+	m_p_Pin_other_Kshort[1] = P_Pin_other_Kshort.py();
+	m_p_Pin_other_Kshort[2] = P_Pin_other_Kshort.pz();
+	m_p_Pin_other_Kshort[3] = P_Pin_other_Kshort.e();
+	m_d3_Pin_other_Kshort=sqrt( P_Pin_other_Kshort.px()*P_Pin_other_Kshort.px()+P_Pin_other_Kshort.py()*P_Pin_other_Kshort.py()+P_Pin_other_Kshort.pz()*P_Pin_other_Kshort.pz());
+	m_m_Pin_other_Kshort = P_Pin_other_Kshort.m();
 	
 
-	m_p_other[0] = P_other.px();
-	m_p_other[1] = P_other.py();
-	m_p_other[2] = P_other.pz();
-	m_p_other[3] = P_other.e();
-	m_d3_other=sqrt( P_other.px()*P_other.px()+P_other.py()*P_other.py()+P_other.pz()*P_other.pz());
-	m_m_other = P_other.m();
+	m_p_other_Kstar[0] = P_other_Kstar.px();
+	m_p_other_Kstar[1] = P_other_Kstar.py();
+	m_p_other_Kstar[2] = P_other_Kstar.pz();
+	m_p_other_Kstar[3] = P_other_Kstar.e();
+	m_d3_other_Kstar=sqrt( P_other_Kstar.px()*P_other_Kstar.px()+P_other_Kstar.py()*P_other_Kstar.py()+P_other_Kstar.pz()*P_other_Kstar.pz());
+	m_m_other_Kstar = P_other_Kstar.m();
 
+	
+	m_p_Kp_other_Kstar[0] = P_Kp_other_Kstar.px();
+	m_p_Kp_other_Kstar[1] = P_Kp_other_Kstar.py();
+	m_p_Kp_other_Kstar[2] = P_Kp_other_Kstar.pz();
+	m_p_Kp_other_Kstar[3] = P_Kp_other_Kstar.e();
+	m_d3_Kp_other_Kstar=sqrt( P_Kp_other_Kstar.px()*P_Kp_other_Kstar.px()+P_Kp_other_Kstar.py()*P_Kp_other_Kstar.py()+P_Kp_other_Kstar.pz()*P_Kp_other_Kstar.pz());
+	m_m_Kp_other_Kstar = P_Kp_other_Kstar.m();
+	
+
+	m_p_Pin_other_Kstar[0] = P_Pin_other_Kstar.px();
+	m_p_Pin_other_Kstar[1] = P_Pin_other_Kstar.py();
+	m_p_Pin_other_Kstar[2] = P_Pin_other_Kstar.pz();
+	m_p_Pin_other_Kstar[3] = P_Pin_other_Kstar.e();
+	m_d3_Pin_other_Kstar=sqrt( P_Pin_other_Kstar.px()*P_Pin_other_Kstar.px()+P_Pin_other_Kstar.py()*P_Pin_other_Kstar.py()+P_Pin_other_Kstar.pz()*P_Pin_other_Kstar.pz());
+	m_m_Pin_other_Kstar = P_Pin_other_Kstar.m();
+	
 
 	m_bkg_m_Pip_Kshort	=(psip-P_Pip_Kshort		).m();
 	m_bkg_m_Pin_Kshort	=(psip-P_Pin_Kshort		).m();
@@ -1449,9 +1469,12 @@ StatusCode JpsiToPiKKshort::execute()
 	m_bkg_m_Pip_Kp		=(psip-P_Pip_Kshort-P_Kp_Kstar	).m();
 	m_bkg_m_Pin_Kp		=(psip-P_Pin_Kshort-P_Kp_Kstar	).m();
 	m_bkg_m_Pip_Pin		=(psip-P_Pip_Kshort-P_Pin_Kstar	).m();
-	m_bkg_m_other		=(psip-P_other			).m();
-	m_bkg_m_Pip_other	=(psip-P_Pip_other		).m();
-	m_bkg_m_Pin_other	=(psip-P_Pin_other		).m();
+	m_bkg_m_other_Kshort	=(psip-P_other_Kshort		).m();
+	m_bkg_m_Pip_other_Kshort=(psip-P_Pip_other_Kshort	).m();
+	m_bkg_m_Pin_other_Kshort=(psip-P_Pin_other_Kshort	).m();
+	m_bkg_m_other_Kstar	=(psip-P_other_Kstar		).m();
+	m_bkg_m_Kp_other_Kstar	=(psip-P_Kp_other_Kstar		).m();
+	m_bkg_m_Pin_other_Kstar	=(psip-P_Pin_other_Kstar	).m();
 	log << MSG::DEBUG << __LINE__ << " save ok" << endmsg;
 
 
@@ -1463,6 +1486,12 @@ StatusCode JpsiToPiKKshort::execute()
 	m_cos_Kp_Kstar		=(P_Kp_Kstar	).cosTheta();
 	m_cos_Kshort		=(P_Kshort	).cosTheta();
 	m_cos_Kstar		=(P_Kstar	).cosTheta();
+	m_cos_Pip_other_Kshort	=(P_Pip_other_Kshort).cosTheta();
+	m_cos_Pin_other_Kshort	=(P_Pin_other_Kshort).cosTheta();
+	m_cos_other_Kshort	=(P_other_Kshort).cosTheta();
+	m_cos_Kp_other_Kstar	=(P_Kp_other_Kstar).cosTheta();
+	m_cos_Pin_other_Kshort	=(P_Pin_other_Kshort).cosTheta();
+	m_cos_other_Kshort	=(P_other_Kshort).cosTheta();
 	/*
 	HepLorentzVector temp_p_Pip_Kshort	= P_Pip_Kshort	;
 	HepLorentzVector temp_p_Pin_Kshort	= P_Pin_Kshort	;
@@ -1509,7 +1538,8 @@ StatusCode JpsiToPiKKshort::finalize()
 	log << MSG::INFO << "npin==2&&vtexfitted_npin==2	" << n_pip_pin_vtxfit_cutted	<< endmsg;
 	log << MSG::INFO << "vertex fit for kshort success	" << n_vtxfit_kshort_cutted	<< endmsg;
 	log << MSG::INFO << "vertex fit for kstar success	" << n_vtxfit_kstar_cutted	<< endmsg;
-	log << MSG::INFO << "vertex fit for other success	" << n_vtxfit_other_ok		<< endmsg;
+	log << MSG::INFO << "vertex fit for other Kshort success" << n_vtxfit_other_Kshort_ok	<< endmsg;
+	log << MSG::INFO << "vertex fit for other Kstar success	" << n_vtxfit_other_Kstar_ok	<< endmsg;
 	log << MSG::INFO << "kinematic fit success		" << n_kmfit_cutted		<< endmsg;
 	log << MSG::INFO << "mass check succes			" << n_mass_cutted		<< endmsg;
 	//log <<"pi0 list:			" << Ncut4  << endmsg;
