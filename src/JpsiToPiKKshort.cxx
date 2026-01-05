@@ -1195,7 +1195,7 @@ StatusCode JpsiToPiKKshort::execute()
 				svtxfit->AddTrack(0, wvKshortTrk);
 				svtxfit->setVpar(vpar);
 				// When decay length error bar cover origin, abs of ratio will less than 1
-				temp_dratio.push_back(fabs(svtxfit->decayLength()/svtxfit->decayLengthError()));
+				temp_dratio.push_back(svtxfit->decayLength()/svtxfit->decayLengthError());
 			} else {	
 				temp_dratio.push_back(0.0);
 			}
@@ -1219,12 +1219,8 @@ StatusCode JpsiToPiKKshort::execute()
 	}
 	// TODO pi0 eta0 highest E gamma
 	// TODO K0 how to Ks
-	// TODO draw other Kstar and othre Kshort
 	// TODO draw chisq and setChisqCut
 	// TODO remove vtxfit for Kstar
-	// TODO remove fabs using in ratio of SecondVertexFit for Kshort
-	// TODO change Kshort selete from ratio>1 to most ratio
-	// TODO add kinematic fit with AddFourMomument(0,psip,0,1,2,3)
 	// TODO compare kinematic fit with Kshort(Pi+ Pi-) and Pi(Kstar) K(Kstar)
 	// TODO refactor ntuple about Kstar final states
 	// TODO foofit
