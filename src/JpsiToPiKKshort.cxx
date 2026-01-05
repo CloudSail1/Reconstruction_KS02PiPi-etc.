@@ -1270,13 +1270,15 @@ StatusCode JpsiToPiKKshort::execute()
 	WTrackParameter wpin_kshort = vtxfit_Kshort->wtrk(1);
 	vtxfit_Kshort->BuildVirtualParticle(0);
 	WTrackParameter wkshort = vtxfit_Kshort->wVirtualTrack(0);
-
+	/*
 	KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
 	kmfit->init();
 	kmfit->AddTrack(0,wpip_kshort);
 	kmfit->AddTrack(1,wpin_kshort);
 	kmfit->AddTrack(2,wvpin_kstarTrk);
 	kmfit->AddTrack(3,wvkp_kstarTrk);
+	kmfit->AddResonance(0,0.4876,0,1);
+	kmfit->AddResonance(0,0.896,2,3);
 	kmfit->AddFourMomentum(0, psip);
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	if(!kmfit->Fit()) {
@@ -1285,7 +1287,7 @@ StatusCode JpsiToPiKKshort::execute()
 	} else
 		n_kmfit_cutted++;
 	m_chisq_kmfit = kmfit->chisq();
-
+	*/
 
 	// for other selecte
 	VertexFit* vtxfit_other_Kshort = VertexFit::instance();
