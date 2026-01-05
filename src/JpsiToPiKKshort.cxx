@@ -1228,7 +1228,7 @@ StatusCode JpsiToPiKKshort::execute()
 		id_pin_kshort = temp_ipin[0];
 		id_pin_kstar  = temp_ipin[1];
 		if (temp_dratio[0]<1)
-			return status;
+			return sc;
 		m_ratio_Kshort= temp_dratio[0];
 		m_ratio_other = temp_dratio[1];
 	} else {
@@ -1236,7 +1236,7 @@ StatusCode JpsiToPiKKshort::execute()
 		id_pin_kshort = temp_ipin[1];
 		id_pin_kstar  = temp_ipin[0];
 		if (temp_dratio[1]<1)
-			return status;
+			return sc;
 		m_ratio_Kshort= temp_dratio[1];
 		m_ratio_other = temp_dratio[0];
 	}
