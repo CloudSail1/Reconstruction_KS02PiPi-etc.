@@ -1216,11 +1216,9 @@ StatusCode JpsiToPiKKshort::execute()
 	}
 	// TODO pi0 eta0 highest E gamma
 	// TODO K0 how to Ks
-	// TODO draw chisq and setChisqCut
-	// TODO remove vtxfit for Kstar
 	// TODO compare kinematic fit with Kshort(Pi+ Pi-) and Pi(Kstar) K(Kstar)
 	// TODO refactor ntuple about Kstar final states
-	// TODO foofit
+	// TODO roofit
 	// TODO topologic topoana.exe inMC_DpDm.card in /besfs5/groups/psipp/psippgroup/public/zhanghan/DpKsKlpi/04_all_newroot/topo
 	n_pip_pin_vtxfit_cutted++;
 	if (temp_dratio[0]>temp_dratio[1]) {
@@ -1270,24 +1268,23 @@ StatusCode JpsiToPiKKshort::execute()
 	WTrackParameter wpin_kshort = vtxfit_Kshort->wtrk(1);
 	vtxfit_Kshort->BuildVirtualParticle(0);
 	WTrackParameter wkshort = vtxfit_Kshort->wVirtualTrack(0);
-	/*
+	
 	KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
 	kmfit->init();
-	kmfit->AddTrack(0,wpip_kshort);
-	kmfit->AddTrack(1,wpin_kshort);
+	kmfit->AddTrack(0,wvpip_kshortTrk);
+	kmfit->AddTrack(1,wvpin_kshortTrk);
 	kmfit->AddTrack(2,wvpin_kstarTrk);
 	kmfit->AddTrack(3,wvkp_kstarTrk);
 	kmfit->AddResonance(0,0.4876,0,1);
-	kmfit->AddResonance(0,0.896,2,3);
-	kmfit->AddFourMomentum(0, psip);
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	if(!kmfit->Fit()) {
 		log << MSG::DEBUG << __LINE__ << " kmfit failure" << endmsg;
+		m_chisq_kmfit = 9999;
 		// return sc;
-	} else
+	} else {
 		n_kmfit_cutted++;
-	m_chisq_kmfit = kmfit->chisq();
-	*/
+		m_chisq_kmfit = kmfit->chisq();
+	}
 
 	// for other selecte
 	VertexFit* vtxfit_other_Kshort = VertexFit::instance();
@@ -1309,7 +1306,7 @@ StatusCode JpsiToPiKKshort::execute()
 	vtxfit_other_Kstar->setChisqCut(9999);
 	vtxfit_other_Kstar->init();
 	vtxfit_other_Kstar->AddTrack(0,wvkp_kstarTrk);
-	vtxfit_other_Kstar->AddTrack(1,wvpin_kstarTrk);
+	vtxfit_other_Kstar->AddTrack(1,wvpin_kshortTrk);
 	vtxfit_other_Kstar->AddVertex(0,vxpar,0,1);
 	if(vtxfit_other_Kstar->Fit())
 		n_vtxfit_other_Kstar_ok++;
