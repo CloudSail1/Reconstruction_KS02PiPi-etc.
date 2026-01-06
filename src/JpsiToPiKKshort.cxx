@@ -1159,53 +1159,116 @@ StatusCode JpsiToPiKKshort::execute()
 	vxpar.setVx(vx);
 	vxpar.setEvx(Evx);
 
+	/* Kshort selection */
+	// TODO refactor loop to save kmfit and svtxfit instead chisq and ratio
 	log << MSG::DEBUG << __LINE__ << "" << endmsg;
-	Vint temp_ipip, temp_ipin;
-	temp_ipip.clear(); temp_ipin.clear();
-	Vdouble temp_dchi, temp_dratio;
-	temp_dchi.clear(); temp_dratio.clear();
-
-	for (int i=0;i<ipip.size();i++) {
-		log << MSG::DEBUG << __LINE__ << " in loop with index i " << i << endmsg;
-		RecMdcKalTrack *pipTrk = (*(evtRecTrkCol->begin()+ipip[i]))->mdcKalTrack();
-		WTrackParameter wvPipTrk = WTrackParameter(xmass[2], pipTrk->getZHelixP(), pipTrk->getZErrorP());
-
-		for (int j=0;j<ipin.size();j++) {
-			log << MSG::DEBUG << __LINE__ << " in loop with index j" << j << endmsg;
-			RecMdcKalTrack *pinTrk = (*(evtRecTrkCol->begin()+ipin[j]))->mdcKalTrack();
-			WTrackParameter wvPinTrk = WTrackParameter(xmass[2], pinTrk->getZHelixP(), pinTrk->getZErrorP());
-		
-			VertexFit* vtxfit = VertexFit::instance();
-			vtxfit->init();
-			vtxfit->AddTrack(0, wvPipTrk);
-			vtxfit->AddTrack(1, wvPinTrk);
-			vtxfit->AddVertex(0, vxpar,0,1);
-			if (vtxfit->Fit()) {
-				vtxfit->BuildVirtualParticle(0);
-				WTrackParameter wvKshortTrk = vtxfit->wVirtualTrack(0);
-		
-				SecondVertexFit* svtxfit = SecondVertexFit::instance();
-				svtxfit->init();
-				svtxfit->setPrimaryVertex(bs);
-				svtxfit->AddTrack(0, wvKshortTrk);
-				svtxfit->setVpar(vtxfit->vpar(0));
-				if(svtxfit->Fit())
-					temp_dratio.push_back(svtxfit->decayLength()/svtxfit->decayLengthError());
-				else 
-					temp_dratio.push_back(0);
-			} else {	
-				temp_dratio.push_back(0);
-			}
-			temp_ipip.push_back(ipip[i]);
-			temp_ipin.push_back(ipin[j]);
-			temp_dchi.push_back(vtxfit->chisq()); // When vtxfit->Fit() return false, the chisq would be 9999 in default. NO to use vtxfit->Fit(0), it will NO updata chisq then only 9999 you can get by chisq().
-			log << MSG::DEBUG << __LINE__ << " exit loop with index j " << j << endmsg;
-		}
-		log << MSG::DEBUG << __LINE__ << " exit loop with index i "<< i << endmsg;
-	}
-	log << MSG::DEBUG << __LINE__ << "" << endmsg;
+	Vint temp_ipip, temp_ipin, temp_igam;
+	temp_ipip.clear(); temp_ipin.clear(), temp_igam.clear();
+	Vdouble temp_dratio, temp_dchi_km;
+	temp_dratio.clear(), temp_dchi_km.clear();
+	Vdouble temp_dang; temp_dang.clear();
 	
-	int id_pip_kshort, id_pin_kshort, id_pin_kstar;
+	for (int i=0;i<iGam.size();i++) {
+		EvtRecTrackIterator gamIter = evtRecTrkCol->begin()+iGam[i];
+		RecEmcShower *gamTrk = (*gamIter)->emcShower();
+		Hep3Vector   gamPos(gamTrk->x(), gamTrk->y(), gamTrk->z());
+
+		double dang = 9999;
+		for (int j=0;j<ipip.size();j++) {
+			log << MSG::DEBUG << __LINE__ << " in loop with index j " << j << endmsg;
+			EvtRecTrackIterator	pipIter = (evtRecTrkCol->begin()+ipip[j]);
+			RecMdcKalTrack		*pipTrk = (*pipIter)->mdcKalTrack();
+			Hep3Vector		pipPos  = (*pipIter)->extTrack()->emcPosition();
+			WTrackParameter		wvPipTrk = WTrackParameter(xmass[2], pipTrk->getZHelixP(), pipTrk->getZErrorP());
+
+			for (int k=0;k<ipin.size();k++) {
+				log << MSG::DEBUG << __LINE__ << " in loop with index k" << k << endmsg;
+				EvtRecTrackIterator	pinIter = (evtRecTrkCol->begin()+ipin[k]);
+				RecMdcKalTrack		*pinTrk = (*pinIter)->mdcKalTrack();
+				Hep3Vector		pinPos  = (*pinIter)->extTrack()->emcPosition();
+				WTrackParameter 	wvPinTrk = WTrackParameter(xmass[2], pinTrk->getZHelixP(), pinTrk->getZErrorP());
+
+				double pinAngle = pinPos.angle(gamPos);
+				double pipAngle = pipPos.angle(gamPos);
+				if ( pinAngle < pipAngle ) {
+					if ( dang > pinAngle )
+						dang = pinAngle;
+				} else {
+					if ( dang > pipAngle )
+						dang = pipAngle;
+				}
+
+				KalmanKinematicFit* kmfit = KalmanKinematicFit::instance();
+				kmfit->init();
+				kmfit->AddTrack(0, 0.0, gamTrk);
+				kmfit->AddTrack(1, wvPipTrk);
+				kmfit->AddTrack(2, wvPinTrk);
+				kmfit->AddResonance(0, 0.4976, 0, 1, 2);
+
+				if (kmfit->Fit()) {
+					kmfit->BuildVirtualParticle(0);
+					WTrackParameter wvKshortTrk = kmfit->wVirtualTrack(0);
+		        	
+					SecondVertexFit* svtxfit = SecondVertexFit::instance();
+					svtxfit->init();
+					svtxfit->setPrimaryVertex(bs);
+					svtxfit->AddTrack(0, wvKshortTrk);
+					svtxfit->setVpar(vxpar); // TODO How to setVpar
+
+					if(svtxfit->Fit())
+						temp_dratio.push_back(svtxfit->decayLength()/svtxfit->decayLengthError());
+					else 
+						temp_dratio.push_back(0);
+				} else {	
+					temp_dratio.push_back(0);
+				}
+
+				temp_igam.push_back(iGam[i]);
+				temp_ipip.push_back(ipip[j]);
+				temp_ipin.push_back(ipin[k]);
+				temp_dchi_km.push_back(kmfit->chisq());
+				temp_dang.push_back(dang);
+				log << MSG::DEBUG << __LINE__ << " exit loop with index k " << k << endmsg;
+			}
+			log << MSG::DEBUG << __LINE__ << " exit loop with index j "<< j << endmsg;
+		}
+		log << MSG::DEBUG << __LINE__ << " exit loop with index i " << i << endmsg;
+	}
+	log << MSG::DEBUG << __LINE__ << " exit loop" << endmsg;
+
+	double	max_ratio = 9999;
+	int	index	  = -1;
+	for ( int i=0; i<temp_dratio.size(); i++) {
+		if ( max_ratio < temp_dratio[i] ) {
+			max_ratio = temp_dratio[i];
+			index	  = i;
+		}
+	}
+	
+	if ( max_ratio < 1 ) {
+		log << MSG::DEBUG << __LINE__ << " return by ratio less than 1" << endmsg;
+		return sc;
+	}
+	if ( index == -1 ) {
+		log << MSG::DEBUG << __LINE__ << " return by ratio large than 9999" << endmsg;
+		return sc;
+	}
+
+	int id_gam_kshort = temp_igam[index];
+	int id_pip_kshort = temp_ipip[index];
+	int id_pin_kshort = temp_ipin[index];
+	m_ratio_Kshort	  = temp_dratio[index];
+
+	int id_pin_kstar;
+	for ( int i=0; i<temp_dratio.size(); i++) {
+		if ( i == index )
+			continue;
+		// TODO select for Kstar ( kmfit resonance to 0.892? )
+		id_pin_kstar = temp_ipin[i];
+	}
+
+	
+	/* rm it	
 	if (ipin.size()!=2) {
 		log << MSG::DEBUG << __LINE__ << " failure with Pi- number " << ipin.size() << endmsg;
 		return sc;
@@ -1214,6 +1277,9 @@ StatusCode JpsiToPiKKshort::execute()
 		log << MSG::DEBUG << __LINE__ << " failure with Pi+ number " << ipip.size() << endmsg;
 		return sc;
 	}
+	n_pip_pin_vtxfit_cutted++;
+	*/
+
 	// TODO pi0 eta0 highest E gamma
 	// TODO K0 how to Ks
 	// TODO draw chisq and setChisqCut
@@ -1222,7 +1288,8 @@ StatusCode JpsiToPiKKshort::execute()
 	// TODO refactor ntuple about Kstar final states
 	// TODO foofit
 	// TODO topologic topoana.exe inMC_DpDm.card in /besfs5/groups/psipp/psippgroup/public/zhanghan/DpKsKlpi/04_all_newroot/topo
-	n_pip_pin_vtxfit_cutted++;
+	
+	/* rm it
 	if (temp_dratio[0]>temp_dratio[1]) {
 		id_pip_kshort = temp_ipip[0];
 		id_pin_kshort = temp_ipin[0];
@@ -1240,36 +1307,38 @@ StatusCode JpsiToPiKKshort::execute()
 		m_ratio_Kshort= temp_dratio[1];
 		m_ratio_other = temp_dratio[0];
 	}
+	*/
 
 	log << MSG::DEBUG << __LINE__ << " id print: pip_kshort pin_kshort pin_kstar" << id_pip_kshort << " " << id_pin_kshort << " " << id_pin_kstar << endmsg;
-	
-	RecMdcKalTrack *pip_kshortTrk = (*(evtRecTrkCol->begin()+id_pip_kshort))->mdcKalTrack();
-	RecMdcKalTrack *pin_kshortTrk = (*(evtRecTrkCol->begin()+id_pin_kshort))->mdcKalTrack();
-	RecMdcKalTrack *pin_kstarTrk  = (*(evtRecTrkCol->begin()+id_pin_kstar))->mdcKalTrack();
-	RecMdcKalTrack *kp_kstarTrk   = (*(evtRecTrkCol->begin()+ikp[0]))->mdcKalTrack();
+
+		
+	RecEmcShower   *gamTrk		= (*(evtRecTrkCol->begin()+id_gam_kshort))->emcShower();
+	RecMdcKalTrack *pip_kshortTrk	= (*(evtRecTrkCol->begin()+id_pip_kshort))->mdcKalTrack();
+	RecMdcKalTrack *pin_kshortTrk	= (*(evtRecTrkCol->begin()+id_pin_kshort))->mdcKalTrack();
+	RecMdcKalTrack *pin_kstarTrk	= (*(evtRecTrkCol->begin()+id_pin_kstar))->mdcKalTrack();
+	RecMdcKalTrack *kp_kstarTrk	= (*(evtRecTrkCol->begin()+ikp[0]))->mdcKalTrack();
 	WTrackParameter wvpip_kshortTrk = WTrackParameter(xmass[2], pip_kshortTrk->getZHelixP(), pip_kshortTrk->getZErrorP());
 	WTrackParameter wvpin_kshortTrk = WTrackParameter(xmass[2], pin_kshortTrk->getZHelixP(), pin_kshortTrk->getZErrorP());
 	WTrackParameter wvpin_kstarTrk  = WTrackParameter(xmass[2], pin_kstarTrk->getZHelixP(),  pin_kstarTrk->getZErrorP());
 	WTrackParameter wvkp_kstarTrk   = WTrackParameter(xmass[3], kp_kstarTrk->getZHelixP(),   kp_kstarTrk->getZErrorP());
 
-	VertexFit* vtxfit_Kshort = VertexFit::instance();
-	vtxfit_Kshort->init();
-	vtxfit_Kshort->setChisqCut(5);
-	vtxfit_Kshort->AddTrack(0,wvpip_kshortTrk);
-	vtxfit_Kshort->AddTrack(1,wvpin_kshortTrk);
-	vtxfit_Kshort->AddVertex(0,vxpar,0,1);
+	KalmanKinematicFit* kmfit_Kshort = KalmanKinematicFit::instance();
+	kmfit_Kshort->init();
+	kmfit_Kshort->setChisqCut(9999);
+	kmfit_Kshort->AddTrack(0,0.0,gamTrk);
+	kmfit_Kshort->AddTrack(1,wvpip_kshortTrk);
+	kmfit_Kshort->AddTrack(2,wvpin_kshortTrk);
+	kmfit_Kshort->AddResonance(0,0.4976,0,1,2);
 	log << MSG::DEBUG << __LINE__ << endmsg;
-	if(!vtxfit_Kshort->Fit()) {
-		log << MSG::DEBUG << __LINE__ << " vtxfit_kshort failure with chisq " << vtxfit_Kshort->chisq() << endmsg;
+	if(!kmfit_Kshort->Fit()) {
+		log << MSG::DEBUG << __LINE__ << " vtxfit_kshort failure with chisq " << kmfit_Kshort->chisq() << endmsg;
 		return sc;
 	}
-	m_chisq_Kshort = vtxfit_Kshort->chisq();
+	m_chisq_Kshort = kmfit_Kshort->chisq();
 	n_vtxfit_kshort_cutted++;
 	log << MSG::DEBUG << __LINE__ << endmsg;
-	WTrackParameter wpip_kshort = vtxfit_Kshort->wtrk(0);
-	WTrackParameter wpin_kshort = vtxfit_Kshort->wtrk(1);
-	vtxfit_Kshort->BuildVirtualParticle(0);
-	WTrackParameter wkshort = vtxfit_Kshort->wVirtualTrack(0);
+	kmfit_Kshort->BuildVirtualParticle(0);
+	WTrackParameter wkshort = kmfit_Kshort->wVirtualTrack(0);
 	/*
 	KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
 	kmfit->init();
@@ -1290,19 +1359,18 @@ StatusCode JpsiToPiKKshort::execute()
 	*/
 
 	// for other selecte
-	VertexFit* vtxfit_other_Kshort = VertexFit::instance();
-	vtxfit_other_Kshort->setChisqCut(9999);
-	vtxfit_other_Kshort->init();
-	vtxfit_other_Kshort->AddTrack(0,wvpip_kshortTrk);
-	vtxfit_other_Kshort->AddTrack(1,wvpin_kstarTrk);
-	vtxfit_other_Kshort->AddVertex(0,vxpar,0,1);
-	if(vtxfit_other_Kshort->Fit())
+	KalmanKinematicFit* kmfit_other_Kshort = KalmanKinematicFit::instance();
+	kmfit_other_Kshort->setChisqCut(9999);
+	kmfit_other_Kshort->init();
+	kmfit_other_Kshort->AddTrack(0,0.0,gamTrk);
+	kmfit_other_Kshort->AddTrack(1,wvpip_kshortTrk);
+	kmfit_other_Kshort->AddTrack(2,wvpin_kstarTrk);
+	kmfit_other_Kshort->AddResonance(0,0.5976,0,1,2);
+	if(kmfit_other_Kshort->Fit())
 		n_vtxfit_other_Kshort_ok++;
-	vtxfit_other_Kshort->BuildVirtualParticle(0);
-	WTrackParameter wpip_other_Kshort = vtxfit_other_Kshort->wtrk(0);
-	WTrackParameter wpin_other_Kshort = vtxfit_other_Kshort->wtrk(1);
-	WTrackParameter wother_Kshort = vtxfit_other_Kshort->wVirtualTrack(0);
-	m_chisq_other_Kshort = vtxfit_other_Kshort->chisq();
+	kmfit_other_Kshort->BuildVirtualParticle(0);
+	WTrackParameter wother_Kshort = kmfit_other_Kshort->wVirtualTrack(0);
+	m_chisq_other_Kshort = kmfit_other_Kshort->chisq();
 
 
 	VertexFit* vtxfit_other_Kstar = VertexFit::instance();
@@ -1327,15 +1395,15 @@ StatusCode JpsiToPiKKshort::execute()
 	log << MSG::DEBUG << __LINE__ << " init lorentz vector from vwTrk";
 	Hep3Vector betaLab = psip.boostVector();
 
-	HepLorentzVector P_Pip_Kshort	= HepLorentzVector(wpip_kshort.w()[0],wpip_kshort.w()[1],wpip_kshort.w()[2],wpip_kshort.w()[3]).boost(-betaLab);
-	HepLorentzVector P_Pin_Kshort	= HepLorentzVector(wpin_kshort.w()[0],wpin_kshort.w()[1],wpin_kshort.w()[2],wpin_kshort.w()[3]).boost(-betaLab);
+	HepLorentzVector P_Pip_Kshort	= kmfit_Kshort->pfit(1).boost(-betaLab);
+	HepLorentzVector P_Pin_Kshort	= kmfit_Kshort->pfit(2).boost(-betaLab);
 	HepLorentzVector P_Pin_Kstar	= HepLorentzVector(wvpin_kstarTrk.w()[0],wvpin_kstarTrk.w()[1],wvpin_kstarTrk.w()[2],wvpin_kstarTrk.w()[3]).boost(-betaLab);
 	HepLorentzVector P_Kp_Kstar	= HepLorentzVector(wvkp_kstarTrk.w()[0],wvkp_kstarTrk.w()[1],wvkp_kstarTrk.w()[2],wvkp_kstarTrk.w()[3]).boost(-betaLab);
 	HepLorentzVector P_Kshort	= HepLorentzVector(wkshort.w()[0],wkshort.w()[1],wkshort.w()[2],wkshort.w()[3]).boost(-betaLab);
 	HepLorentzVector P_Kstar	= P_Pin_Kstar + P_Kp_Kstar;
 
-	HepLorentzVector P_Pip_other_Kshort	= HepLorentzVector(wpip_other_Kshort.w()[0],wpip_other_Kshort.w()[1],wpip_other_Kshort.w()[2],wpip_other_Kshort.w()[3]).boost(-betaLab);
-	HepLorentzVector P_Pin_other_Kshort	= HepLorentzVector(wpin_other_Kshort.w()[0],wpin_other_Kshort.w()[1],wpin_other_Kshort.w()[2],wpin_other_Kshort.w()[3]).boost(-betaLab);
+	HepLorentzVector P_Pip_other_Kshort	= kmfit_other_Kshort->pfit(1).boost(-betaLab);
+	HepLorentzVector P_Pin_other_Kshort	= kmfit_other_Kshort->pfit(2).boost(-betaLab);
 	HepLorentzVector P_other_Kshort	= HepLorentzVector(wother_Kshort.w()[0],wother_Kshort.w()[1],wother_Kshort.w()[2],wother_Kshort.w()[3]).boost(-betaLab);
 	
 	HepLorentzVector P_Kp_other_Kstar	= HepLorentzVector(wpip_other_Kstar.w()[0],wpip_other_Kstar.w()[1],wpip_other_Kstar.w()[2],wpip_other_Kstar.w()[3]).boost(-betaLab);
