@@ -1270,16 +1270,17 @@ StatusCode JpsiToPiKKshort::execute()
 	
 	KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
 	kmfit->init();
+	kmfit->setChisqCut(40);
 	kmfit->AddTrack(0,wvpip_kshortTrk);
 	kmfit->AddTrack(1,wvpin_kshortTrk);
 	kmfit->AddTrack(2,wvpin_kstarTrk);
 	kmfit->AddTrack(3,wvkp_kstarTrk);
 	kmfit->AddResonance(0,0.4876,0,1);
+	kmfit->AddResonance(1,0.896,2,3);
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	if(!kmfit->Fit()) {
 		log << MSG::DEBUG << __LINE__ << " kmfit failure" << endmsg;
-		m_chisq_kmfit = 9999;
-		// return sc;
+		return sc;
 	} else {
 		n_kmfit_cutted++;
 		m_chisq_kmfit = kmfit->chisq();
@@ -1383,15 +1384,6 @@ StatusCode JpsiToPiKKshort::execute()
 
 	HepLorentzVector P_other_Kshort	= wother_Kshort.p().boost(-betaLab);
 	HepLorentzVector P_other_Kstar	= wother_Kstar.p().boost(-betaLab);
-
-
-	// cut for mass
-	if (fabs(P_Kstar.m()-0.892)>0.12) {
-		log << MSG::DEBUG << __LINE__ << " return with Kstar mass is " << P_Kstar.m() << endmsg;
-		return sc;
-	}
-	n_mass_cutted++;
-
 
 	log << MSG::DEBUG << __LINE__ << " save data to ntuple" << endmsg;
 	HepLorentzVector ptotal = (P_Pip_Kshort+P_Pin_Kshort+P_Pin_Kstar+P_Kp_Kstar);
