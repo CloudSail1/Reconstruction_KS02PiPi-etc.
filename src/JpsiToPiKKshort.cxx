@@ -452,6 +452,23 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("bkg_m_Kp_other_Kstar",	m_bkg_m_Kp_other_Kstar     );
 			status = m_tuple->addItem("bkg_m_Pin_other_Kstar",	m_bkg_m_Pin_other_Kstar     );
 			status = m_tuple->addItem("bkg_m_other_Kstar",		m_bkg_m_other_Kstar     );
+
+			// for debug use
+			status = m_tuple->addItem("m_orig_Kshort",		m_m_orig_Kshort				);
+			status = m_tuple->addItem("m_orig_Kstar",		m_m_orig_Kstar				);
+			status = m_tuple->addItem("m_vtxadd_Kshort",		m_m_vtxadd_Kshort			);
+			status = m_tuple->addItem("m_vtxadd_Kstar",		m_m_vtxadd_Kstar			);
+			status = m_tuple->addItem("m_km_Kshort",		m_m_km_Kshort				);
+			status = m_tuple->addItem("m_km_Kstar",			m_m_km_Kstar				);
+			status = m_tuple->addItem("m_km_1resonance_Kshort",	m_m_km_1resonance_Kshort		);
+			status = m_tuple->addItem("m_km_1resonance_Kstar",	m_m_km_1resonance_Kstar			);
+			status = m_tuple->addItem("m_km_2resonance_Kshort",	m_m_km_2resonance_Kshort		);
+			status = m_tuple->addItem("m_km_2resonance_Kstar",	m_m_km_2resonance_Kstar			);
+			status = m_tuple->addItem("m_km_4p2resonance_Kshort",	m_m_km_4p2resonance_Kshort		);
+			status = m_tuple->addItem("m_km_4p2resonance_Kstar",	m_m_km_4p2resonance_Kstar		);
+			status = m_tuple->addItem("chisq_kmfit_1resonance",	m_chisq_kmfit_1resonance		);
+			status = m_tuple->addItem("chisq_kmfit_2resonance",	m_chisq_kmfit_2resonance		);
+			status = m_tuple->addItem("chisq_kmfit_4p2resonance",	m_chisq_kmfit_4p2resonance		);
 		}
 		else   
 		{ 
@@ -1286,6 +1303,60 @@ StatusCode JpsiToPiKKshort::execute()
 		m_chisq_kmfit = kmfit->chisq();
 	}
 
+	// for debug use
+	KalmanKinematicFit *kmfit_1resonance = KalmanKinematicFit::instance();
+	kmfit_1resonance->init();
+	kmfit_1resonance->AddTrack(0,wvpip_kshortTrk);
+	kmfit_1resonance->AddTrack(1,wvpin_kshortTrk);
+	kmfit_1resonance->AddTrack(2,wvpin_kstarTrk);
+	kmfit_1resonance->AddTrack(3,wvkp_kstarTrk);
+	kmfit_1resonance->AddResonance(0,0.4876,0,1);
+	log << MSG::DEBUG << __LINE__ << endmsg;
+	if(!kmfit_1resonance->Fit()) {
+		log << MSG::DEBUG << __LINE__ << " kmfit_1resonance failure" << endmsg;
+		m_chisq_kmfit_1resonance = 9999;
+		// return sc;
+	} else {
+		m_chisq_kmfit_1resonance = kmfit_1resonance->chisq();
+	}
+
+	// for debug use
+	KalmanKinematicFit *kmfit_2resonance = KalmanKinematicFit::instance();
+	kmfit_2resonance->init();
+	kmfit_2resonance->AddTrack(0,wvpip_kshortTrk);
+	kmfit_2resonance->AddTrack(1,wvpin_kshortTrk);
+	kmfit_2resonance->AddTrack(2,wvpin_kstarTrk);
+	kmfit_2resonance->AddTrack(3,wvkp_kstarTrk);
+	kmfit_2resonance->AddResonance(0,0.4876,0,1);
+	kmfit_2resonance->AddResonance(1,0.896,2,3);
+	log << MSG::DEBUG << __LINE__ << endmsg;
+	if(!kmfit_2resonance->Fit()) {
+		log << MSG::DEBUG << __LINE__ << " kmfit_2resonance failure" << endmsg;
+		m_chisq_kmfit_2resonance = 9999;
+		// return sc;
+	} else {
+		m_chisq_kmfit_2resonance = kmfit_2resonance->chisq();
+	}
+
+	// for debug use
+	KalmanKinematicFit *kmfit_4p2resonance = KalmanKinematicFit::instance();
+	kmfit_4p2resonance->init();
+	kmfit_4p2resonance->AddTrack(0,wvpip_kshortTrk);
+	kmfit_4p2resonance->AddTrack(1,wvpin_kshortTrk);
+	kmfit_4p2resonance->AddTrack(2,wvpin_kstarTrk);
+	kmfit_4p2resonance->AddTrack(3,wvkp_kstarTrk);
+	kmfit_4p2resonance->AddResonance(0,0.4876,0,1);
+	kmfit_4p2resonance->AddResonance(1,0.896,2,3);
+	kmfit_4p2resonance->AddFourMomentum(2,psip);
+	log << MSG::DEBUG << __LINE__ << endmsg;
+	if(!kmfit_4p2resonance->Fit()) {
+		log << MSG::DEBUG << __LINE__ << " kmfit_4p2resonance failure" << endmsg;
+		m_chisq_kmfit_4p2resonance = 9999;
+		// return sc;
+	} else {
+		m_chisq_kmfit_4p2resonance = kmfit_4p2resonance->chisq();
+	}
+
 	// for other selecte
 	VertexFit* vtxfit_other_Kshort = VertexFit::instance();
 	vtxfit_other_Kshort->setChisqCut(9999);
@@ -1493,30 +1564,21 @@ StatusCode JpsiToPiKKshort::execute()
 	m_cos_Kp_other_Kstar	=(P_Kp_other_Kstar).cosTheta();
 	m_cos_Pin_other_Kshort	=(P_Pin_other_Kshort).cosTheta();
 	m_cos_other_Kshort	=(P_other_Kshort).cosTheta();
-	/*
-	HepLorentzVector temp_p_Pip_Kshort	= P_Pip_Kshort	;
-	HepLorentzVector temp_p_Pin_Kshort	= P_Pin_Kshort	;
-	HepLorentzVector temp_p_Pin_Kstar	= P_Pin_Kstar	;
-	HepLorentzVector temp_p_Kp_Kstar	= P_Kp_Kstar	;
-	HepLorentzVector temp_p_Kshort		= P_Kshort	;
-	HepLorentzVector temp_p_Kstar		= P_Kstar	;
 
-	Hep3Vector betaLab = psip.boostVector();
-	
-	temp_p_Pip_Kshort	.boost(-betaLab);
-        temp_p_Pin_Kshort	.boost(-betaLab);
-        temp_p_Pin_Kstar	.boost(-betaLab);
-        temp_p_Kp_Kstar		.boost(-betaLab);
-	temp_p_Kshort		.boost(-betaLab);
-        temp_p_Kstar		.boost(-betaLab);
 
-	m_cos_Pip_Kshort	=(temp_p_Pip_Kshort	).cosTheta();
-	m_cos_Pin_Kshort	=(temp_p_Pin_Kshort	).cosTheta();
-	m_cos_Pin_Kstar		=(temp_p_Pin_Kstar	).cosTheta();
-	m_cos_Kp_Kstar		=(temp_p_Kp_Kstar	).cosTheta();
-	m_cos_Kshort		=(temp_p_Kshort		).cosTheta();
-	m_cos_Kstar		=(temp_p_Kstar		).cosTheta();
-	*/
+	// for debug use
+	m_m_orig_Kshort			= (wvpip_kshortTrk.p()		+ wvpin_kshortTrk.p()).m();
+	m_m_orig_Kstar			= (wvpin_kstarTrk.p()		+ wvkp_kstarTrk.p()).m();
+	m_m_vtxadd_Kshort		= (wpip_kshort.p()		+ wpin_kshort.p()).m();
+	m_m_vtxadd_Kstar		= (wvpin_kstarTrk.p()		+ wvkp_kstarTrk.p()).m(); // equal to m_m_orig_Kstar
+	m_m_km_Kshort			= (kmfit->pfit(0)		+ kmfit->pfit(1)).m();
+	m_m_km_Kstar			= (kmfit->pfit(2)		+ kmfit->pfit(3)).m();
+	m_m_km_1resonance_Kshort	= (kmfit_1resonance->pfit(0)	+ kmfit_1resonance->pfit(1)).m();
+	m_m_km_1resonance_Kstar		= (kmfit_1resonance->pfit(2)	+ kmfit_1resonance->pfit(3)).m();
+	m_m_km_2resonance_Kshort	= (kmfit_2resonance->pfit(0)	+ kmfit_2resonance->pfit(1)).m();
+	m_m_km_2resonance_Kstar		= (kmfit_2resonance->pfit(2)	+ kmfit_2resonance->pfit(3)).m();
+	m_m_km_4p2resonance_Kshort	= (kmfit_4p2resonance->pfit(0)	+ kmfit_4p2resonance->pfit(1)).m();
+	m_m_km_4p2resonance_Kstar	= (kmfit_4p2resonance->pfit(2)	+ kmfit_4p2resonance->pfit(3)).m();
 	log << MSG::DEBUG << __LINE__ << " save ok" << endmsg;
 
 
