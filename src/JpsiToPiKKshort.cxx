@@ -367,6 +367,7 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("n_kn" ,m_nkn );
 
 			status = m_tuple->addItem("chisq_Kshort" ,m_chisq_Kshort);
+			status = m_tuple->addItem("chisq_km_Kshort" ,m_chisq_km_Kshort);
 			status = m_tuple->addItem("chisq_kmfit" ,m_chisq_kmfit);
 			status = m_tuple->addItem("chisq_other_Kshort" ,m_chisq_other_Kshort);
 			status = m_tuple->addItem("chisq_other_Kstar" ,m_chisq_other_Kstar);
@@ -1164,8 +1165,8 @@ StatusCode JpsiToPiKKshort::execute()
 	log << MSG::DEBUG << __LINE__ << "" << endmsg;
 	Vint temp_ipip, temp_ipin, temp_igam;
 	temp_ipip.clear(); temp_ipin.clear(), temp_igam.clear();
-	Vdouble temp_dratio, temp_dchi_km;
-	temp_dratio.clear(), temp_dchi_km.clear();
+	Vdouble temp_dratio, temp_dchi_km, temp_dchi_vtx;
+	temp_dratio.clear(); temp_dchi_km.clear(); temp_dchi_vtx.clear();
 	Vdouble temp_dang; temp_dang.clear();
 	
 	for (int i=0;i<iGam.size();i++) {
@@ -1198,28 +1199,40 @@ StatusCode JpsiToPiKKshort::execute()
 						dang = pipAngle;
 				}
 
+				VertexFit* vtxfit = VertexFit::instance();
+				vtxfit->init();
+				vtxfit->AddTrack(0,wvPipTrk);
+				vtxfit->AddTrack(1,wvPinTrk);
+				vtxfit->AddVertex(0,vxpar,0,1);
+
 				KalmanKinematicFit* kmfit = KalmanKinematicFit::instance();
 				kmfit->init();
 				kmfit->AddTrack(0, 0.0, gamTrk);
 				kmfit->AddTrack(1, wvPipTrk);
 				kmfit->AddTrack(2, wvPinTrk);
 				kmfit->AddResonance(0, 0.4976, 0, 1, 2);
+				if (!kmfit->Fit())
+					temp_dchi_km.push_back(9999);
+				else temp_dchi_km.push_back(kmfit->chisq());
 
-				if (kmfit->Fit()) {
-					kmfit->BuildVirtualParticle(0);
-					WTrackParameter wvKshortTrk = kmfit->wVirtualTrack(0);
-		        	
+				if (vtxfit->Fit()) {
+					temp_dchi_vtx.push_back(vtxfit->chisq());
+
+					vtxfit->BuildVirtualParticle(0);
+					WTrackParameter wvKshortTrk = vtxfit->wVirtualTrack(0);
+
 					SecondVertexFit* svtxfit = SecondVertexFit::instance();
 					svtxfit->init();
 					svtxfit->setPrimaryVertex(bs);
 					svtxfit->AddTrack(0, wvKshortTrk);
-					svtxfit->setVpar(vxpar); // TODO How to setVpar
+					svtxfit->setVpar(vtxfit->vpar(0));
 
 					if(svtxfit->Fit())
 						temp_dratio.push_back(svtxfit->decayLength()/svtxfit->decayLengthError());
 					else 
 						temp_dratio.push_back(0);
-				} else {	
+				} else {
+					temp_dchi_vtx.push_back(9999);
 					temp_dratio.push_back(0);
 				}
 
@@ -1258,6 +1271,7 @@ StatusCode JpsiToPiKKshort::execute()
 	int id_pip_kshort = temp_ipip[index];
 	int id_pin_kshort = temp_ipin[index];
 	m_ratio_Kshort	  = temp_dratio[index];
+	m_chisq_km_Kshort = temp_dchi_km[index];
 
 	int id_pin_kstar;
 	for ( int i=0; i<temp_dratio.size(); i++) {
