@@ -366,6 +366,7 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("n_kp" ,m_nkp );
 			status = m_tuple->addItem("n_kn" ,m_nkn );
 
+			status = m_tuple->addItem("e_cm" ,m_e_cm);
 			status = m_tuple->addItem("chisq_Kshort" ,m_chisq_Kshort);
 			status = m_tuple->addItem("chisq_kmfit" ,m_chisq_kmfit);
 			status = m_tuple->addItem("chisq_other_Kshort" ,m_chisq_other_Kshort);
@@ -941,7 +942,7 @@ StatusCode JpsiToPiKKshort::execute()
 		//double dang = 200.;
 		for(int j = 0; j < evtRecEvent->totalCharged(); j++)
 		{
-			log << MSG::DEBUG << __LINE__ << "in loop with index j" << j << endmsg;
+			log << MSG::DEBUG << __LINE__ << " in loop with index j " << j << endmsg;
 			EvtRecTrackIterator jtTrk = evtRecTrkCol->begin() + j;
 			if(!(*jtTrk)->isExtTrackValid()) continue;
 			RecExtTrack *extTrk = (*jtTrk)->extTrack();
@@ -949,7 +950,7 @@ StatusCode JpsiToPiKKshort::execute()
 			Hep3Vector extpos = extTrk->emcPosition();
 			double angd = extpos.angle(emcpos);
 			if(angd < dang)dang = angd;
-			log << MSG::DEBUG << __LINE__ << " exit loop with index j" << j << endmsg;
+			log << MSG::DEBUG << __LINE__ << " exit loop with index j " << j << endmsg;
 		}
 
 		double eraw = emcTrk->energy();
@@ -1014,7 +1015,7 @@ StatusCode JpsiToPiKKshort::execute()
 		ptrk.setE(eraw);
 		//ptrk = ptrk.boost(-boov);
 		pGam.push_back(ptrk);
-		log << MSG::DEBUG << __LINE__ << " exit loop with index" << i << endmsg;
+		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	if(debug)cout<<__LINE__<<endl;
 	log << MSG::DEBUG << __LINE__ << "" << endmsg;
@@ -1322,15 +1323,15 @@ StatusCode JpsiToPiKKshort::execute()
 	}
 
 	// for debug use
+	m_e_cm = psip.e();
 	KalmanKinematicFit *kmfit_4p2resonance = KalmanKinematicFit::instance();
 	kmfit_4p2resonance->init();
+	kmfit_4p2resonance->setChisqCut(9999);
 	kmfit_4p2resonance->AddTrack(0,wvpip_kshortTrk);
 	kmfit_4p2resonance->AddTrack(1,wvpin_kshortTrk);
 	kmfit_4p2resonance->AddTrack(2,wvpin_kstarTrk);
 	kmfit_4p2resonance->AddTrack(3,wvkp_kstarTrk);
-	kmfit_4p2resonance->AddResonance(0,0.4876,0,1);
-	kmfit_4p2resonance->AddResonance(1,0.896,2,3);
-	kmfit_4p2resonance->AddFourMomentum(2,psip);
+	kmfit_4p2resonance->AddFourMomentum(0,psip);
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	if(!kmfit_4p2resonance->Fit()) {
 		log << MSG::DEBUG << __LINE__ << " kmfit_4p2resonance failure" << endmsg;

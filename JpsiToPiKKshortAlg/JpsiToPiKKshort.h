@@ -202,6 +202,7 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>   m_cos_other_Kstar;
    NTuple::Item<double>   m_bkg_m_other_Kstar; 
 
+   NTuple::Item<double>   m_e_cm;
    NTuple::Item<double>   m_chisq_Kshort;
    NTuple::Item<double>   m_chisq_kmfit;
    NTuple::Item<double>   m_chisq_other_Kshort;
