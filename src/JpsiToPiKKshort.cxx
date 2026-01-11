@@ -1081,11 +1081,11 @@ StatusCode JpsiToPiKKshort::execute()
 			log << MSG::ERROR << __LINE__ << " PID error, all probability of partical is -1." << endmsg;
 			return sc;
 		}
-		if (index==0) iep.push_back(iChrgn[i]);
+		if (index==0) iep.push_back(iChrgp[i]);
 		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
-		if (index==2) ipip.push_back(iChrgn[i]);
-		if (index==3) ikp.push_back(iChrgn[i]);
-		if (index==4) ipp.push_back(iChrgn[i]);
+		if (index==2) ipip.push_back(iChrgp[i]);
+		if (index==3) ikp.push_back(iChrgp[i]);
+		if (index==4) ipp.push_back(iChrgp[i]);
 		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	for(int i = 0; i < nChn; i++)//chrn指  带负电径迹
@@ -1282,7 +1282,7 @@ StatusCode JpsiToPiKKshort::execute()
 
 	VertexFit* vtxfit_Kshort = VertexFit::instance();
 	vtxfit_Kshort->init();
-	vtxfit_Kshort->setChisqCut(5);
+	vtxfit_Kshort->setChisqCut(9999);
 	vtxfit_Kshort->AddTrack(0,wvpip_kshortTrk);
 	vtxfit_Kshort->AddTrack(1,wvpin_kshortTrk);
 	vtxfit_Kshort->AddTrack(2,wvep_kshortTrk);
