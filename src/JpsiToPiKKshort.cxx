@@ -858,7 +858,7 @@ StatusCode JpsiToPiKKshort::execute()
 	if(debug)cout<<__LINE__<<endl;
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	int ntot=iGood.size();
-	if((ntot != 4)||(nCharge != 0)) {
+	if((ntot != 6)||(nCharge != 0)) {
 		log << MSG::DEBUG << __LINE__ << " failure with ntot " << ntot << " and nCharge " << nCharge << endmsg;
 		return sc;
 	}
@@ -866,7 +866,7 @@ StatusCode JpsiToPiKKshort::execute()
 
 	int nChp=iChrgp.size();
 	int nChn=iChrgn.size();
-	if((nChp != 2)||(nChn != 2)) {
+	if((nChp != 3)||(nChn != 3)) {
 		log << MSG::DEBUG << __LINE__ << " failure with nChp " << nChp << " and nChn " << nChn << endmsg;
 		return sc;
 	}
@@ -1033,7 +1033,7 @@ StatusCode JpsiToPiKKshort::execute()
 	//  Vp4 ppip,ppm,ppin,ppp;//动量
 	Vp4 ppm,ppin,ppp,ppip,pkp,pkn;//动量
 	//  Vint ipip,ipm,ipin,ipp;//容器 存储事例信息？
-	Vint ipm,ipin,ipp,ipip,ikp,ikn;//容器 存储事例信息？
+	Vint ipm,ipin,ipp,ipip,ikp,ikn,iep,ien;//容器 存储事例信息？
 	ppip.clear();
 	ppm.clear();
 	ppin.clear();
@@ -1047,6 +1047,8 @@ StatusCode JpsiToPiKKshort::execute()
 	ikp.clear();
 	pkn.clear();
 	ikn.clear();
+	iep.clear();
+	ien.clear();
 	ParticleID *pid = ParticleID::instance();
 	for(int i = 0; i < nChp; i++)
 	{
@@ -1057,32 +1059,32 @@ StatusCode JpsiToPiKKshort::execute()
 		pid->setChiMinCut(4);
 		pid->setRecTrack(*itTrk);
 		pid->usePidSys(pid->useDedx() | pid->useTof1() | pid->useTof2()); // use PID sub-system
-		pid->identify(pid->onlyPion() | pid->onlyKaon() |pid->onlyProton());    // seperater Pion/Kaon
+		pid->identify(pid->onlyPion() | pid->onlyKaon() | pid->onlyProton() | pid->onlyElectron);    // seperater Pion/Kaon
 		pid->calculate();
 		if(!(pid->IsPidInfoValid())) continue;
 		RecMdcTrack* mdcTrk = (*itTrk)->mdcTrack();
-		double m_prob_pi = pid->probPion();
-		double m_prob_K = pid->probKaon();
-		double m_prob_p = pid->probProton();
-		//if((pid->probPion()<pid->probKaon())||(pid->probPion()<pid->probProton())) continue;
-		if(m_prob_p>m_prob_pi && m_prob_p>m_prob_K)//如果质子p的概率大于pi+,K+,则它就是质子
-		{
-			RecMdcKalTrack* mdcKalTrk = (*itTrk)->mdcKalTrack();//After ParticleID, use RecMdcKalTrack su
-			RecMdcKalTrack::setPidType(RecMdcKalTrack::proton);//PID can set to e//这里是质子 proton 
-			ipp.push_back(iChrgp[i]);
-
-
+		double max_prob = 0;
+		int    index    = -1;
+		for (int i=0; i<5; i++) {
+			double _prob = pid->prob(i);
+			if (max_prob < _prob) {
+				max_prob = _prob;
+				index    = i;
+			}
 		}
-		if(m_prob_pi>m_prob_K && m_prob_pi>m_prob_p) {
-			RecMdcKalTrack* mdcKalTrk = (*itTrk)->mdcKalTrack();//After ParticleID, use RecMdcKalTrack su
-			RecMdcKalTrack::setPidType(RecMdcKalTrack::pion);
-			ipip.push_back(iChrgp[i]);
+		if (index==-1) {
+			log << MSG::ERROR << __LINE__ << " PID error, no partical can be select." << endmsg;
+			return sc;
 		}
-		if(m_prob_K>m_prob_pi && m_prob_K>m_prob_p) {
-			RecMdcKalTrack* mdcKalTrk = (*itTrk)->mdcKalTrack();//After ParticleID, use RecMdcKalTrack su
-			RecMdcKalTrack::setPidType(RecMdcKalTrack::kaon);
-			ikp.push_back(iChrgp[i]);
+		if (max_prob==0) {
+			log << MSG::ERROR << __LINE__ << " PID error, all probability of partical is -1." << endmsg;
+			return sc;
 		}
+		if (index==0) iep.push_back(iChrgn[i]);
+		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
+		if (index==2) ipip.push_back(iChrgn[i]);
+		if (index==3) ikp.push_back(iChrgn[i]);
+		if (index==4) ipp.push_back(iChrgn[i]);
 		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	for(int i = 0; i < nChn; i++)//chrn指  带负电径迹
@@ -1094,30 +1096,32 @@ StatusCode JpsiToPiKKshort::execute()
 		pid->setChiMinCut(4);
 		pid->setRecTrack(*itTrk);
 		pid->usePidSys(pid->useDedx() | pid->useTof1() | pid->useTof2()); // use PID sub-system
-		pid->identify(pid->onlyPion() | pid->onlyKaon() |pid->onlyProton());    // seperater Pion/Kaon
+		pid->identify(pid->onlyPion() | pid->onlyKaon() |pid->onlyProton() | pid->onlyElectron);    // seperater Pion/Kaon
 		pid->calculate();
 		if(!(pid->IsPidInfoValid())) continue;
 		RecMdcTrack* mdcTrk = (*itTrk)->mdcTrack();
-		double m_prob_p = pid->probProton();
-		double m_prob_pi = pid->probPion();
-		double m_prob_K = pid->probKaon();
-		if(m_prob_p>m_prob_pi && m_prob_p>m_prob_K)//如果质子p的概率大于pi+,K+,则它就是质子
-		{
-			RecMdcKalTrack* mdcKalTrk = (*itTrk)->mdcKalTrack();//After ParticleID, use RecMdcKalTrack su
-			RecMdcKalTrack::setPidType(RecMdcKalTrack::proton);//PID can set to e//这里是质子 proton 
-			ipm.push_back(iChrgn[i]);
-
-		}	
-		if(m_prob_pi>m_prob_K && m_prob_pi>m_prob_p) {
-			RecMdcKalTrack* mdcKalTrk = (*itTrk)->mdcKalTrack();//After ParticleID, use RecMdcKalTrack su
-			RecMdcKalTrack::setPidType(RecMdcKalTrack::pion);
-			ipin.push_back(iChrgn[i]);
+		double max_prob = 0;
+		int    index    = -1;
+		for (int i=0; i<5; i++) {
+			double _prob = pid->prob(i);
+			if (max_prob < _prob) {
+				max_prob = _prob;
+				index    = i;
+			}
 		}
-		if(m_prob_K>m_prob_pi && m_prob_K>m_prob_p) {
-			RecMdcKalTrack* mdcKalTrk = (*itTrk)->mdcKalTrack();//After ParticleID, use RecMdcKalTrack su
-			RecMdcKalTrack::setPidType(RecMdcKalTrack::kaon);
-			ikn.push_back(iChrgn[i]);
+		if (index==-1) {
+			log << MSG::ERROR << __LINE__ << " PID error, no partical can be select." << endmsg;
+			return sc;
 		}
+		if (max_prob==0) {
+			log << MSG::ERROR << __LINE__ << " PID error, all probability of partical is -1." << endmsg;
+			return sc;
+		}
+		if (index==0) ien.push_back(iChrgn[i]);
+		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
+		if (index==2) ipin.push_back(iChrgn[i]);
+		if (index==3) ikn.push_back(iChrgn[i]);
+		if (index==4) ipm.push_back(iChrgn[i]);
 		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	int npp = ipp.size();
