@@ -1083,9 +1083,9 @@ StatusCode JpsiToPiKKshort::execute()
 		}
 		if (index==0) log << MSG::ERROR << __LINE__ << " PID error, electron be selected." << endmsg;
 		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
-		if (index==2) ipip.push_back(iChrgn[i]);
-		if (index==3) ikp.push_back(iChrgn[i]);
-		if (index==4) ipp.push_back(iChrgn[i]);
+		if (index==2) ipip.push_back(iChrgp[i]);
+		if (index==3) ikp.push_back(iChrgp[i]);
+		if (index==4) ipp.push_back(iChrgp[i]);
 		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	for(int i = 0; i < nChn; i++)//chrn指  带负电径迹
