@@ -1416,7 +1416,7 @@ StatusCode JpsiToPiKKshort::execute()
 	m_m_other_Kshort	= P_other_Kshort.m();
 	m_m_other_Kstar		= P_other_Kstar.m();
 
-	m_recoil		= sqrt((psip.e()-P_Kstar.e())*(psip.e()-P_Kstar.e())-P_Kshort.rho()*P_Kshort.rho());
+	m_recoil		= sqrt((psip.e()-P_Kstar.e())*(psip.e()-P_Kstar.e())-P_Kstar.rho()*P_Kstar.rho());
 
 	m_bkg_m_Pip_Kshort	=(psip-P_Pip_Kshort		).m();
 	m_bkg_m_Pin_Kshort	=(psip-P_Pin_Kshort		).m();
