@@ -1066,6 +1066,7 @@ StatusCode JpsiToPiKKshort::execute()
 		double max_prob = 0;
 		int    index    = -1;
 		for (int i=0; i<5; i++) {
+			if (i==0 || i==1) continue;
 			double _prob = pid->prob(i);
 			if (max_prob < _prob) {
 				max_prob = _prob;
@@ -1103,6 +1104,7 @@ StatusCode JpsiToPiKKshort::execute()
 		double max_prob = 0;
 		int    index    = -1;
 		for (int i=0; i<5; i++) {
+			if (i==0 || i==1) continue;
 			double _prob = pid->prob(i);
 			if (max_prob < _prob) {
 				max_prob = _prob;
