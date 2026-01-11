@@ -1059,7 +1059,7 @@ StatusCode JpsiToPiKKshort::execute()
 		pid->setChiMinCut(4);
 		pid->setRecTrack(*itTrk);
 		pid->usePidSys(pid->useDedx() | pid->useTof1() | pid->useTof2()); // use PID sub-system
-		pid->identify(pid->onlyPion() | pid->onlyKaon() | pid->onlyProton() | pid->onlyElectron);    // seperater Pion/Kaon
+		pid->identify(pid->onlyPion() | pid->onlyKaon() | pid->onlyProton());    // seperater Pion/Kaon
 		pid->calculate();
 		if(!(pid->IsPidInfoValid())) continue;
 		RecMdcTrack* mdcTrk = (*itTrk)->mdcTrack();
@@ -1080,7 +1080,7 @@ StatusCode JpsiToPiKKshort::execute()
 			log << MSG::ERROR << __LINE__ << " PID error, all probability of partical is -1." << endmsg;
 			return sc;
 		}
-		if (index==0) iep.push_back(iChrgn[i]);
+		if (index==0) log << MSG::ERROR << __LINE__ << " PID error, electron be selected." << endmsg;
 		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
 		if (index==2) ipip.push_back(iChrgn[i]);
 		if (index==3) ikp.push_back(iChrgn[i]);
@@ -1096,7 +1096,7 @@ StatusCode JpsiToPiKKshort::execute()
 		pid->setChiMinCut(4);
 		pid->setRecTrack(*itTrk);
 		pid->usePidSys(pid->useDedx() | pid->useTof1() | pid->useTof2()); // use PID sub-system
-		pid->identify(pid->onlyPion() | pid->onlyKaon() |pid->onlyProton() | pid->onlyElectron);    // seperater Pion/Kaon
+		pid->identify(pid->onlyPion() | pid->onlyKaon() |pid->onlyProton());    // seperater Pion/Kaon
 		pid->calculate();
 		if(!(pid->IsPidInfoValid())) continue;
 		RecMdcTrack* mdcTrk = (*itTrk)->mdcTrack();
@@ -1117,7 +1117,7 @@ StatusCode JpsiToPiKKshort::execute()
 			log << MSG::ERROR << __LINE__ << " PID error, all probability of partical is -1." << endmsg;
 			return sc;
 		}
-		if (index==0) ien.push_back(iChrgn[i]);
+		if (index==0) log << MSG::ERROR << __LINE__ << " PID error, electron be selected." << endmsg;
 		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
 		if (index==2) ipin.push_back(iChrgn[i]);
 		if (index==3) ikn.push_back(iChrgn[i]);
