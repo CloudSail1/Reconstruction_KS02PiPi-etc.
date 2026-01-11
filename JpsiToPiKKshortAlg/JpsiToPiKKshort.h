@@ -156,6 +156,7 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Array<double>  m_p_total;
    NTuple::Array<double>  m_p_Pip_Kshort;
    NTuple::Array<double>  m_p_Pin_Kshort;
+   NTuple::Array<double>  m_p_Gamma_Kshort;
    NTuple::Array<double>  m_p_Pin_Kstar;
    NTuple::Array<double>  m_p_Pip_Kstar;
    NTuple::Array<double>  m_p_Kp_Kstar;
@@ -196,36 +197,13 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>   m_cos_other_Kshort;
    NTuple::Item<double>   m_bkg_m_other_Kshort; 
 
-   NTuple::Array<double>  m_p_Pip_other_Kshort;
-   NTuple::Item<double>   m_d3_Pip_other_Kshort;
-   NTuple::Item<double>   m_m_Pip_other_Kshort;
-   NTuple::Item<double>   m_cos_Pip_other_Kshort;
-   NTuple::Item<double>   m_bkg_m_Pip_other_Kshort; 
- 
-   NTuple::Array<double>  m_p_Pin_other_Kshort;
-   NTuple::Item<double>   m_d3_Pin_other_Kshort;
-   NTuple::Item<double>   m_m_Pin_other_Kshort;
-   NTuple::Item<double>   m_cos_Pin_other_Kshort;
-   NTuple::Item<double>   m_bkg_m_Pin_other_Kshort; 
-
    NTuple::Array<double>  m_p_other_Kstar;
    NTuple::Item<double>   m_d3_other_Kstar;
    NTuple::Item<double>   m_m_other_Kstar;
    NTuple::Item<double>   m_cos_other_Kstar;
    NTuple::Item<double>   m_bkg_m_other_Kstar; 
 
-   NTuple::Array<double>  m_p_Kp_other_Kstar;
-   NTuple::Item<double>   m_d3_Kp_other_Kstar;
-   NTuple::Item<double>   m_m_Kp_other_Kstar;
-   NTuple::Item<double>   m_cos_Kp_other_Kstar;
-   NTuple::Item<double>   m_bkg_m_Kp_other_Kstar; 
- 
-   NTuple::Array<double>  m_p_Pin_other_Kstar;
-   NTuple::Item<double>   m_d3_Pin_other_Kstar;
-   NTuple::Item<double>   m_m_Pin_other_Kstar;
-   NTuple::Item<double>   m_cos_Pin_other_Kstar;
-   NTuple::Item<double>   m_bkg_m_Pin_other_Kstar; 
-
+   NTuple::Item<double>   m_e_cm;
    NTuple::Item<double>   m_chisq_Kshort;
    NTuple::Item<double>   m_chisq_kmfit;
    NTuple::Item<double>   m_chisq_other_Kshort;
@@ -233,7 +211,10 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>   m_ratio_Kshort;
    NTuple::Item<double>   m_ratio_other;
    NTuple::Item<double>   m_chisq_km_Kshort;
+   NTuple::Item<double>   m_dang_km;
+   NTuple::Item<double>   m_dang_km_max;
 
+   NTuple::Item<double>   m_recoil;
 
    NTuple::Item<double>  m_bkg_m_Pip_Kshort     ; 
    NTuple::Item<double>  m_bkg_m_Pin_Kshort     ; 
@@ -248,6 +229,22 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>  m_bkg_m_Pin_Kp         ; 
    NTuple::Item<double>  m_bkg_m_Pip_Pin        ; 
 
+   // for debug use
+   NTuple::Item<double>  m_m_orig_Kshort;
+   NTuple::Item<double>  m_m_orig_Kstar;
+   NTuple::Item<double>  m_m_vtxadd_Kshort;
+   NTuple::Item<double>  m_m_vtxadd_Kstar;
+   NTuple::Item<double>  m_m_km_Kshort;
+   NTuple::Item<double>  m_m_km_Kstar;
+   NTuple::Item<double>  m_m_km_1resonance_Kshort;
+   NTuple::Item<double>  m_m_km_1resonance_Kstar;
+   NTuple::Item<double>  m_m_km_2resonance_Kshort;
+   NTuple::Item<double>  m_m_km_2resonance_Kstar;
+   NTuple::Item<double>  m_m_km_4p2resonance_Kshort;
+   NTuple::Item<double>  m_m_km_4p2resonance_Kstar;
+   NTuple::Item<double>  m_chisq_kmfit_1resonance;
+   NTuple::Item<double>  m_chisq_kmfit_2resonance;
+   NTuple::Item<double>  m_chisq_kmfit_4p2resonance;
 
 
    NTuple::Item<double>  m_mPi0_bkg0_6C;
