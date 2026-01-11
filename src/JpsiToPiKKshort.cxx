@@ -858,7 +858,7 @@ StatusCode JpsiToPiKKshort::execute()
 	if(debug)cout<<__LINE__<<endl;
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	int ntot=iGood.size();
-	if((ntot != 6)||(nCharge != 0)) {
+	if((ntot != 4)||(nCharge != 0)) {
 		log << MSG::DEBUG << __LINE__ << " failure with ntot " << ntot << " and nCharge " << nCharge << endmsg;
 		return sc;
 	}
@@ -866,7 +866,7 @@ StatusCode JpsiToPiKKshort::execute()
 
 	int nChp=iChrgp.size();
 	int nChn=iChrgn.size();
-	if((nChp != 3)||(nChn != 3)) {
+	if((nChp != 2)||(nChn != 2)) {
 		log << MSG::DEBUG << __LINE__ << " failure with nChp " << nChp << " and nChn " << nChn << endmsg;
 		return sc;
 	}
