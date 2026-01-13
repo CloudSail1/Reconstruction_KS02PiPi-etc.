@@ -1348,12 +1348,14 @@ StatusCode JpsiToPiKKshort::execute()
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
 	kmfit->init();
-	kmfit->setChisqCut(40);
+	kmfit->setChisqCut(9999);
 	kmfit->AddTrack(0,0.0,gamTrk);
 	kmfit->AddTrack(1,wvpip_kshortTrk);
 	kmfit->AddTrack(2,wvpin_kshortTrk);
 	kmfit->AddTrack(3,wvpin_kstarTrk);
 	kmfit->AddTrack(4,wvkp_kstarTrk);
+	kmfit->AddResonance(0,0.4976,0,1,2);
+	kmfit->AddResonance(0,0.896,3,4);
 	kmfit->AddFourMomentum(0,psip);
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	if(!kmfit->Fit()) {
