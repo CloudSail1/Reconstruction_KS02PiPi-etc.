@@ -157,6 +157,8 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple_angular->addItem("mctruth_P4_K_Kstar",	4,m_mctruth_P4_K_Kstar		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kshort",		4,m_mctruth_P4_Kshort		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kstar",		4,m_mctruth_P4_Kstar		);
+
+			status = m_tuple_angular->addItem("mctruth_is_anti_Kstar",        m_mctruth_is_anti_Kstar       );
 		}
 		else
 		{
@@ -407,7 +409,8 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("cos_other_Kshort",	m_cos_other_Kshort);
 			status = m_tuple->addItem("cos_other_Kstar",	m_cos_other_Kstar);
 
-			status = m_tuple->addItem("recoil",		m_recoil          );
+			status = m_tuple->addItem("recoil",             m_recoil          );
+			status = m_tuple->addItem("is_anti_Kstar",      m_is_anti_Kstar          );
 
 			status = m_tuple->addItem("bkg_m_Pip_kshort",	m_bkg_m_Pip_Kshort  );
 			status = m_tuple->addItem("bkg_m_Pin_Kshort",	m_bkg_m_Pin_Kshort  );
@@ -467,9 +470,6 @@ StatusCode JpsiToPiKKshort::execute()
 	int gEb = 0;
 	if(m_rec%10000==0)cout<<"Run   "<<m_run<<"     Event   "<<m_rec<<endl; 
 	//MC information
-// rm mctrue lorentz	
-// 	HepLorentzVector  mctrue_pp01, mctrue_pm01, mctrue_gam1_Eta0, mctrue_gam2_Eta0,mctrue_gam1_Eta1,mctrue_gam2_Eta1,mctrue_Eta0, mctrue_Eta1;
-	HepLorentzVector  mctruth_Pip_Kshort, mctruth_Pin_Kshort, mctruth_Pin_Kstar, mctruth_Kp_Kstar, mctruth_Kshort, mctruth_Kstar;
 
 	if(debug)cout<<__LINE__<<endl;
 	log << MSG::DEBUG << __LINE__ << "" << endmsg;
@@ -542,7 +542,7 @@ StatusCode JpsiToPiKKshort::execute()
 				double mmm = p4mc.mag();
 				double ppp = p4mc.rho();
 				log << MSG::DEBUG << __LINE__ << endmsg;
-				Hep3Vector cos_theta = p4mc.boost(betaLab2).cosTheta();
+				double cos_theta = p4mc.boost(betaLab2).cosTheta();
 				log << MSG::DEBUG << __LINE__ << endmsg;
 
 				int mctrue_id = (*iter_mc)->particleProperty();
@@ -563,7 +563,6 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_cos_Kstar     = cos_theta;
 				}
 				if (mctrue_id == -313 && mctrue_mothPID == 443) {
-					mctruth_Kstar		= p4mc;
 					m_mctruth_is_anti_Kstar = 1;
 					m_mctruth_P4_Kstar[0]	= mcpx;
 					m_mctruth_P4_Kstar[1] 	= mcpy;
@@ -574,7 +573,6 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_cos_Kstar     = cos_theta;
 				}
 				if (fabs(mctrue_id) == -211 && fabs(mctrue_mothPID) == 313) {
-					mctruth_Pi_Kstar		= p4mc;
 					m_mctruth_P4_Pi_Kstar[0]	= mcpx;
 					m_mctruth_P4_Pi_Kstar[1] 	= mcpy;
 					m_mctruth_P4_Pi_Kstar[2] 	= mcpz;
@@ -584,7 +582,6 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_cos_Pi_Kstar          = cos_theta;
 				}
 				if (fabs(mctrue_id) == 321 && fabs(mctrue_mothPID) == 313) {
-					mctruth_K_Kstar			= p4mc;
 					m_mctruth_P4_K_Kstar[0]		= mcpx;
 					m_mctruth_P4_K_Kstar[1] 	= mcpy;
 					m_mctruth_P4_K_Kstar[2] 	= mcpz;
@@ -594,7 +591,6 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_cos_K_Kstar           = cos_theta;
 				}
 				if (mctrue_id == 310 && mctrue_mothPID == 443) {
-					mctruth_Kshort			= p4mc;
 					m_mctruth_P4_Kshort[0]		= mcpx;
 					m_mctruth_P4_Kshort[1]		= mcpy;
 					m_mctruth_P4_Kshort[2]		= mcpz;
@@ -604,24 +600,22 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_cos_Kshort            = cos_theta;
 				}
 				if (mctrue_id == 211 && mctrue_mothPID == 310) {
-					mctruth_Pip_Kshort		= p4mc;
 					m_mctruth_P4_Pip_Kshort[0]	= mcpx;
 					m_mctruth_P4_Pip_Kshort[1] 	= mcpy;
 					m_mctruth_P4_Pip_Kshort[2] 	= mcpz;
 					m_mctruth_P4_Pip_Kshort[3] 	= mcen;
 					m_mctruth_P_Pip_Kshort		= ppp;
 					m_mctruth_M_Pip_Kshort 		= mmm;
-					m_mctruth_cos_Pip_Kstar         = cos_theta;
+					m_mctruth_cos_Pip_Kshort        = cos_theta;
 				}
 				if (mctrue_id == -211 && mctrue_mothPID == 310) {
-					mctruth_Pin_Kshort		= p4mc;
 					m_mctruth_P4_Pin_Kshort[0]	= mcpx;
 					m_mctruth_P4_Pin_Kshort[1] 	= mcpy;
 					m_mctruth_P4_Pin_Kshort[2] 	= mcpz;
 					m_mctruth_P4_Pin_Kshort[3] 	= mcen;
 					m_mctruth_P_Pin_Kshort		= ppp;
 					m_mctruth_M_Pin_Kshort 		= mmm;
-					m_mctruth_cos_Pin_Kstar         = cos_theta;
+					m_mctruth_cos_Pin_Kshort        = cos_theta;
 				}
 
 				log << MSG::DEBUG << __LINE__ << "" << endmsg;
@@ -1036,7 +1030,7 @@ StatusCode JpsiToPiKKshort::execute()
 
 	// TODO refactor to use a class which save all loop logic
 	log << MSG::DEBUG << __LINE__ << " now in select section." << endmsg;
-	Vint temp_ipip, temp_ipin;
+	Vint temp_pip, temp_pin;
 	Vdouble temp_chisq, temp_decay_ratio, temp_decay_length, temp_decay_length_error;
 
 	for (int i=0;i<ipip.size();i++) {
@@ -1091,6 +1085,7 @@ StatusCode JpsiToPiKKshort::execute()
 	}
 	log << MSG::DEBUG << __LINE__ << " select Kshort..." << endmsg;
 	int id_pip_kshort, id_pin_kshort, id_pi_kstar, id_k_kstar;
+	double chisq_kshort, decay_length_kshort, decay_length_error_kshort;
 	// TODO pi0 eta0 highest E gamma
 	// TODO K0 how to Ks
 	// TODO compare kinematic fit with Kshort(Pi+ Pi-) and Pi(Kstar) K(Kstar)
@@ -1193,8 +1188,8 @@ StatusCode JpsiToPiKKshort::execute()
 	kmfit->setChisqCut(9999);
 	kmfit->AddTrack(0,wvpip_kshortTrk);
 	kmfit->AddTrack(1,wvpin_kshortTrk);
-	kmfit->AddTrack(2,wvpin_kstarTrk);
-	kmfit->AddTrack(3,wvkp_kstarTrk);
+	kmfit->AddTrack(2,wvpi_kstarTrk);
+	kmfit->AddTrack(3,wvk_kstarTrk);
 	kmfit->AddFourMomentum(0,psip);
 	if(!kmfit->Fit()) {
 		log << MSG::DEBUG << __LINE__ << " kmfit failure" << endmsg;
@@ -1216,12 +1211,14 @@ StatusCode JpsiToPiKKshort::execute()
 	HepLorentzVector P_K_Kstar	= wvk_kstarTrk.p().boost(-betaLab);
 	HepLorentzVector P_Kstar	= P_Pi_Kstar + P_K_Kstar;
 
+	HepLorentzVector P_other_Kshort;
+	HepLorentzVector P_other_Kstar;
 	if (is_anti_kstar==0) {
-		HepLorentzVector P_other_Kshort	= P_Pip_Kshort + P_Pi_Kstar;
-		HepLorentzVector P_other_Kstar	= P_Pin_Kshort + P_K_Kstar;
+		P_other_Kshort	= P_Pip_Kshort + P_Pi_Kstar;
+		P_other_Kstar	= P_Pin_Kshort + P_K_Kstar;
 	} else {
-		HepLorentzVector P_other_Kshort = P_Pin_Kshort + P_Pi_Kstar;
-		HepLorentzVector P_other_Kstar  = P_Pip_Kshort + P_K_Kstar;
+		P_other_Kshort = P_Pin_Kshort + P_Pi_Kstar;
+		P_other_Kstar  = P_Pip_Kshort + P_K_Kstar;
 	}
 
 	log << MSG::DEBUG << __LINE__ << " save data to ntuple" << endmsg;
@@ -1229,13 +1226,13 @@ StatusCode JpsiToPiKKshort::execute()
 	m_chisq_Kshort = chisq_kshort;
 	m_chisq_kmfit = kmfit->chisq();
 
-	HepLorentzVector ptotal = (P_Pip_Kshort + P_Pin_Kshort + P_Pin_Kstar + P_Kp_Kstar);
+	HepLorentzVector ptotal = (P_Pip_Kshort + P_Pin_Kshort + P_Pi_Kstar + P_K_Kstar);
 	for (int i;i<4;i++) {
 		m_p_total[i]		= ptotal[i];
 		m_p_Pip_Kshort[i]	= P_Pip_Kshort[i];
 		m_p_Pin_Kshort[i]	= P_Pin_Kshort[i];
-		m_p_Pin_Kstar[i]	= P_Pin_Kstar[i];
-		m_p_Kp_Kstar[i]		= P_Kp_Kstar[i];
+		m_p_Pi_Kstar[i]	        = P_Pi_Kstar[i];
+		m_p_K_Kstar[i]		= P_K_Kstar[i];
 		m_p_other_Kshort[i]	= P_other_Kshort[i];
 		m_p_other_Kstar[i]	= P_other_Kstar[i];
 	}
@@ -1243,8 +1240,8 @@ StatusCode JpsiToPiKKshort::execute()
 	m_d3_Pip_Kshort		= P_Pip_Kshort.rho();
 	m_d3_Pin_Kshort		= P_Pin_Kshort.rho();
 	m_d3_Kshort		= P_Kshort.rho();
-	m_d3_Pin_Kstar		= P_Pin_Kstar.rho();
-	m_d3_Kp_Kstar		= P_Kp_Kstar.rho();
+	m_d3_Pi_Kstar		= P_Pi_Kstar.rho();
+	m_d3_K_Kstar		= P_K_Kstar.rho();
 	m_d3_Kstar		= P_Kstar.rho();
 	m_d3_other_Kshort	= P_other_Kshort.rho();
 	m_d3_other_Kstar	= P_other_Kstar.rho();
@@ -1252,8 +1249,8 @@ StatusCode JpsiToPiKKshort::execute()
 	m_m_Pip_Kshort		= P_Pip_Kshort.m();
 	m_m_Pin_Kshort		= P_Pin_Kshort.m();
 	m_m_Kshort		= P_Kshort.m();
-	m_m_Pin_Kstar		= P_Pin_Kstar.m();
-	m_m_Kp_Kstar		= P_Kp_Kstar.m();
+	m_m_Pi_Kstar		= P_Pi_Kstar.m();
+	m_m_K_Kstar		= P_K_Kstar.m();
 	m_m_Kstar		= P_Kstar.m();
 	m_m_other_Kshort	= P_other_Kshort.m();
 	m_m_other_Kstar		= P_other_Kstar.m();
@@ -1262,8 +1259,8 @@ StatusCode JpsiToPiKKshort::execute()
 
 	m_bkg_m_Pip_Kshort	=(psip-P_Pip_Kshort		).m();
 	m_bkg_m_Pin_Kshort	=(psip-P_Pin_Kshort		).m();
-	m_bkg_m_Pin_Kstar	=(psip-P_Pin_Kstar		).m();
-	m_bkg_m_Kp_Kstar	=(psip-P_Kp_Kstar		).m();
+	m_bkg_m_Pi_Kstar	=(psip-P_Pi_Kstar		).m();
+	m_bkg_m_K_Kstar 	=(psip-P_K_Kstar		).m();
 	m_bkg_m_Kshort		=(psip-P_Kshort			).m();
 	m_bkg_m_Kstar		=(psip-P_Kstar			).m();
 	m_bkg_m_other_Kshort	=(psip-P_other_Kshort		).m();
@@ -1275,8 +1272,8 @@ StatusCode JpsiToPiKKshort::execute()
 
 	m_cos_Pip_Kshort	=(P_Pip_Kshort	).cosTheta();
 	m_cos_Pin_Kshort	=(P_Pin_Kshort	).cosTheta();
-	m_cos_Pin_Kstar		=(P_Pin_Kstar	).cosTheta();
-	m_cos_Kp_Kstar		=(P_Kp_Kstar	).cosTheta();
+	m_cos_Pi_Kstar		=(P_Pi_Kstar	).cosTheta();
+	m_cos_K_Kstar		=(P_K_Kstar	).cosTheta();
 	m_cos_Kshort		=(P_Kshort	).cosTheta();
 	m_cos_Kstar		=(P_Kstar	).cosTheta();
 	m_cos_other_Kshort	=(P_other_Kshort).cosTheta();
