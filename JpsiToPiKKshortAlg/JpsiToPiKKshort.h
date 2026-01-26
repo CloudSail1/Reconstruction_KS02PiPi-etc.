@@ -154,37 +154,29 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Array<double>  m_p_total;
    NTuple::Array<double>  m_p_Pip_Kshort;
    NTuple::Array<double>  m_p_Pin_Kshort;
-   NTuple::Array<double>  m_p_Pin_Kstar;
-   NTuple::Array<double>  m_p_Pip_Kstar;
-   NTuple::Array<double>  m_p_Kp_Kstar;
-   NTuple::Array<double>  m_p_Kn_Kstar;
+   NTuple::Array<double>  m_p_Pi_Kstar;
+   NTuple::Array<double>  m_p_K_Kstar;
    NTuple::Array<double>  m_p_Kshort;
    NTuple::Array<double>  m_p_Kstar;
 
    NTuple::Item<double>   m_d3_Pip_Kshort;
    NTuple::Item<double>   m_d3_Pin_Kshort;
-   NTuple::Item<double>   m_d3_Pin_Kstar;
-   NTuple::Item<double>   m_d3_Pip_Kstar;
-   NTuple::Item<double>   m_d3_Kp_Kstar;
-   NTuple::Item<double>   m_d3_Kn_Kstar;
+   NTuple::Item<double>   m_d3_Pi_Kstar;
+   NTuple::Item<double>   m_d3_K_Kstar;
    NTuple::Item<double>   m_d3_Kshort;
    NTuple::Item<double>   m_d3_Kstar;
 
    NTuple::Item<double>   m_m_Pip_Kshort;
    NTuple::Item<double>   m_m_Pin_Kshort;
-   NTuple::Item<double>   m_m_Pin_Kstar;
-   NTuple::Item<double>   m_m_Pip_Kstar;
-   NTuple::Item<double>   m_m_Kp_Kstar;
-   NTuple::Item<double>   m_m_Kn_Kstar;
+   NTuple::Item<double>   m_m_Pi_Kstar;
+   NTuple::Item<double>   m_m_K_Kstar;
    NTuple::Item<double>   m_m_Kshort;
    NTuple::Item<double>   m_m_Kstar;
 
    NTuple::Item<double>   m_cos_Pip_Kshort	;
    NTuple::Item<double>   m_cos_Pin_Kshort	;
-   NTuple::Item<double>   m_cos_Pin_Kstar	;
-   NTuple::Item<double>   m_cos_Pip_Kstar	;
-   NTuple::Item<double>   m_cos_Kp_Kstar	;
-   NTuple::Item<double>   m_cos_Kn_Kstar	;
+   NTuple::Item<double>   m_cos_Pi_Kstar	;
+   NTuple::Item<double>   m_cos_K_Kstar	        ;
    NTuple::Item<double>   m_cos_Kshort		;
    NTuple::Item<double>   m_cos_Kstar		;
 
@@ -218,10 +210,6 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>  m_bkg_m_Kn_Kstar       ; 
    NTuple::Item<double>  m_bkg_m_Kshort         ; 
    NTuple::Item<double>  m_bkg_m_Kstar          ; 
-   NTuple::Item<double>  m_bkg_m_Pin_Pin        ; 
-   NTuple::Item<double>  m_bkg_m_Pip_Kp         ; 
-   NTuple::Item<double>  m_bkg_m_Pin_Kp         ; 
-   NTuple::Item<double>  m_bkg_m_Pip_Pin        ; 
 
 
    NTuple::Item<double>  m_mPi0_bkg0_6C;
