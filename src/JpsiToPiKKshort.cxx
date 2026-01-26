@@ -128,37 +128,29 @@ StatusCode JpsiToPiKKshort::initialize()
 			
                         status = m_tuple_angular->addItem("m_mctruth_P_Pip_Kshort",	m_mctruth_P_Pip_Kshort	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Pin_Kshort",	m_mctruth_P_Pin_Kshort	);
-                        status = m_tuple_angular->addItem("m_mctruth_P_Pin_Kstar",	m_mctruth_P_Pin_Kstar	);
-                        status = m_tuple_angular->addItem("m_mctruth_P_Pip_Kstar",	m_mctruth_P_Pip_Kstar	);
-                        status = m_tuple_angular->addItem("m_mctruth_P_Kp_Kstar",	m_mctruth_P_Kp_Kstar	);
-                        status = m_tuple_angular->addItem("m_mctruth_P_Kn_Kstar",	m_mctruth_P_Kn_Kstar	);
+                        status = m_tuple_angular->addItem("m_mctruth_P_Pi_Kstar",	m_mctruth_P_Pi_Kstar	);
+                        status = m_tuple_angular->addItem("m_mctruth_P_K_Kstar",	m_mctruth_P_K_Kstar	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Kshort",		m_mctruth_P_Kshort	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Kstar",		m_mctruth_P_Kstar	);
 	
                         status = m_tuple_angular->addItem("mctruth_M_Pip_Kshort",	m_mctruth_M_Pip_Kshort	);
                         status = m_tuple_angular->addItem("mctruth_M_Pin_Kshort",	m_mctruth_M_Pin_Kshort	);
-                        status = m_tuple_angular->addItem("mctruth_M_Pin_Kstar",	m_mctruth_M_Pin_Kstar	);
-                        status = m_tuple_angular->addItem("mctruth_M_Pip_Kstar",	m_mctruth_M_Pip_Kstar	);
-                        status = m_tuple_angular->addItem("mctruth_M_Kp_Kstar",		m_mctruth_M_Kp_Kstar	);
-                        status = m_tuple_angular->addItem("mctruth_M_Kn_Kstar",		m_mctruth_M_Kn_Kstar	);
+                        status = m_tuple_angular->addItem("mctruth_M_Pi_Kstar",	m_mctruth_M_Pi_Kstar	);
+                        status = m_tuple_angular->addItem("mctruth_M_K_Kstar",		m_mctruth_M_K_Kstar	);
                         status = m_tuple_angular->addItem("mctruth_M_Kshort",		m_mctruth_M_Kshort	);
                         status = m_tuple_angular->addItem("mctruth_M_Kstar",		m_mctruth_M_Kstar	);
                         
 			status = m_tuple_angular->addItem("mctruth_cos_Pip_Kshort",	m_mctruth_cos_Pip_Kshort);
 			status = m_tuple_angular->addItem("mctruth_cos_Pin_Kshort",	m_mctruth_cos_Pin_Kshort);
-			status = m_tuple_angular->addItem("mctruth_cos_Pin_Kstar",	m_mctruth_cos_Pin_Kstar	);
-			status = m_tuple_angular->addItem("mctruth_cos_Pip_Kstar",	m_mctruth_cos_Pip_Kstar	);
-			status = m_tuple_angular->addItem("mctruth_cos_Kp_Kstar",	m_mctruth_cos_Kp_Kstar	);
-			status = m_tuple_angular->addItem("mctruth_cos_Kn_Kstar",	m_mctruth_cos_Kn_Kstar	);
+			status = m_tuple_angular->addItem("mctruth_cos_Pi_Kstar",	m_mctruth_cos_Pi_Kstar	);
+			status = m_tuple_angular->addItem("mctruth_cos_K_Kstar",	m_mctruth_cos_K_Kstar	);
 			status = m_tuple_angular->addItem("mctruth_cos_Kshort",		m_mctruth_cos_Kshort	);
 			status = m_tuple_angular->addItem("mctruth_cos_Kstar",		m_mctruth_cos_Kstar	);
 			
 			status = m_tuple_angular->addItem("mctruth_P4_Pip_Kshort",	4,m_mctruth_P4_Pip_Kshort	);
 			status = m_tuple_angular->addItem("mctruth_P4_Pin_Kshort",	4,m_mctruth_P4_Pin_Kshort	);
-			status = m_tuple_angular->addItem("mctruth_P4_Pin_Kstar",	4,m_mctruth_P4_Pin_Kstar	);
-			status = m_tuple_angular->addItem("mctruth_P4_Pip_Kstar",	4,m_mctruth_P4_Pip_Kstar	);
-			status = m_tuple_angular->addItem("mctruth_P4_Kp_Kstar",	4,m_mctruth_P4_Kp_Kstar		);
-			status = m_tuple_angular->addItem("mctruth_P4_Kn_Kstar",	4,m_mctruth_P4_Kn_Kstar		);
+			status = m_tuple_angular->addItem("mctruth_P4_Pi_Kstar",	4,m_mctruth_P4_Pi_Kstar	);
+			status = m_tuple_angular->addItem("mctruth_P4_K_Kstar",	4,m_mctruth_P4_K_Kstar		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kshort",		4,m_mctruth_P4_Kshort		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kstar",		4,m_mctruth_P4_Kstar		);
 		}
@@ -548,6 +540,10 @@ StatusCode JpsiToPiKKshort::execute()
 				double mcpy = (*iter_mc)->initialFourMomentum().py(); //最初py
 				double mcpz = (*iter_mc)->initialFourMomentum().pz(); //最初pz
 				double mcen = (*iter_mc)->initialFourMomentum().e();  //最初能量
+
+                                HepLorentzVector ZXX(0.011*m_ecms,0.0,0.0,m_ecms);
+                                Hep3Vector betaLab2 = ZXX.boostVector();
+
 				HepLorentzVector p4mc;
 				p4mc.setPx(mcpx);
 				p4mc.setPy(mcpy);
@@ -555,8 +551,8 @@ StatusCode JpsiToPiKKshort::execute()
 				p4mc.setE(mcen);
 				double mmm = p4mc.mag();
 				double ppp = p4mc.rho();
-
-				if(debug)cout<<__LINE__<<endl;
+				log << MSG::DEBUG << __LINE__ << endmsg;
+				Hep3Vector cos_theta = p4mc.boost(betaLab2).cosTheta();
 				log << MSG::DEBUG << __LINE__ << endmsg;
 
 				int mctrue_id = (*iter_mc)->particleProperty();
@@ -564,33 +560,48 @@ StatusCode JpsiToPiKKshort::execute()
 				int mctrue_moth_mothPID=((*iter_mc)->mother().mother()).particleProperty();
 
 
+				
 				log << MSG::DEBUG << __LINE__ << endmsg;
 				if (mctrue_id == 313 && mctrue_mothPID == 443) {
-					mctruth_Kstar		= p4mc;
+					m_mctruth_is_anti_Kstar = 0;
 					m_mctruth_P4_Kstar[0]	= mcpx;
 					m_mctruth_P4_Kstar[1] 	= mcpy;
 					m_mctruth_P4_Kstar[2] 	= mcpz;
 					m_mctruth_P4_Kstar[3] 	= mcen;
 					m_mctruth_P_Kstar	= ppp;
 					m_mctruth_M_Kstar 	= mmm;
+					m_mctruth_cos_Kstar     = cos_theta;
 				}
-				if (mctrue_id == -211 && mctrue_mothPID == 313) {
-					mctruth_Pin_Kstar		= p4mc;
-					m_mctruth_P4_Pin_Kstar[0]	= mcpx;
-					m_mctruth_P4_Pin_Kstar[1] 	= mcpy;
-					m_mctruth_P4_Pin_Kstar[2] 	= mcpz;
-					m_mctruth_P4_Pin_Kstar[3] 	= mcen;
-					m_mctruth_P_Pin_Kstar		= ppp;
-					m_mctruth_M_Pin_Kstar		= mmm;
+				if (mctrue_id == -313 && mctrue_mothPID == 443) {
+					mctruth_Kstar		= p4mc;
+					m_mctruth_is_anti_Kstar = 1;
+					m_mctruth_P4_Kstar[0]	= mcpx;
+					m_mctruth_P4_Kstar[1] 	= mcpy;
+					m_mctruth_P4_Kstar[2] 	= mcpz;
+					m_mctruth_P4_Kstar[3] 	= mcen;
+					m_mctruth_P_Kstar	= ppp;
+					m_mctruth_M_Kstar 	= mmm;
+					m_mctruth_cos_Kstar     = cos_theta;
 				}
-				if (mctrue_id == 321 && mctrue_mothPID == 313) {
-					mctruth_Kp_Kstar		= p4mc;
-					m_mctruth_P4_Kp_Kstar[0]	= mcpx;
-					m_mctruth_P4_Kp_Kstar[1] 	= mcpy;
-					m_mctruth_P4_Kp_Kstar[2] 	= mcpz;
-					m_mctruth_P4_Kp_Kstar[3] 	= mcen;
-					m_mctruth_P_Kp_Kstar		= ppp;
-					m_mctruth_M_Kp_Kstar 		= mmm;
+				if (fabs(mctrue_id) == -211 && fabs(mctrue_mothPID) == 313) {
+					mctruth_Pi_Kstar		= p4mc;
+					m_mctruth_P4_Pi_Kstar[0]	= mcpx;
+					m_mctruth_P4_Pi_Kstar[1] 	= mcpy;
+					m_mctruth_P4_Pi_Kstar[2] 	= mcpz;
+					m_mctruth_P4_Pi_Kstar[3] 	= mcen;
+					m_mctruth_P_Pi_Kstar		= ppp;
+					m_mctruth_M_Pi_Kstar		= mmm;
+					m_mctruth_cos_Pi_Kstar          = cos_theta;
+				}
+				if (fabs(mctrue_id) == 321 && fabs(mctrue_mothPID) == 313) {
+					mctruth_K_Kstar			= p4mc;
+					m_mctruth_P4_K_Kstar[0]		= mcpx;
+					m_mctruth_P4_K_Kstar[1] 	= mcpy;
+					m_mctruth_P4_K_Kstar[2] 	= mcpz;
+					m_mctruth_P4_K_Kstar[3] 	= mcen;
+					m_mctruth_P_K_Kstar		= ppp;
+					m_mctruth_M_K_Kstar 		= mmm;
+					m_mctruth_cos_K_Kstar           = cos_theta;
 				}
 				if (mctrue_id == 310 && mctrue_mothPID == 443) {
 					mctruth_Kshort			= p4mc;
@@ -600,6 +611,7 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_P4_Kshort[3]		= mcen;
 					m_mctruth_P_Kshort		= ppp;
 					m_mctruth_M_Kshort 		= mmm;
+					m_mctruth_cos_Kshort            = cos_theta;
 				}
 				if (mctrue_id == 211 && mctrue_mothPID == 310) {
 					mctruth_Pip_Kshort		= p4mc;
@@ -609,6 +621,7 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_P4_Pip_Kshort[3] 	= mcen;
 					m_mctruth_P_Pip_Kshort		= ppp;
 					m_mctruth_M_Pip_Kshort 		= mmm;
+					m_mctruth_cos_Pip_Kstar         = cos_theta;
 				}
 				if (mctrue_id == -211 && mctrue_mothPID == 310) {
 					mctruth_Pin_Kshort		= p4mc;
@@ -618,135 +631,18 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_P4_Pin_Kshort[3] 	= mcen;
 					m_mctruth_P_Pin_Kshort		= ppp;
 					m_mctruth_M_Pin_Kshort 		= mmm;
+					m_mctruth_cos_Pin_Kstar         = cos_theta;
 				}
 
-// rm two eta
-/*
-				//@@@@@@@@@@@@@@@@@  two eta
-				if(debug)cout<<__LINE__<<endl;
-				if(mctrue_id== 221 && mctrue_mothPID ==443&& nE==0  )   //  eta  A
-				{
-					mctrue_Eta0=p4mc;
-
-					mctrue_eta0_P4[0]=  mcpx; mctrue_eta0_P4[1] = mcpy; mctrue_eta0_P4[2] = mcpz; mctrue_eta0_P4[3] = mcen; mctrue_Peta0 = ppp; mctrue_meta0 = mmm ;
-					nE++;
-				}
-				else if(mctrue_id== 221 && mctrue_mothPID ==443  &&nE ==1 )   //  eta B
-				{
-					mctrue_Eta1=p4mc;
-
-					mctrue_eta1_P4[0]=  mcpx; mctrue_eta1_P4[1] = mcpy; mctrue_eta1_P4[2] = mcpz; mctrue_eta1_P4[3] = mcen; mctrue_Peta1 = ppp; mctrue_meta1 = mmm ;
-				}
-				if(debug)cout<<__LINE__<<endl;
-
-
-				//@@@@@@@@@@@@@@@@@ two gamma for eta A / B
-				if(debug)cout<<__LINE__<<endl;
-
-				if(mctrue_id== 22 && mctrue_mothPID ==221 &&gEa==0  && nnE==0 )   //  22  gamma   fro  eta A
-				{
-					mctrue_gam1_Eta0=p4mc;
-
-					mctrue_gam0_eta0_P4[0]=  mcpx; mctrue_gam0_eta0_P4[1] = mcpy; mctrue_gam0_eta0_P4[2] = mcpz; mctrue_gam0_eta0_P4[3] = mcen; mctrue_Pgam0_eta0 = ppp; mctrue_mgam0_eta0 = mmm ;
-					gEa++;
-				}
-				else if(mctrue_id== 22 && mctrue_mothPID ==221  &&gEa ==1 &&nnE==0 )   //  22  gamma   fro  eta A
-				{
-					mctrue_gam2_Eta0=p4mc;
-
-					mctrue_gam1_eta0_P4[0]=  mcpx; mctrue_gam1_eta0_P4[1] = mcpy; mctrue_gam1_eta0_P4[2] = mcpz; mctrue_gam1_eta0_P4[3] = mcen; mctrue_Pgam1_eta0 = ppp; mctrue_mgam1_eta0 = mmm ;
-					nnE++;
-				}
-				else if ( mctrue_id== 22 && mctrue_mothPID ==221 && gEb==0 &&nnE==1)   //  22  gamma   fro  eta B
-				{
-					mctrue_gam1_Eta1=p4mc;
-
-					mctrue_gam0_eta1_P4[0]=  mcpx; mctrue_gam0_eta1_P4[1] = mcpy; mctrue_gam0_eta1_P4[2] = mcpz; mctrue_gam0_eta1_P4[3] = mcen; mctrue_Pgam0_eta1 = ppp; mctrue_mgam0_eta1 = mmm ;
-					gEb++;
-				}
-				else if(mctrue_id== 22 && mctrue_mothPID ==221  &&gEb ==1 &&nnE==1 )   //  22  gamma   fro  eta B
-				{
-					mctrue_gam2_Eta1=p4mc;
-
-					mctrue_gam1_eta1_P4[0]=  mcpx; mctrue_gam1_eta1_P4[1] = mcpy; mctrue_gam1_eta1_P4[2] = mcpz; mctrue_gam1_eta1_P4[3] = mcen; mctrue_Pgam1_eta1 = ppp; mctrue_mgam1_eta1 = mmm ;
-				}
-				if(debug)cout<<__LINE__<<endl;
-
-				//@@@@@@@@@@@@@@@@@    p   pbar
-				if(mctrue_id== 2212 && mctrue_mothPID ==443  )   // p+ 
-				{                  
-					mctrue_pp01=p4mc;
-
-					mctrue_Ppp_P4[0]=  mcpx; mctrue_Ppp_P4[1] = mcpy; mctrue_Ppp_P4[2] = mcpz; mctrue_Ppp_P4[3] = mcen; mctrue_Ppp = ppp; mctrue_mpp = mmm ;
-				}
-
-				if(mctrue_id== -2212 && mctrue_mothPID ==443  )   // anti-p-
-				{                  
-					mctrue_pm01=p4mc;
-
-					mctrue_Ppm_P4[0]=  mcpx; mctrue_Ppm_P4[1] = mcpy; mctrue_Ppm_P4[2] = mcpz; mctrue_Ppm_P4[3] = mcen; mctrue_Ppm = ppp; mctrue_mpm = mmm ;
-				}
-*/
-				if(debug)cout<<__LINE__<<endl;
 				log << MSG::DEBUG << __LINE__ << "" << endmsg;
-
-                                HepLorentzVector ZXX(0.011*m_ecms,0.0,0.0,m_ecms);
-                                Hep3Vector betaLab2 = ZXX.boostVector();
-				
-                                HepLorentzVector temp_Kshort     = mctruth_Kshort;
-                                HepLorentzVector temp_Kstar      = mctruth_Kstar;
-                                HepLorentzVector temp_Pip_Kshort = mctruth_Pip_Kshort;
-                                HepLorentzVector temp_Pin_Kshort = mctruth_Pin_Kshort;
-                                HepLorentzVector temp_Pin_Kstar  = mctruth_Pin_Kstar;
-                                HepLorentzVector temp_Kp_Kstar   = mctruth_Kp_Kstar;
-			
-				m_mctruth_cos_Kshort	=(temp_Kshort    ).cosTheta();
-				m_mctruth_cos_Kstar     =(temp_Kstar     ).cosTheta();
-				m_mctruth_cos_Pip_Kshort=(temp_Pip_Kshort).cosTheta();
-				m_mctruth_cos_Pin_Kshort=(temp_Pin_Kshort).cosTheta();
-				m_mctruth_cos_Pin_Kstar =(temp_Pin_Kstar ).cosTheta();
-				m_mctruth_cos_Kp_Kstar  =(temp_Kp_Kstar  ).cosTheta();
-
-
-                                //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  0422 Add For MCtruth
-                                
-/* rm mctruth mc 
-                                HepLorentzVector ZXX(0.011*m_ecms,0.0,0.0,m_ecms);
-                                Hep3Vector betaLab2 = ZXX.boostVector();
-                                HepLorentzVector temGam1_Eta0= mctrue_gam1_Eta0;
-                                HepLorentzVector temGam2_Eta0= mctrue_gam2_Eta0;
-                                HepLorentzVector temGam1_Eta1= mctrue_gam1_Eta1;
-                                HepLorentzVector temGam2_Eta1= mctrue_gam2_Eta1;
-
-                                HepLorentzVector tem_Eta0= mctrue_Eta0;
-                                HepLorentzVector tem_Eta1= mctrue_Eta1;
-                                HepLorentzVector tem_pp01= mctrue_pp01;
-                                HepLorentzVector tem_pm01= mctrue_pm01;
-
-                                m_mctruth_cos_gam1_Eta0=(temGam1_Eta0).cosTheta();
-                                m_mctruth_cos_gam2_Eta0=(temGam2_Eta0).cosTheta();
-                                m_mctruth_cos_gam1_Eta1=(temGam1_Eta1).cosTheta();
-                                m_mctruth_cos_gam2_Eta1=(temGam2_Eta1).cosTheta();
-
-                                m_mctruth_cos_Eta0=(tem_Eta0).cosTheta();
-                                m_mctruth_cos_Eta1=(tem_Eta1).cosTheta();
-                                m_mctruth_cos_pp=(tem_pp01).cosTheta();
-                                m_mctruth_cos_pm=(tem_pm01).cosTheta();
-*/
-
-
-
 			}
-//0422			m_tuple_angular->write();
+// TODO is need ?	m_tuple_angular->write();
 
 		}
 		m_idxmc = m_numParticle;
-		if(debug)cout<<__LINE__<<endl;
 		log << MSG::DEBUG << __LINE__ << "" << endmsg;
 
 	}
-
-	if(debug)cout<<__LINE__<<endl;
 	log << MSG::DEBUG << __LINE__ << "" << endmsg;
 
 	SmartDataPtr<EvtRecEvent> evtRecEvent(eventSvc(), EventModel::EvtRec::EvtRecEvent);

@@ -49,37 +49,29 @@ class JpsiToPiKKshort : public Algorithm
    
    NTuple::Array<double>	m_mctruth_P4_Pip_Kshort;
    NTuple::Array<double>   	m_mctruth_P4_Pin_Kshort;
-   NTuple::Array<double>   	m_mctruth_P4_Pin_Kstar;
-   NTuple::Array<double>   	m_mctruth_P4_Pip_Kstar;
-   NTuple::Array<double>   	m_mctruth_P4_Kp_Kstar;
-   NTuple::Array<double>   	m_mctruth_P4_Kn_Kstar;
+   NTuple::Array<double>   	m_mctruth_P4_Pi_Kstar;
+   NTuple::Array<double>   	m_mctruth_P4_K_Kstar;
    NTuple::Array<double>   	m_mctruth_P4_Kshort;
    NTuple::Array<double>   	m_mctruth_P4_Kstar;
 
    NTuple::Item<double>		m_mctruth_P_Pip_Kshort;
    NTuple::Item<double>   	m_mctruth_P_Pin_Kshort;
-   NTuple::Item<double>   	m_mctruth_P_Pin_Kstar;
-   NTuple::Item<double>   	m_mctruth_P_Pip_Kstar;
-   NTuple::Item<double>   	m_mctruth_P_Kp_Kstar;
-   NTuple::Item<double>   	m_mctruth_P_Kn_Kstar;
+   NTuple::Item<double>   	m_mctruth_P_Pi_Kstar;
+   NTuple::Item<double>   	m_mctruth_P_K_Kstar;
    NTuple::Item<double>   	m_mctruth_P_Kshort;
    NTuple::Item<double>   	m_mctruth_P_Kstar;
 
    NTuple::Item<double>   	m_mctruth_M_Pip_Kshort;
    NTuple::Item<double>   	m_mctruth_M_Pin_Kshort;
-   NTuple::Item<double>   	m_mctruth_M_Pin_Kstar;
-   NTuple::Item<double>   	m_mctruth_M_Pip_Kstar;
-   NTuple::Item<double>   	m_mctruth_M_Kp_Kstar;
-   NTuple::Item<double>   	m_mctruth_M_Kn_Kstar;
+   NTuple::Item<double>   	m_mctruth_M_Pi_Kstar;
+   NTuple::Item<double>   	m_mctruth_M_K_Kstar;
    NTuple::Item<double>   	m_mctruth_M_Kshort;
    NTuple::Item<double>   	m_mctruth_M_Kstar;
 
    NTuple::Item<double>   	m_mctruth_cos_Pip_Kshort;
    NTuple::Item<double>   	m_mctruth_cos_Pin_Kshort;
-   NTuple::Item<double>   	m_mctruth_cos_Pin_Kstar;
-   NTuple::Item<double>   	m_mctruth_cos_Pip_Kstar;
-   NTuple::Item<double>   	m_mctruth_cos_Kp_Kstar;
-   NTuple::Item<double>   	m_mctruth_cos_Kn_Kstar;
+   NTuple::Item<double>   	m_mctruth_cos_Pi_Kstar;
+   NTuple::Item<double>   	m_mctruth_cos_K_Kstar;
    NTuple::Item<double>   	m_mctruth_cos_Kshort;
    NTuple::Item<double>   	m_mctruth_cos_Kstar;
 
@@ -120,6 +112,9 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>    m_mctruth_cos_pp;
    NTuple::Item<double>    m_mctruth_cos_pm;
 
+   // if Kstar->K- pi+, set to 1, else set to 0.
+   NTuple::Item<int> m_mctruth_isAntiKstar;
+
 
    NTuple::Item<long>  m_cc;
    NTuple::Array<double>  m_vx0;
@@ -152,6 +147,9 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<long>  m_nGam;
    
    NTuple::Item<double>  m_chi2;
+
+   // if Kstar->K- pi+, set to 1, else set to 0.
+   NTuple::Item<int> m_isAntiKstar;
 
    NTuple::Array<double>  m_p_total;
    NTuple::Array<double>  m_p_Pip_Kshort;
