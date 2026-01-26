@@ -1198,9 +1198,9 @@ StatusCode JpsiToPiKKshort::execute()
 				if(svtxfit->Fit())
 					temp_dratio.push_back(svtxfit->decayLength()/svtxfit->decayLengthError());
 				else 
-					temp_dratio.push_back(0);
+					temp_dratio.push_back(-99);
 			} else {	
-				temp_dratio.push_back(0);
+				temp_dratio.push_back(-99);
 			}
 			temp_ipip.push_back(ipip[i]);
 			temp_ipin.push_back(ipin[j]);
