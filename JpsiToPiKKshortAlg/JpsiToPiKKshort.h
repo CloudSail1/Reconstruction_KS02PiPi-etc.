@@ -230,10 +230,17 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>  m_bkg_m_Pip_Pin        ; 
 
    // for count pi0 and eta
-   NTuple::Item<int> m_num_pi0;
-   NTuple::Item<int> m_num_eta;
-   NTuple::Item<double> m_mass_error_pi0;
-   NTuple::Item<double> m_mass_error_eta;
+   NTuple::Item<int>     m_index_pair_gamma;
+   NTuple::Array<int>    m_num_pi0;
+   NTuple::Array<int>    m_num_eta;
+   NTuple::Item<int>     m_index_candidate_pi0;
+   NTuple::Array<int>    m_index_first_pi0;
+   NTuple::Array<int>    m_index_second_pi0;
+   NTuple::Array<double> m_chisq_pi0;
+   NTuple::Item<int>     m_index_candidate_eta;
+   NTuple::Array<int>    m_index_first_eta;
+   NTuple::Array<int>    m_index_second_eta;
+   NTuple::Array<double> m_chisq_eta;
 
    NTuple::Item<double>  m_mPi0_bkg0_6C;
    NTuple::Item<double>  m_mPi0_bkg1_6C;
