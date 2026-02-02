@@ -1114,8 +1114,7 @@ StatusCode JpsiToPiKKshort::execute()
 	double min_mass_deviation = 9999;
 	int is_anti_Kstar = 9999;
 	for (int i; i<temp_pip.size(); i++) {
-		if (temp_pip[i]==id_pip_kshort && temp_pin[i]==id_pin_kshort)
-			continue;
+		if (temp_pip[i]==id_pip_kshort && temp_pin[i]==id_pin_kshort) {continue;}
 		
 		if (temp_pip[i]!=id_pip_kshort) {
 			// use pi+ and k-, so it is anti-kstar
