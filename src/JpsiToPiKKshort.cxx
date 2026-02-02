@@ -625,6 +625,8 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_P_Pin_Kshort		= ppp;
 					m_mctruth_M_Pin_Kshort 		= mmm;
 				}
+				if (mctrue_id == 221) {m_mctruth_num_eta++;}
+				if (mctrue_id == 111) {m_mctruth_num_pi0++;}
 
 // rm two eta
 /*
