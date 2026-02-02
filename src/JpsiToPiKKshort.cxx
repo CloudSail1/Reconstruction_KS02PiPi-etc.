@@ -1112,7 +1112,7 @@ StatusCode JpsiToPiKKshort::execute()
 
 	log << MSG::DEBUG << " select Kstar..." << endmsg;
 	double min_mass_deviation = 9999;
-	int is_anti_kstar = 9999;
+	int is_anti_Kstar = 9999;
 	for (int i; i<temp_pip.size(); i++) {
 		if (temp_pip[i]==id_pip_kshort && temp_pin[i]==id_pin_kshort)
 			continue;
@@ -1129,7 +1129,7 @@ StatusCode JpsiToPiKKshort::execute()
 					min_mass_deviation = mass_deviation;
 					id_pi_kstar = temp_pip[i];
 					id_k_kstar  = ikn[j];
-					is_anti_kstar = 1;
+					is_anti_Kstar = 1;
 				}
 			}
 		}
@@ -1145,7 +1145,7 @@ StatusCode JpsiToPiKKshort::execute()
 					min_mass_deviation = mass_deviation;
 					id_pi_kstar = temp_pin[i];
 					id_k_kstar  = ikp[j];
-					is_anti_kstar = 0;
+					is_anti_Kstar = 0;
 				}
 			}
 		}
@@ -1157,8 +1157,8 @@ StatusCode JpsiToPiKKshort::execute()
 	}
 	n_select_kstar_cutted++;
 
-	log << MSG::DEBUG << __LINE__ << " print info: pip_kshort pin_kshort pi_kstar k_kstar is_anti_kstar"
-		<< id_pip_kshort << " " << id_pin_kshort << " " << id_pi_kstar << " " << id_k_kstar << " " << is_anti_kstar << endmsg;
+	log << MSG::DEBUG << __LINE__ << " print info: pip_kshort pin_kshort pi_kstar k_kstar is_anti_Kstar"
+		<< id_pip_kshort << " " << id_pin_kshort << " " << id_pi_kstar << " " << id_k_kstar << " " << is_anti_Kstar << endmsg;
 	
 	RecMdcKalTrack *pip_kshortTrk = (*(evtRecTrkCol->begin()+id_pip_kshort))->mdcKalTrack();
 	RecMdcKalTrack *pin_kshortTrk = (*(evtRecTrkCol->begin()+id_pin_kshort))->mdcKalTrack();
@@ -1213,7 +1213,7 @@ StatusCode JpsiToPiKKshort::execute()
 
 	HepLorentzVector P_other_Kshort;
 	HepLorentzVector P_other_Kstar;
-	if (is_anti_kstar==0) {
+	if (is_anti_Kstar==0) {
 		P_other_Kshort	= P_Pip_Kshort + P_Pi_Kstar;
 		P_other_Kstar	= P_Pin_Kshort + P_K_Kstar;
 	} else {
@@ -1223,8 +1223,9 @@ StatusCode JpsiToPiKKshort::execute()
 
 	log << MSG::DEBUG << __LINE__ << " save data to ntuple" << endmsg;
 
-	m_chisq_Kshort = chisq_kshort;
-	m_chisq_kmfit = kmfit->chisq();
+	m_chisq_Kshort  = chisq_kshort;
+	m_chisq_kmfit   = kmfit->chisq();
+	m_is_anti_Kstar = is_anti_Kstar;
 
 	HepLorentzVector ptotal = (P_Pip_Kshort + P_Pin_Kshort + P_Pi_Kstar + P_K_Kstar);
 	for (int i;i<4;i++) {
