@@ -435,18 +435,6 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("bkg_m_Pip_Pin",	m_bkg_m_Pip_Pin   );
 			status = m_tuple->addItem("bkg_m_other_Kshort",		m_bkg_m_other_Kshort     );
 			status = m_tuple->addItem("bkg_m_other_Kstar",		m_bkg_m_other_Kstar     );
-
-			status = m_tuple->addItem("index_pair_gamma",    m_index_pair_gamma,    0, 50);
-			status = m_tuple->addItem("num_pi0",             m_index_pair_gamma,    m_num_pi0);
-			status = m_tuple->addItem("num_eta",             m_index_pair_gamma,    m_num_eta);
-			status = m_tuple->addItem("index_candidate_pi0", m_index_candidate_pi0, 0, 500);
-			status = m_tuple->addItem("index_first_pi0",     m_index_candidate_pi0, m_index_first_pi0);
-			status = m_tuple->addItem("index_second_pi0",    m_index_candidate_pi0, m_index_second_pi0);
-			status = m_tuple->addItem("chisq_pi0",           m_index_candidate_pi0, m_chisq_pi0);
-			status = m_tuple->addItem("index_candidate_eta", m_index_candidate_eta, 0, 500);
-			status = m_tuple->addItem("index_first_eta",     m_index_candidate_eta, m_index_first_eta);
-			status = m_tuple->addItem("index_second_eta",    m_index_candidate_eta, m_index_second_eta);
-			status = m_tuple->addItem("chisq_eta",           m_index_candidate_eta, m_chisq_eta);
 		}
 		else   
 		{ 
@@ -1285,104 +1273,8 @@ StatusCode JpsiToPiKKshort::execute()
 		m_chisq_kmfit = kmfit->chisq();
 	}
 
-	log << MSG::DEBUG << __LINE__ << " counting pi0 eta..." << endmsg;
-	class GammaPairCounter {
-	  private:
-		double                       chisq_cut_;
-		SmartDataPtr<EvtRecTrackCol> trk_col_;
-		std::vector<int>             good_gamma_container_;
-		double                       mass_;
-		std::vector<std::pair<std::pair<int, int>, KalmanKinematicFit*> >  data_container_;
-		GammaPairCounter& init_data_container_() {
-			this->data_container_.clear();
-			for (int i=0; i<this->good_gamma_container_.size()-1; i++) {
-				for (int j=i+1; j<this->good_gamma_container_.size(); j++) {
-					this->data_container_.push_back(std::make_pair(std::make_pair(i,j), KalmanKinematicFit::instance()));
-				}
-			}
-			return *this;
-		}
-		GammaPairCounter& do_kmfit_() {
-			for (std::vector<std::pair<std::pair<int, int>, KalmanKinematicFit*> >::iterator it=this->data_container_.begin();
-				it!=this->data_container_.end(); ++it) {
-				it->second->init();
-				it->second->setChisqCut(this->chisq_cut_);
-				it->second->AddTrack(0, 0.0, (*(this->trk_col_->begin()+it->first.first))->emcShower());
-				it->second->AddTrack(1, 0.0, (*(this->trk_col_->begin()+it->first.second))->emcShower());
-				it->second->AddResonance(0, this->mass_, 0, 1);
-				it->second->Fit();
-			}
-		}
-		long calculate_n_select_2(int n) {
-			if (n <= 1) return 0;
-			long result = 1;
-			for (int i=n; i!=2; i--) {
-				result = result * i;
-			}
-			return result;
-		}
-	  public:
-		GammaPairCounter(SmartDataPtr<EvtRecTrackCol> trk_col,
-			vector<int> good_gamma_container,
-			double      chisq_cut=9999):
-			trk_col_(trk_col), chisq_cut_(chisq_cut),
-			good_gamma_container_(good_gamma_container) {
-			this->init_data_container_();
-		}
-		int                 size() {return this->data_container_.size();}
-		std::pair<int, int> get_pair(int index) {return this->data_container_[index].first;}
-		KalmanKinematicFit* get_kmfit(int index) {return this->data_container_[index].second;}
-		double              get_chisq(int index) {return this->data_container_[index].second->chisq();}
-		std::vector<double> get_chisq_list() {
-			std::vector<double> chisq_list;
-			for (int i=0; i<this->data_container_.size(); i++) {
-				chisq_list.push_back(this->get_chisq(i));
-			}
-			return chisq_list;
-		}
-		std::vector<int> count_chisq_num(std::vector<double> chisq_cuts) {
-			std::vector<double> chisq_list = this->get_chisq_list();
-			std::vector<int>    result;
-			for (std::vector<double>::iterator cut=chisq_cuts.begin();
-				cut!=chisq_cuts.end(); ++cut) {
-				int chisq_num = 0;
-				for (std::vector<double>::iterator chisq=chisq_list.begin();
-				chisq!=chisq_list.end(); ++chisq) {
-					if (*chisq < *cut)
-						chisq_num++;
-				}
-				result.push_back(chisq_num);
-			}
-			return result;
-		}
-		std::vector<int> pair_num(std::vector<double> chisq_cuts) {
-			std::vector<int> chisq_num = this->count_chisq_num(chisq_cuts);
-			std::vector<int> result;
-			for (std::vector<int>::iterator num=chisq_num.begin();
-				num!=chisq_num.end(); ++num) {
-				int pair_num = -1;
-				for (int i=0; i<8; i++) {
-					if (*num < this->calculate_n_select_2(i)) {
-						pair_num = i-1; // use lower
-					}
-				}
-				result.push_back(pair_num);
-			}
-		}
-	};
-	std::vector<double> chisq_cut_list;
-	chisq_cut_list.push_back(5);
-	chisq_cut_list.push_back(20);
-	chisq_cut_list.push_back(40);
-	chisq_cut_list.push_back(100);
-	chisq_cut_list.push_back(200);
-	chisq_cut_list.push_back(1000);
-	GammaPairCounter counter_pi0(evtRecTrkCol, iGam);
-	std::vector<int> num_pi0 = counter_pi0.pair_num(chisq_cut_list);
-	GammaPairCounter counter_eta(evtRecTrkCol, iGam);
-	std::vector<int> num_eta = counter_eta.pair_num(chisq_cut_list);
 
-	log << MSG::DEBUG << __LINE__ << " init lorentz vector from orig trk" << endmsg;
+	log << MSG::DEBUG << __LINE__ << " init lorentz vector from orig trk";
 	Hep3Vector betaLab = psip.boostVector();
 
 	// .boost() will change the value, check if you use after boost.
@@ -1398,25 +1290,6 @@ StatusCode JpsiToPiKKshort::execute()
 	HepLorentzVector P_other_Kstar	= P_Pin_Kshort + P_Kp_Kstar;
 
 	log << MSG::DEBUG << __LINE__ << " save data to ntuple" << endmsg;
-
-	m_index_pair_gamma = chisq_cut_list.size();
-	for (int i=0; i<chisq_cut_list.size(); i++) {
-		m_num_pi0[i] = num_pi0[i];
-		m_num_eta[i] = num_eta[i];
-	}
-	// may useless
-	m_index_candidate_pi0 = counter_pi0.size();
-	for (int i=0; i<counter_pi0.size(); i++) {
-		m_index_first_pi0[i]  = counter_pi0.get_pair(i).first;
-		m_index_second_pi0[i] = counter_pi0.get_pair(i).second;
-		m_chisq_pi0[i]        = counter_pi0.get_chisq(i);
-	}
-	m_index_candidate_eta = counter_eta.size();
-	for (int i=0; i<counter_eta.size(); i++) {
-		m_index_first_eta[i]  = counter_eta.get_pair(i).first;
-		m_index_second_eta[i] = counter_eta.get_pair(i).second;
-		m_chisq_eta[i]        = counter_eta.get_chisq(i);
-	}
 
 	HepLorentzVector ptotal = (P_Pip_Kshort + P_Pin_Kshort + P_Pin_Kstar + P_Kp_Kstar);
 	for (int i;i<4;i++) {
