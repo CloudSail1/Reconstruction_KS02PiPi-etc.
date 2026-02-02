@@ -120,6 +120,9 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>    m_mctruth_cos_pp;
    NTuple::Item<double>    m_mctruth_cos_pm;
 
+   NTuple::Item<int>    m_mctruth_num_eta;
+   NTuple::Item<int>    m_mctruth_num_pi0;
+
 
    NTuple::Item<long>  m_cc;
    NTuple::Array<double>  m_vx0;
@@ -211,6 +214,9 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>   m_ratio_other ;
 
    NTuple::Item<double>   m_recoil;
+
+   NTuple::Item<int>      m_num_eta;
+   NTuple::Item<int>      m_num_pi0;
 
    NTuple::Item<double>  m_bkg_m_Pip_Kshort     ; 
    NTuple::Item<double>  m_bkg_m_Pin_Kshort     ; 

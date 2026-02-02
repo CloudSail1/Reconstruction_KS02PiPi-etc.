@@ -161,6 +161,9 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple_angular->addItem("mctruth_P4_Kn_Kstar",	4,m_mctruth_P4_Kn_Kstar		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kshort",		4,m_mctruth_P4_Kshort		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kstar",		4,m_mctruth_P4_Kstar		);
+
+			status = m_tuple_angular->addItem("mctruth_num_eta",		m_mctruth_num_eta	);
+			status = m_tuple_angular->addItem("mctruth_num_pi0",		m_mctruth_num_pi0	);
 		}
 		else
 		{
@@ -420,6 +423,9 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("cos_other_Kstar",	m_cos_other_Kstar     );
 
 			status = m_tuple->addItem("recoil",		m_recoil	     );
+
+			status = m_tuple->addItem("num_eta",		m_num_eta	     );
+			status = m_tuple->addItem("num_pi0",		m_num_pi0	     );
 
 			status = m_tuple->addItem("bkg_m_Pip_kshort",	m_bkg_m_Pip_Kshort);
 			status = m_tuple->addItem("bkg_m_Pin_Kshort",	m_bkg_m_Pin_Kshort);
