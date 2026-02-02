@@ -1275,6 +1275,60 @@ StatusCode JpsiToPiKKshort::execute()
 		m_chisq_kmfit = kmfit->chisq();
 	}
 
+	log << MSG::DEBUG << __LINE__ << " counting eta and pi0..." << endmsg;
+	HepLorentzVector shower2lorentz_(RecEmcShower *trk) {
+		double ptrk = trk->energy();
+		double e = sqrt(ptrk*ptrk + mass * mass);
+		double the = trk->theta();
+		double phi = trk->phi();
+		return HepLorentzVector p4(ptrk * sin(the) * cos(phi), 
+			ptrk * sin(the) * sin(phi),
+			ptrk * cos(the),
+			e);
+	}
+
+	std::vector<std::pair<int, int>> vec_pair_gamma;
+	for (int i=0; i<iGam.size()-1; i++) {
+		for (int j=i; j<iGam.size(); j++) {
+			vec_pair_gamma.push_back(make_pair(iGam[i], iGam[j]));
+		}
+	}
+	// reference: https://docbes3.ihep.ac.cn/DocDB/0018/001805/001/MEMO_Semileptonic_Ds_Decays_v1.1.pdf 4.5
+	 int num_eta = 0;
+	for (int i=0; i<vec_pair_gamma.size(); i++) {
+		RecEmcShower *first_gamma  = (*(evtRecTrkCol->begin()+vec_pair_gamma[i].first ))->emcShower();
+		RecEmcShower *second_gamma = (*(evtRecTrkCol->begin()+vec_pair_gamma[i].second))->emcShower();
+		HepLorentzVector total_p4  = shower2lorentz(first_gamma) + shower2lorentz(second_gamma);
+        
+		KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
+		kmfit->init();
+		kmfit->setChisqCut(20);
+		kmfit->AddTrack(0, 0.0, first_gamma );
+		kmfit->AddTrack(0, 0.0, second_gamma);
+		kmfit->AddResonance(0, 0.547853, 0, 1);
+		if (!kmfit->Fit()) {continue;}
+		if (0.5 <= total_p4.m() && total_p4.m() <= 0.57) {
+			num_eta++;
+		}
+	}
+	int num_pi0 = 0;
+	for (int i=0; i<vec_pair_gamma.size(); i++) {
+		RecEmcShower *first_gamma  = (*(evtRecTrkCol->begin()+vec_pair_gamma[i].first ))->emcShower();
+		RecEmcShower *second_gamma = (*(evtRecTrkCol->begin()+vec_pair_gamma[i].second))->emcShower();
+		HepLorentzVector total_p4  = shower2lorentz(first_gamma) + shower2lorentz(second_gamma);
+        
+		KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
+		kmfit->init();
+		kmfit->setChisqCut(20);
+		kmfit->AddTrack(0, 0.0, first_gamma );
+		kmfit->AddTrack(0, 0.0, second_gamma);
+		kmfit->AddResonance(0, 0.1349766, 0, 1);
+		if (!kmfit->Fit()) {continue;}
+		if (0.115 <= total_p4.m() && total_p4.m() <= 0.15) {
+			num_pi0++;
+		}
+	}
+
 
 	log << MSG::DEBUG << __LINE__ << " init lorentz vector from orig trk";
 	Hep3Vector betaLab = psip.boostVector();
@@ -1303,6 +1357,9 @@ StatusCode JpsiToPiKKshort::execute()
 		m_p_other_Kshort[i]	= P_other_Kshort[i];
 		m_p_other_Kstar[i]	= P_other_Kstar[i];
 	}
+
+	m_num_eta = num_eta;
+	m_num_pi0 = num_pi0;
 		
 	m_d3_Pip_Kshort		= P_Pip_Kshort.rho();
 	m_d3_Pin_Kshort		= P_Pin_Kshort.rho();
