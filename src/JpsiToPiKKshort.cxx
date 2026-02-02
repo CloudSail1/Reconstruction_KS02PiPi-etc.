@@ -620,10 +620,9 @@ StatusCode JpsiToPiKKshort::execute()
 
 				log << MSG::DEBUG << __LINE__ << "" << endmsg;
 			}
-// TODO is need ?	m_tuple_angular->write();
-
 		}
 		m_idxmc = m_numParticle;
+		// m_tuple_angular->write();
 		log << MSG::DEBUG << __LINE__ << "" << endmsg;
 
 	}
@@ -1113,14 +1112,14 @@ StatusCode JpsiToPiKKshort::execute()
 	log << MSG::DEBUG << " select Kstar..." << endmsg;
 	double min_mass_deviation = 9999;
 	int is_anti_Kstar = 9999;
-	for (int i; i<temp_pip.size(); i++) {
+	for (int i=0; i<temp_pip.size(); i++) {
 		if (temp_pip[i]==id_pip_kshort && temp_pin[i]==id_pin_kshort) {continue;}
 		
 		if (temp_pip[i]!=id_pip_kshort) {
 			// use pi+ and k-, so it is anti-kstar
 			RecMdcKalTrack *trk_pi = (*(evtRecTrkCol->begin()+temp_pip[i]))->mdcKalTrack();
 			WTrackParameter wtrk_pi = WTrackParameter(xmass[2], trk_pi->getZHelixP(), trk_pi->getZErrorP());
-			for (int j; j<ikn.size(); j++) {
+			for (int j=0; j<ikn.size(); j++) {
 				RecMdcKalTrack *trk_k = (*(evtRecTrkCol->begin()+ikn[j]))->mdcKalTrack();
 				WTrackParameter wtrk_k = WTrackParameter(xmass[3], trk_k->getZHelixP(), trk_k->getZErrorP());
 				double mass_deviation = fabs((wtrk_pi.p() + wtrk_k.p()).m() - 0.896);
@@ -1136,7 +1135,7 @@ StatusCode JpsiToPiKKshort::execute()
 			// use pi- and k+, so it is kstar
 			RecMdcKalTrack *trk_pi = (*(evtRecTrkCol->begin()+temp_pin[i]))->mdcKalTrack();
 			WTrackParameter wtrk_pi = WTrackParameter(xmass[2], trk_pi->getZHelixP(), trk_pi->getZErrorP());
-			for (int j; j<ikp.size(); j++) {
+			for (int j=0; j<ikp.size(); j++) {
 				RecMdcKalTrack *trk_k = (*(evtRecTrkCol->begin()+ikp[j]))->mdcKalTrack();
 				WTrackParameter wtrk_k = WTrackParameter(xmass[3], trk_k->getZHelixP(), trk_k->getZErrorP());
 				double mass_deviation = fabs((wtrk_pi.p() + wtrk_k.p()).m() - 0.896);
