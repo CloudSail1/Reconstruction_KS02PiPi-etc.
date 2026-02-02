@@ -508,8 +508,6 @@ StatusCode JpsiToPiKKshort::execute()
 			bool psipDecay = false;
 			int rootIndex = -1;
 			bool strange =false;
-			m_mctruth_num_pi0 = 0;
-			m_mctruth_num_eta = 0;
 			Event::McParticleCol::iterator iter_mc;
 			for(iter_mc=mcParticleCol->begin(); iter_mc != mcParticleCol->end();
 					iter_mc++)
@@ -621,10 +619,6 @@ StatusCode JpsiToPiKKshort::execute()
 					m_mctruth_P_Pin_Kshort		= ppp;
 					m_mctruth_M_Pin_Kshort 		= mmm;
 				}
-				if (mctrue_id == 111)
-					m_mctruth_num_pi0++;
-				if (mctrue_id == 221)
-					m_mctruth_num_eta++;
 
 // rm two eta
 /*
