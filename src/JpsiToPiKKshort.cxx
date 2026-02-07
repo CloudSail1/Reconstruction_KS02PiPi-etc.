@@ -55,6 +55,18 @@ bool debug = false;
 const double mka = xmass[3];
 int n_total_event,n_charge_cutted,n_charged_partical_cutted,Ncut2,n_particle_number_cutted,Ncut4,Ncut5,Ncut6,Ncut7,Ncut8,Ncut9,Ncut10,n_pip_pin_vtxfit_cutted,n_vtxfit_kshort_cutted,n_vtxfit_kstar_cutted,n_kmfit_cutted,n_mass_cutted,n_vtxfit_other_Kshort_ok,n_vtxfit_other_Kstar_ok,n_select_kstar_cutted;
 ////////////////////////////////////////////////////////////////////
+HepLorentzVector shower2lorentz_(RecEmcShower *trk) {
+	double ptrk = trk->energy();
+	double e = sqrt(ptrk*ptrk);
+	double the = trk->theta();
+	double phi = trk->phi();
+	return HepLorentzVector(ptrk * sin(the) * cos(phi), 
+		ptrk * sin(the) * sin(phi),
+		ptrk * cos(the),
+		e);
+}
+
+
 JpsiToPiKKshort::JpsiToPiKKshort(const std::string& name, ISvcLocator* pSvcLocator) :
 	Algorithm(name, pSvcLocator) 
 {  
@@ -157,15 +169,11 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple_angular->addItem("mctruth_P4_K_Kstar",	4,m_mctruth_P4_K_Kstar		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kshort",		4,m_mctruth_P4_Kshort		);
 			status = m_tuple_angular->addItem("mctruth_P4_Kstar",		4,m_mctruth_P4_Kstar		);
-<<<<<<< HEAD
 
 			status = m_tuple_angular->addItem("mctruth_num_eta",		m_mctruth_num_eta	);
 			status = m_tuple_angular->addItem("mctruth_num_pi0",		m_mctruth_num_pi0	);
-||||||| merged common ancestors
-=======
 
 			status = m_tuple_angular->addItem("mctruth_is_anti_Kstar",        m_mctruth_is_anti_Kstar       );
->>>>>>> master
 		}
 		else
 		{
@@ -1200,43 +1208,35 @@ StatusCode JpsiToPiKKshort::execute()
 	kmfit->AddTrack(2,wvpi_kstarTrk);
 	kmfit->AddTrack(3,wvk_kstarTrk);
 	kmfit->AddFourMomentum(0,psip);
-	if(!kmfit->Fit()) {
+	if (!kmfit->Fit()) {
 		log << MSG::DEBUG << __LINE__ << " kmfit failure" << endmsg;
 		return sc;
 	} else {
 		n_kmfit_cutted++;
 	}
 
-	log << MSG::DEBUG << __LINE__ << " counting eta and pi0..." << endmsg;
-	HepLorentzVector shower2lorentz_(RecEmcShower *trk) {
-		double ptrk = trk->energy();
-		double e = sqrt(ptrk*ptrk + mass * mass);
-		double the = trk->theta();
-		double phi = trk->phi();
-		return HepLorentzVector p4(ptrk * sin(the) * cos(phi), 
-			ptrk * sin(the) * sin(phi),
-			ptrk * cos(the),
-			e);
-	}
-
-	std::vector<std::pair<int, int>> vec_pair_gamma;
-	for (int i=0; i<iGam.size()-1; i++) {
+	log << MSG::DEBUG << __LINE__ << " counting eta and pi0 with " << iGam.size() << " gamma..." << endmsg;
+	std::vector<std::pair<int, int> > vec_pair_gamma;
+	log << MSG::DEBUG << __LINE__ << endmsg;
+	for (int i=0; i<iGam.size(); i++) {
 		for (int j=i; j<iGam.size(); j++) {
+			if (i==j) {continue;}
 			vec_pair_gamma.push_back(make_pair(iGam[i], iGam[j]));
 		}
 	}
+	log << MSG::DEBUG << __LINE__ << endmsg;
 	// reference: https://docbes3.ihep.ac.cn/DocDB/0018/001805/001/MEMO_Semileptonic_Ds_Decays_v1.1.pdf 4.5
 	 int num_eta = 0;
 	for (int i=0; i<vec_pair_gamma.size(); i++) {
 		RecEmcShower *first_gamma  = (*(evtRecTrkCol->begin()+vec_pair_gamma[i].first ))->emcShower();
 		RecEmcShower *second_gamma = (*(evtRecTrkCol->begin()+vec_pair_gamma[i].second))->emcShower();
-		HepLorentzVector total_p4  = shower2lorentz(first_gamma) + shower2lorentz(second_gamma);
+		HepLorentzVector total_p4  = shower2lorentz_(first_gamma) + shower2lorentz_(second_gamma);
         
 		KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
 		kmfit->init();
 		kmfit->setChisqCut(20);
 		kmfit->AddTrack(0, 0.0, first_gamma );
-		kmfit->AddTrack(0, 0.0, second_gamma);
+		kmfit->AddTrack(1, 0.0, second_gamma);
 		kmfit->AddResonance(0, 0.547853, 0, 1);
 		if (!kmfit->Fit()) {continue;}
 		if (0.5 <= total_p4.m() && total_p4.m() <= 0.57) {
@@ -1244,16 +1244,17 @@ StatusCode JpsiToPiKKshort::execute()
 		}
 	}
 	int num_pi0 = 0;
+	log << MSG::DEBUG << __LINE__ << endmsg;
 	for (int i=0; i<vec_pair_gamma.size(); i++) {
 		RecEmcShower *first_gamma  = (*(evtRecTrkCol->begin()+vec_pair_gamma[i].first ))->emcShower();
 		RecEmcShower *second_gamma = (*(evtRecTrkCol->begin()+vec_pair_gamma[i].second))->emcShower();
-		HepLorentzVector total_p4  = shower2lorentz(first_gamma) + shower2lorentz(second_gamma);
+		HepLorentzVector total_p4  = shower2lorentz_(first_gamma) + shower2lorentz_(second_gamma);
         
 		KalmanKinematicFit *kmfit = KalmanKinematicFit::instance();
 		kmfit->init();
 		kmfit->setChisqCut(20);
 		kmfit->AddTrack(0, 0.0, first_gamma );
-		kmfit->AddTrack(0, 0.0, second_gamma);
+		kmfit->AddTrack(1, 0.0, second_gamma);
 		kmfit->AddResonance(0, 0.1349766, 0, 1);
 		if (!kmfit->Fit()) {continue;}
 		if (0.115 <= total_p4.m() && total_p4.m() <= 0.15) {

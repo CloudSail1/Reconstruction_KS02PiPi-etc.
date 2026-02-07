@@ -112,19 +112,12 @@ class JpsiToPiKKshort : public Algorithm
    NTuple::Item<double>    m_mctruth_cos_pp;
    NTuple::Item<double>    m_mctruth_cos_pm;
 
-   // if Kstar->K- pi+, set to 1, else set to 0.
-   NTuple::Item<int> m_mctruth_is_anti_Kstar;
-
-<<<<<<< HEAD
    NTuple::Item<int>    m_mctruth_num_eta;
    NTuple::Item<int>    m_mctruth_num_pi0;
 
-||||||| merged common ancestors
-=======
    // if Kstar->K- pi+, set to 1, else set to 0.
    NTuple::Item<int> m_mctruth_is_anti_Kstar;
 
->>>>>>> master
 
    NTuple::Item<long>  m_cc;
    NTuple::Array<double>  m_vx0;
