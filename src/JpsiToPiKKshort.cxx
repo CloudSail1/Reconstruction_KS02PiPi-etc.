@@ -1223,6 +1223,7 @@ StatusCode JpsiToPiKKshort::execute()
 
 	m_chisq_Kshort  = chisq_kshort;
 	m_chisq_kmfit   = kmfit->chisq();
+	m_ratio_Kshort  = max_ratio;
 	m_is_anti_Kstar = is_anti_Kstar;
 
 	HepLorentzVector ptotal = (P_Pip_Kshort + P_Pin_Kshort + P_Pi_Kstar + P_K_Kstar);
