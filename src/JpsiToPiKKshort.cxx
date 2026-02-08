@@ -1291,19 +1291,19 @@ StatusCode JpsiToPiKKshort::execute()
 StatusCode JpsiToPiKKshort::finalize() 
 {
 	MsgStream log(msgSvc(), name());
-	log << MSG::INFO << "in finalize()" << endmsg;
-	log << MSG::INFO << "total event number:                " << n_total_event		<< endmsg;
-	log << MSG::INFO << "ntot==4, nCharge==0:               " << n_charge_cutted		<< endmsg;
-	log << MSG::INFO << "nChp==2, nChn==2:                  " << n_charged_partical_cutted 	<< endmsg;
-	log << MSG::INFO << "npip*npin==2&&(nkp+nkn)==1         " << n_particle_number_cutted	<< endmsg;
-	log << MSG::INFO << "select kshort success              " << n_pip_pin_vtxfit_cutted	<< endmsg;
-	log << MSG::INFO << "select kstar success               " << n_select_kstar_cutted      << endmsg;
-	log << MSG::INFO << "vertex fit for kshort success	" << n_vtxfit_kshort_cutted	<< endmsg;
-	log << MSG::INFO << "vertex fit for kstar success	" << n_vtxfit_kstar_cutted	<< endmsg;
-	log << MSG::INFO << "vertex fit for other Kshort success" << n_vtxfit_other_Kshort_ok	<< endmsg;
-	log << MSG::INFO << "vertex fit for other Kstar success	" << n_vtxfit_other_Kstar_ok	<< endmsg;
-	log << MSG::INFO << "kinematic fit success		" << n_kmfit_cutted		<< endmsg;
-	log << MSG::INFO << "mass check succes			" << n_mass_cutted		<< endmsg;
+	log << MSG::FATAL << "in finalize()" << endmsg;
+	log << MSG::FATAL << "total event number:                " << n_total_event		<< endmsg;
+	log << MSG::FATAL << "ntot==4, nCharge==0:               " << n_charge_cutted		<< endmsg;
+	log << MSG::FATAL << "nChp==2, nChn==2:                  " << n_charged_partical_cutted 	<< endmsg;
+	log << MSG::FATAL << "npip*npin==2&&(nkp+nkn)==1         " << n_particle_number_cutted	<< endmsg;
+	log << MSG::FATAL << "select kshort success              " << n_pip_pin_vtxfit_cutted	<< endmsg;
+	log << MSG::FATAL << "select kstar success               " << n_select_kstar_cutted      << endmsg;
+	log << MSG::FATAL << "vertex fit for kshort success	" << n_vtxfit_kshort_cutted	<< endmsg;
+	log << MSG::FATAL << "vertex fit for kstar success	" << n_vtxfit_kstar_cutted	<< endmsg;
+	log << MSG::FATAL << "vertex fit for other Kshort success" << n_vtxfit_other_Kshort_ok	<< endmsg;
+	log << MSG::FATAL << "vertex fit for other Kstar success	" << n_vtxfit_other_Kstar_ok	<< endmsg;
+	log << MSG::FATAL << "kinematic fit success		" << n_kmfit_cutted		<< endmsg;
+	log << MSG::FATAL << "mass check succes			" << n_mass_cutted		<< endmsg;
 	return StatusCode::SUCCESS;
 }
 // *****************************************************************
