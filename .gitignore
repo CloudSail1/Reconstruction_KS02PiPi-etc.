@@ -1,3 +1,4 @@
 /tags
 /*-opt
-/fit/*.png
+/fit/
+!/fit/fit.cxx
