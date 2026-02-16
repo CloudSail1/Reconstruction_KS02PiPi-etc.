@@ -930,9 +930,9 @@ StatusCode JpsiToPiKKshort::execute()
 	ikn.clear();
 	iep.clear();
 	ien.clear();
-	ParticleID *pid = ParticleID::instance();
 	for(int i = 0; i < nChp; i++)
 	{
+		ParticleID *pid = ParticleID::instance();
 		log << MSG::DEBUG << __LINE__ << " in loop with index" << i << endmsg;
 		EvtRecTrackIterator itTrk = evtRecTrkCol->begin() + iChrgp[i];
 		pid->init();
@@ -971,6 +971,7 @@ StatusCode JpsiToPiKKshort::execute()
 	}
 	for(int i = 0; i < nChn; i++)//chrn指  带负电径迹
 	{
+		ParticleID *pid = ParticleID::instance();
 		log << MSG::DEBUG << __LINE__ << " in loop with index " << i << endmsg;
 		EvtRecTrackIterator itTrk = evtRecTrkCol->begin() + iChrgn[i];
 		pid->init();
