@@ -943,7 +943,7 @@ StatusCode JpsiToPiKKshort::execute()
 		pid->identify(pid->onlyPion() | pid->onlyKaon() | pid->onlyProton());    // seperater Pion/Kaon
 		pid->calculate();
 		if(!(pid->IsPidInfoValid())) continue;
-		RecMdcTrack* mdcTrk = (*itTrk)->mdcTrack();
+		RecMdcKalTrack* mdcTrk = (*itTrk)->mdcKalTrack();
 		double max_prob = 0;
 		int    index    = -1;
 		for (int i=0; i<5; i++) {
@@ -964,9 +964,18 @@ StatusCode JpsiToPiKKshort::execute()
 		}
 		if (index==0) log << MSG::ERROR << __LINE__ << " PID error, electron be selected." << endmsg;
 		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
-		if (index==2) ipip.push_back(iChrgp[i]);
-		if (index==3) ikp.push_back(iChrgp[i]);
-		if (index==4) ipp.push_back(iChrgp[i]);
+		if (index==2) {
+			ipip.push_back(iChrgp[i]);
+			mdcTrk->setPidType(RecMdcKalTrack::pion);
+		}
+		if (index==3) {
+			ikp.push_back(iChrgp[i]);
+			mdcTrk->setPidType(RecMdcKalTrack::kaon);
+		}
+		if (index==4) {
+			ipp.push_back(iChrgp[i]);
+			mdcTrk->setPidType(RecMdcKalTrack::proton);
+		}
 		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	for(int i = 0; i < nChn; i++)//chrn指  带负电径迹
@@ -982,7 +991,7 @@ StatusCode JpsiToPiKKshort::execute()
 		pid->identify(pid->onlyPion() | pid->onlyKaon() |pid->onlyProton());    // seperater Pion/Kaon
 		pid->calculate();
 		if(!(pid->IsPidInfoValid())) continue;
-		RecMdcTrack* mdcTrk = (*itTrk)->mdcTrack();
+		RecMdcKalTrack* mdcTrk = (*itTrk)->mdcKalTrack();
 		double max_prob = 0;
 		int    index    = -1;
 		for (int i=0; i<5; i++) {
@@ -1003,9 +1012,18 @@ StatusCode JpsiToPiKKshort::execute()
 		}
 		if (index==0) log << MSG::ERROR << __LINE__ << " PID error, electron be selected." << endmsg;
 		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
-		if (index==2) ipin.push_back(iChrgn[i]);
-		if (index==3) ikn.push_back(iChrgn[i]);
-		if (index==4) ipm.push_back(iChrgn[i]);
+		if (index==2) {
+			ipin.push_back(iChrgn[i]);
+			mdcTrk->setPidType(RecMdcKalTrack::pion);
+		}
+		if (index==3) {
+			ikn.push_back(iChrgn[i]);
+			mdcTrk->setPidType(RecMdcKalTrack::kaon);
+		}
+		if (index==4) {
+			ipm.push_back(iChrgn[i]);
+			mdcTrk->setPidType(RecMdcKalTrack::proton);
+		}
 		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	int npp = ipp.size();
@@ -1209,6 +1227,7 @@ StatusCode JpsiToPiKKshort::execute()
 	kmfit->AddTrack(2,wvpi_kstarTrk);
 	kmfit->AddTrack(3,wvk_kstarTrk);
 	kmfit->AddFourMomentum(0,psip);
+	kmfit->AddResonance(1, 0.4976, 0, 1);
 	if (!kmfit->Fit()) {
 		log << MSG::DEBUG << __LINE__ << " kmfit failure" << endmsg;
 		return sc;

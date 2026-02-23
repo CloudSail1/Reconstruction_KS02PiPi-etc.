@@ -42,15 +42,15 @@ void fit()
 {
 	draw_inmc("m_Kstar",      "m_Kstar", 0, 3, "m_Kshort!=0");
 	draw_inmc("m_Kshort",     "m_Kshort", 0.4, 0.6, "m_Kshort!=0");
-	draw_inmc("chisq_kmfit",  "chisq_kmfit", 0, 300, "m_Kshort!=0");
+	draw_inmc("chisq_kmfit",  "chisq_kmfit", 0, 3, "chisq_kmfit!=0");
 	draw_inmc("ratio_Kshort", "ratio_Kshort", 0, 10, "m_Kshort!=0");
-	draw_inmc("m_Kstar",      "m_Kstar_cutted", 0, 3, "ratio_Kshort>2&&num_pi0==0");
-	draw_inmc("m_Kshort",     "m_Kshort_cutted", 0.4, 0.6, "ratio_Kshort>2&&num_pi0==0");
-	draw_inmc("chisq_kmfit",  "chisq_kmfit_cutted", 0, 300, "ratio_Kshort>2&&num_pi0==0");
-	draw_inmc("ratio_Kshort", "ratio_Kshort_cutted", 0, 10, "ratio_Kshort>2&&num_pi0==0");
+	draw_inmc("m_Kstar",      "m_Kstar_cutted", 0, 3, "ratio_Kshort>2");
+	draw_inmc("m_Kshort",     "m_Kshort_cutted", 0.4, 0.6, "ratio_Kshort>2");
+	draw_inmc("chisq_kmfit",  "chisq_kmfit_cutted", 0, 300, "ratio_Kshort>2");
+	draw_inmc("ratio_Kshort", "ratio_Kshort_cutted", 0, 10, "ratio_Kshort>2");
 	Double_t lo = 0.3;
 	Double_t up = 0.7;
-	draw_fit("m_Kshort", "m_Kshort_fitted", lo, up, "ratio_Kshort>2&&num_pi0==0");
+	draw_fit("m_Kshort", "m_Kshort_fitted", lo, up, "m_Kshort!=-100");
 }
 
 
@@ -64,12 +64,12 @@ void draw_fit(std::string target, std::string file_name, Double_t lo, Double_t u
 	chain_data.Add("/scratchfs/bes/cloudsail/JpsiToPiKKshort/master/run/data.root");
 	
 	RooRealVar mass("mass", "mass", lo, up);
-	RooRealVar mean = RooRealVar("mean", "mean",0, -0.5, 0.5);
-	RooRealVar sigma = RooRealVar("sigma", "sigma", 0.1, 1e-4, 0.1);
+	RooRealVar mean = RooRealVar("mean", "mean", 0, -0.5, 0.5);
+	RooRealVar sigma = RooRealVar("sigma", "sigma", 1e-4, 0, 1);
 	RooGaussian *gaus = new RooGaussian("gaus", "gaus", mass, mean, sigma);
 	
 	int i_dcy_tr[n_hist];
-	int color[n_hist] = {2,3,4,5,6,7,8,9};
+	int color[n_hist] = {2,3,4,5,6,7,9,22};
 	int line_style[n_hist] = {9,10,10,10,10,10,10,10};
 
 	char hs_title[200];
@@ -81,7 +81,7 @@ void draw_fit(std::string target, std::string file_name, Double_t lo, Double_t u
 	RooRealVar  *rv[n_hist];
 	RooExtendPdf *rep[n_hist];
 	char hname[20], rhname[20], rpname[20], rvname[20], repname[20];
-	char varexp[20];
+	char varexp[100];
 	char selection_cc[100], selection[100];
 	for (int i=0;i<n_hist;i++) {
 		i_dcy_tr[i] = i;
@@ -102,7 +102,7 @@ void draw_fit(std::string target, std::string file_name, Double_t lo, Double_t u
 		sprintf(rpname, "rp%i", i);
 		rp[i] = new RooHistPdf(rpname, rpname, mass, *rh[i], 3);
 		sprintf(rvname, "rv%i", i);
-		rv[i] = new RooRealVar(rvname, rvname, 1e-3*h[i]->Integral());
+		rv[i] = new RooRealVar(rvname, rvname, h[i]->Integral(), 0, 3*h[i]->Integral());
 		sprintf(repname, "rep%i", i);
 		rep[i] = new RooExtendPdf(repname, repname, *rp[i], *rv[i]);
 	}
@@ -197,7 +197,7 @@ void draw_inmc(std::string target, std::string file_name, double down, double up
 	char varexp[20];
 	char selection_cc[100], selection[100];
 	int i_dcy_tr[n_hist];
-	int h_fill_color[n_hist] = {2,3,4,5,6,7,8,9};
+	int h_fill_color[n_hist] = {2,3,4,5,6,7,9,22};
 	TLegend *legend = new TLegend(0.6175,0.3725,0.8825,0.8825);
 	TLegendEntry *h_legend_entry[n_hist];
 	char h_legend_entry_title[n_hist][200] = {
