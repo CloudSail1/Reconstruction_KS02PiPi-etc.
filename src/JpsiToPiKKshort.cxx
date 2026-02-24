@@ -985,18 +985,9 @@ StatusCode JpsiToPiKKshort::execute()
 		}
 		if (index==0) log << MSG::ERROR << __LINE__ << " PID error, electron be selected." << endmsg;
 		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
-		if (index==2) {
-			ipip.push_back(iChrgp[i]);
-			mdcTrk->setPidType(RecMdcKalTrack::pion);
-		}
-		if (index==3) {
-			ikp.push_back(iChrgp[i]);
-			mdcTrk->setPidType(RecMdcKalTrack::kaon);
-		}
-		if (index==4) {
-			ipp.push_back(iChrgp[i]);
-			mdcTrk->setPidType(RecMdcKalTrack::proton);
-		}
+		if (index==2) ipip.push_back(iChrgp[i]);
+		if (index==3) ikp.push_back(iChrgp[i]);
+		if (index==4) ipp.push_back(iChrgp[i]);
 		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	for(int i = 0; i < nChn; i++)//chrn指  带负电径迹
@@ -1033,18 +1024,9 @@ StatusCode JpsiToPiKKshort::execute()
 		}
 		if (index==0) log << MSG::ERROR << __LINE__ << " PID error, electron be selected." << endmsg;
 		if (index==1) log << MSG::ERROR << __LINE__ << " PID error, muon be selected." << endmsg;
-		if (index==2) {
-			ipin.push_back(iChrgn[i]);
-			mdcTrk->setPidType(RecMdcKalTrack::pion);
-		}
-		if (index==3) {
-			ikn.push_back(iChrgn[i]);
-			mdcTrk->setPidType(RecMdcKalTrack::kaon);
-		}
-		if (index==4) {
-			ipm.push_back(iChrgn[i]);
-			mdcTrk->setPidType(RecMdcKalTrack::proton);
-		}
+		if (index==2) ipin.push_back(iChrgn[i]);
+		if (index==3) ikn.push_back(iChrgn[i]);
+		if (index==4) ipm.push_back(iChrgn[i]);
 		log << MSG::DEBUG << __LINE__ << " exit loop with index " << i << endmsg;
 	}
 	int npp = ipp.size();
@@ -1094,12 +1076,14 @@ StatusCode JpsiToPiKKshort::execute()
 	for (int i=0;i<ipip.size();i++) {
 		log << MSG::DEBUG << __LINE__ << " in loop with index i " << i << endmsg;
 		RecMdcKalTrack *pipTrk = (*(evtRecTrkCol->begin()+ipip[i]))->mdcKalTrack();
-		WTrackParameter wvPipTrk = WTrackParameter(xmass[2], pipTrk->getZHelixP(), pipTrk->getZErrorP());
+		pipTrk->setPidType(RecMdcKalTrack::pion);
+		WTrackParameter wvPipTrk = WTrackParameter(xmass[2], pipTrk->getZHelix(), pipTrk->getZError());
 
 		for (int j=0;j<ipin.size();j++) {
 			log << MSG::DEBUG << __LINE__ << " in loop with index j" << j << endmsg;
 			RecMdcKalTrack *pinTrk = (*(evtRecTrkCol->begin()+ipin[j]))->mdcKalTrack();
-			WTrackParameter wvPinTrk = WTrackParameter(xmass[2], pinTrk->getZHelixP(), pinTrk->getZErrorP());
+			pinTrk->setPidType(RecMdcKalTrack::pion);
+			WTrackParameter wvPinTrk = WTrackParameter(xmass[2], pinTrk->getZHelix(), pinTrk->getZError());
 
 			double decay_ratio, decay_length, decay_length_error;
 			int id_pip, id_pin;
@@ -1174,10 +1158,12 @@ StatusCode JpsiToPiKKshort::execute()
 		if (temp_pip[i]!=id_pip_kshort) {
 			// use pi+ and k-, so it is anti-kstar
 			RecMdcKalTrack *trk_pi = (*(evtRecTrkCol->begin()+temp_pip[i]))->mdcKalTrack();
-			WTrackParameter wtrk_pi = WTrackParameter(xmass[2], trk_pi->getZHelixP(), trk_pi->getZErrorP());
+			trk_pi->setPidType(RecMdcKalTrack::pion);
+			WTrackParameter wtrk_pi = WTrackParameter(xmass[2], trk_pi->getZHelix(), trk_pi->getZError());
 			for (int j=0; j<ikn.size(); j++) {
 				RecMdcKalTrack *trk_k = (*(evtRecTrkCol->begin()+ikn[j]))->mdcKalTrack();
-				WTrackParameter wtrk_k = WTrackParameter(xmass[3], trk_k->getZHelixP(), trk_k->getZErrorP());
+				trk_k->setPidType(RecMdcKalTrack::kaon);
+				WTrackParameter wtrk_k = WTrackParameter(xmass[3], trk_k->getZHelixK(), trk_k->getZErrorK());
 				double mass_deviation = fabs((wtrk_pi.p() + wtrk_k.p()).m() - 0.896);
 				if (mass_deviation < min_mass_deviation) {
 					min_mass_deviation = mass_deviation;
@@ -1190,10 +1176,12 @@ StatusCode JpsiToPiKKshort::execute()
 		if (temp_pin[i]!=id_pin_kshort) {
 			// use pi- and k+, so it is kstar
 			RecMdcKalTrack *trk_pi = (*(evtRecTrkCol->begin()+temp_pin[i]))->mdcKalTrack();
-			WTrackParameter wtrk_pi = WTrackParameter(xmass[2], trk_pi->getZHelixP(), trk_pi->getZErrorP());
+			trk_pi->setPidType(RecMdcKalTrack::pion);
+			WTrackParameter wtrk_pi = WTrackParameter(xmass[2], trk_pi->getZHelix(), trk_pi->getZError());
 			for (int j=0; j<ikp.size(); j++) {
 				RecMdcKalTrack *trk_k = (*(evtRecTrkCol->begin()+ikp[j]))->mdcKalTrack();
-				WTrackParameter wtrk_k = WTrackParameter(xmass[3], trk_k->getZHelixP(), trk_k->getZErrorP());
+				trk_k->setPidType(RecMdcKalTrack::kaon);
+				WTrackParameter wtrk_k = WTrackParameter(xmass[3], trk_k->getZHelixK(), trk_k->getZErrorK());
 				double mass_deviation = fabs((wtrk_pi.p() + wtrk_k.p()).m() - 0.896);
 				if (mass_deviation < min_mass_deviation) {
 					min_mass_deviation = mass_deviation;
@@ -1218,10 +1206,15 @@ StatusCode JpsiToPiKKshort::execute()
 	RecMdcKalTrack *pin_kshortTrk = (*(evtRecTrkCol->begin()+id_pin_kshort))->mdcKalTrack();
 	RecMdcKalTrack *pi_kstarTrk  = (*(evtRecTrkCol->begin()+id_pi_kstar))->mdcKalTrack();
 	RecMdcKalTrack *k_kstarTrk   = (*(evtRecTrkCol->begin()+id_k_kstar))->mdcKalTrack();
-	WTrackParameter wvpip_kshortTrk = WTrackParameter(xmass[2], pip_kshortTrk->getZHelixP(), pip_kshortTrk->getZErrorP());
-	WTrackParameter wvpin_kshortTrk = WTrackParameter(xmass[2], pin_kshortTrk->getZHelixP(), pin_kshortTrk->getZErrorP());
-	WTrackParameter wvpi_kstarTrk  = WTrackParameter(xmass[2], pi_kstarTrk->getZHelixP(),  pi_kstarTrk->getZErrorP());
-	WTrackParameter wvk_kstarTrk   = WTrackParameter(xmass[3], k_kstarTrk->getZHelixP(),   k_kstarTrk->getZErrorP());
+	pip_kshortTrk->setPidType(RecMdcKalTrack::pion);
+	pin_kshortTrk->setPidType(RecMdcKalTrack::pion);
+	pi_kstarTrk->setPidType(RecMdcKalTrack::pion);
+	k_kstarTrk->setPidType(RecMdcKalTrack::kaon);
+	// Calling getZHelix return the helix of pion, while getZHelixP return the helix of proton. The appends of K Mu and E are the same.
+	WTrackParameter wvpip_kshortTrk = WTrackParameter(xmass[2], pip_kshortTrk->getZHelix(), pip_kshortTrk->getZError());
+	WTrackParameter wvpin_kshortTrk = WTrackParameter(xmass[2], pin_kshortTrk->getZHelix(), pin_kshortTrk->getZError());
+	WTrackParameter wvpi_kstarTrk  = WTrackParameter(xmass[2], pi_kstarTrk->getZHelix(),  pi_kstarTrk->getZError());
+	WTrackParameter wvk_kstarTrk   = WTrackParameter(xmass[3], k_kstarTrk->getZHelixK(),   k_kstarTrk->getZErrorK());
 	
 	log << MSG::DEBUG << __LINE__ << endmsg;
 	log << MSG::DEBUG << __LINE__ << " select gamma ..." << endmsg;
