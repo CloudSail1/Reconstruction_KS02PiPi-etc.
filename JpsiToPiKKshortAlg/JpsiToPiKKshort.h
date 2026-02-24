@@ -49,6 +49,7 @@ class JpsiToPiKKshort : public Algorithm
    
    NTuple::Array<double>	m_mctruth_P4_Pip_Kshort;
    NTuple::Array<double>   	m_mctruth_P4_Pin_Kshort;
+   NTuple::Array<double>   	m_mctruth_P4_Gamma_Kshort;
    NTuple::Array<double>   	m_mctruth_P4_Pi_Kstar;
    NTuple::Array<double>   	m_mctruth_P4_K_Kstar;
    NTuple::Array<double>   	m_mctruth_P4_Kshort;
@@ -56,6 +57,7 @@ class JpsiToPiKKshort : public Algorithm
 
    NTuple::Item<double>		m_mctruth_P_Pip_Kshort;
    NTuple::Item<double>   	m_mctruth_P_Pin_Kshort;
+   NTuple::Item<double>   	m_mctruth_P_Gamma_Kshort;
    NTuple::Item<double>   	m_mctruth_P_Pi_Kstar;
    NTuple::Item<double>   	m_mctruth_P_K_Kstar;
    NTuple::Item<double>   	m_mctruth_P_Kshort;
@@ -63,6 +65,7 @@ class JpsiToPiKKshort : public Algorithm
 
    NTuple::Item<double>   	m_mctruth_M_Pip_Kshort;
    NTuple::Item<double>   	m_mctruth_M_Pin_Kshort;
+   NTuple::Item<double>   	m_mctruth_M_Gamma_Kshort;
    NTuple::Item<double>   	m_mctruth_M_Pi_Kstar;
    NTuple::Item<double>   	m_mctruth_M_K_Kstar;
    NTuple::Item<double>   	m_mctruth_M_Kshort;
@@ -70,6 +73,7 @@ class JpsiToPiKKshort : public Algorithm
 
    NTuple::Item<double>   	m_mctruth_cos_Pip_Kshort;
    NTuple::Item<double>   	m_mctruth_cos_Pin_Kshort;
+   NTuple::Item<double>   	m_mctruth_cos_Gamma_Kshort;
    NTuple::Item<double>   	m_mctruth_cos_Pi_Kstar;
    NTuple::Item<double>   	m_mctruth_cos_K_Kstar;
    NTuple::Item<double>   	m_mctruth_cos_Kshort;
@@ -117,6 +121,8 @@ class JpsiToPiKKshort : public Algorithm
 
    // if Kstar->K- pi+, set to 1, else set to 0.
    NTuple::Item<int> m_mctruth_is_anti_Kstar;
+   // if decay process is Kshort->Gamma Pi+ Pi-, set to 1, else set to 0.
+   NTuple::Item<int> m_mctruth_is_Gamma_PiPi;
 
 
    NTuple::Item<long>  m_cc;
@@ -153,10 +159,13 @@ class JpsiToPiKKshort : public Algorithm
 
    // if Kstar->K- pi+, set to 1, else set to 0.
    NTuple::Item<int> m_is_anti_Kstar;
+   // if decay process is Kshort->Gamma Pi+ Pi-, set to 1, else set to 0.
+   NTuple::Item<int> m_is_Gamma_PiPi;
 
    NTuple::Array<double>  m_p_total;
    NTuple::Array<double>  m_p_Pip_Kshort;
    NTuple::Array<double>  m_p_Pin_Kshort;
+   NTuple::Array<double>  m_p_Gamma_Kshort;
    NTuple::Array<double>  m_p_Pi_Kstar;
    NTuple::Array<double>  m_p_K_Kstar;
    NTuple::Array<double>  m_p_Kshort;
@@ -164,6 +173,7 @@ class JpsiToPiKKshort : public Algorithm
 
    NTuple::Item<double>   m_d3_Pip_Kshort;
    NTuple::Item<double>   m_d3_Pin_Kshort;
+   NTuple::Item<double>   m_d3_Gamma_Kshort;
    NTuple::Item<double>   m_d3_Pi_Kstar;
    NTuple::Item<double>   m_d3_K_Kstar;
    NTuple::Item<double>   m_d3_Kshort;
@@ -171,6 +181,7 @@ class JpsiToPiKKshort : public Algorithm
 
    NTuple::Item<double>   m_m_Pip_Kshort;
    NTuple::Item<double>   m_m_Pin_Kshort;
+   NTuple::Item<double>   m_m_Gamma_Kshort;
    NTuple::Item<double>   m_m_Pi_Kstar;
    NTuple::Item<double>   m_m_K_Kstar;
    NTuple::Item<double>   m_m_Kshort;
@@ -178,6 +189,7 @@ class JpsiToPiKKshort : public Algorithm
 
    NTuple::Item<double>   m_cos_Pip_Kshort	;
    NTuple::Item<double>   m_cos_Pin_Kshort	;
+   NTuple::Item<double>   m_cos_Gamma_Kshort	;
    NTuple::Item<double>   m_cos_Pi_Kstar	;
    NTuple::Item<double>   m_cos_K_Kstar	        ;
    NTuple::Item<double>   m_cos_Kshort		;
