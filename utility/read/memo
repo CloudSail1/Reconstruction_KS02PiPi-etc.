@@ -1,0 +1,3 @@
+method to build binary file: g++ read.cxx test.cxx $(root-config --glibs --cflags --libs) -o test.exe
+reference to: https://root.cern/manual/creating_a_user_application/
+cmake tempalate: https://cliutils.gitlab.io/modern-cmake/examples/root-simple/README.html

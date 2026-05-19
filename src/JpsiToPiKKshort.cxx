@@ -104,6 +104,7 @@ StatusCode JpsiToPiKKshort::initialize()
 
 		if(m_tuple_angular)
 		{
+        /*
 			status = m_tuple_angular->addItem("eta0_P4",      4,       mctrue_eta0_P4);
 			status = m_tuple_angular->addItem("eta1_P4",      4,       mctrue_eta1_P4);
 			status = m_tuple_angular->addItem("gam0_eta0_P4",      4,       mctrue_gam0_eta0_P4);
@@ -131,7 +132,6 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple_angular->addItem("mgam1_eta1",        mctrue_mgam1_eta1);
 			status = m_tuple_angular->addItem("mpp",        mctrue_mpp);
 			status = m_tuple_angular->addItem("mpm",        mctrue_mpm);
-
                         status = m_tuple_angular->addItem("mctruth_cos_gam1_Eta0",     m_mctruth_cos_gam1_Eta0);
                         status = m_tuple_angular->addItem("mctruth_cos_gam2_Eta0",     m_mctruth_cos_gam2_Eta0);
                         status = m_tuple_angular->addItem("mctruth_cos_gam1_Eta1",     m_mctruth_cos_gam1_Eta1);
@@ -141,7 +141,7 @@ StatusCode JpsiToPiKKshort::initialize()
                         status = m_tuple_angular->addItem("mctruth_cos_Eta1",     m_mctruth_cos_Eta1);
                         status = m_tuple_angular->addItem("mctruth_cos_pp",     m_mctruth_cos_pp);
                         status = m_tuple_angular->addItem("mctruth_cos_pm",     m_mctruth_cos_pm);
-			
+        */
                         status = m_tuple_angular->addItem("m_mctruth_P_Pip_Kshort",	m_mctruth_P_Pip_Kshort	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Pin_Kshort",	m_mctruth_P_Pin_Kshort	);
                         status = m_tuple_angular->addItem("m_mctruth_P_Gamma_Kshort",	m_mctruth_P_Gamma_Kshort	);
@@ -232,7 +232,7 @@ StatusCode JpsiToPiKKshort::initialize()
 
 
 			status = m_tuple->addItem("chi2",      m_chi2);
-
+            /*
 			status = m_tuple->addItem("mPi0_bkg0_6C",      m_mPi0_bkg0_6C);
 			status = m_tuple->addItem("mPi0_bkg1_6C",      m_mPi0_bkg1_6C);
 			status = m_tuple->addItem("mPI0_bkg_6C",      m_mPI0_bkg_6C);
@@ -282,12 +282,10 @@ StatusCode JpsiToPiKKshort::initialize()
 			log << MSG::DEBUG << __LINE__ << endmsg;
 			status = m_tuple->addItem("d3_eta0",   m_d3_eta0);
 			status = m_tuple->addItem("d3_eta1",   m_d3_eta1);
-/*
 			status = m_tuple->addItem("mg13_wc",   m_mg13_wc);
 			status = m_tuple->addItem("mg14_wc",   m_mg14_wc);
 			status = m_tuple->addItem("mg23_wc",   m_mg23_wc);
 			status = m_tuple->addItem("mg24_wc",   m_mg24_wc);
-*/
 
 
 			log << MSG::DEBUG << __LINE__ << endmsg;
@@ -304,13 +302,14 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("ptot2",     m_ptot2);
 			status = m_tuple->addItem("depth1",     m_depth1);
 			status = m_tuple->addItem("depth2",     m_depth2);
-
+            */
 			log << MSG::DEBUG << __LINE__ << endmsg;
 			status = m_tuple->addItem("npp",     m_npp);//add for PID
 			status = m_tuple->addItem("npm",     m_npm);//add for PID
 			//status = m_tuple->addItem("npim",     m_npim);//add for PID
 			//status = m_tuple->addItem("npip",     m_npip);//add for PID
 
+            /*
 			status = m_tuple->addItem("mEta0_4C",     m_mEta0_4C);
 			status = m_tuple->addItem("mEta1_4C",     m_mEta1_4C);
 			status = m_tuple->addItem("m2Etarec_bkg",     m_m2Etarec_bkg);
@@ -339,9 +338,6 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("m2gamrec5_bkg",    m_m2gamrec5_bkg);
 			status = m_tuple->addItem("m2gamrec6_bkg",    m_m2gamrec6_bkg);
 
-
-
-
 			log << MSG::DEBUG << __LINE__ << endmsg;
 			status = m_tuple->addItem("mpEta0",      m_mpEta0);
 			status = m_tuple->addItem("mpEta1",      m_mpEta1);
@@ -361,7 +357,6 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("mppb2Eta",    m_mppb2Eta);
 
 
-
 			log << MSG::DEBUG << __LINE__ << endmsg;
 			////////////////   2020-01-08
 			status = m_tuple->addItem("m2Eta",    m_m2Eta);
@@ -376,8 +371,8 @@ StatusCode JpsiToPiKKshort::initialize()
 			status = m_tuple->addItem("cos_gam2_Eta0",    m_cos_gam2_Eta0);
 			status = m_tuple->addItem("cos_gam1_Eta1",    m_cos_gam1_Eta1);
 			status = m_tuple->addItem("cos_gam2_Eta1",    m_cos_gam2_Eta1);
+            */
 
-			
 			log << MSG::DEBUG << __LINE__ << endmsg;
 			status = m_tuple->addItem("n_pip",m_npip);
 			status = m_tuple->addItem("n_pin",m_npin);
@@ -1230,12 +1225,14 @@ StatusCode JpsiToPiKKshort::execute()
 		RecEmcShower *current_gamma_shower;
 		kmfit_gamma->AddTrack(0, wvpip_kshortTrk);
 		kmfit_gamma->AddTrack(1, wvpin_kshortTrk);
+		kmfit_gamma->AddTrack(2, wvpi_kstarTrk);
+		kmfit_gamma->AddTrack(3, wvk_kstarTrk);
 		if (i==iGam.size()) { // if loop to end
-			kmfit_gamma->AddResonance(0, 0.4976, 0, 1);
+			kmfit_gamma->AddFourMomentum(0, psip);
 		} else {
 			current_gamma_shower = (*(evtRecTrkCol->begin()+iGam[i]))->emcShower();
-			kmfit_gamma->AddTrack(2, 0.0, current_gamma_shower);
-			kmfit_gamma->AddResonance(0, 0.4976, 0, 1, 2);
+			kmfit_gamma->AddTrack(4, 0.0, current_gamma_shower);
+			kmfit_gamma->AddFourMomentum(0, psip);
 		}
 		if (!kmfit_gamma->Fit()) current_chisq = 9999;
 		else current_chisq = kmfit_gamma->chisq();
@@ -1361,7 +1358,7 @@ StatusCode JpsiToPiKKshort::execute()
 	if (is_gamma_pipi) m_is_Gamma_PiPi = 1;
 	else m_is_Gamma_PiPi = 0;
 	m_chisq_Kshort  = chisq_kshort;
-	m_chisq_kmfit   = kmfit->chisq();
+	m_chisq_kmfit   = min_chisq_kmfit_gamma;
 	m_ratio_Kshort  = max_ratio;
 	m_is_anti_Kstar = is_anti_Kstar;
 
