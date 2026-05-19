@@ -1,6 +1,6 @@
 /*
-TODO is need unlimit track num
-TODO is need remove vtxfit and kmfit cut
+save all angle message beteew track and shower
+save all four momentum
 */
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/AlgFactory.h"
@@ -876,7 +876,7 @@ StatusCode JpsiToPiKKshort::execute()
 			continue;
 		}
 
-		if(time>15||time<0)continue;
+		if(time>14||time<0)continue;
 		if(eraw < m_energyThreshold) continue;
 		iGam.push_back(i);
 		log << MSG::DEBUG << __LINE__ << "exit loop with index i" << i << endmsg;
