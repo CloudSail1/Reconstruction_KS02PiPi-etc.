@@ -1,0 +1,2 @@
+known bug:
+    In boost, dang[] size may be insufficient. Just discard the tail now.

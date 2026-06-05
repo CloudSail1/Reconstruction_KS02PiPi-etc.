@@ -31,6 +31,7 @@ struct DrawParams{
     std::string  exp_bkg   ;
     std::string  exp_data  ;
     size_t       n_bin     ;
+    bool         normalize ;
 };
 /*
 = kLo;

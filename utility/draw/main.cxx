@@ -13,6 +13,7 @@ const std::string kNoDraw          = "0";
 const std::string kDrawAll         = "1";
 const std::string kTreeName        = "chi2omg";
 const std::string kJsonFile        = "../../draw/params.json";
+const bool        kNormalize       = false;
 
 DrawParams json_to_draw_params(const json &j_defaults, const json &j_item) {
     DrawParams p;
@@ -40,7 +41,7 @@ DrawParams json_to_draw_params(const json &j_defaults, const json &j_item) {
     p.inmc_list = get_str("inmc_list");
     p.data_list = get_str("data_list");
 
-    // exp_sig/exp_err/exp_bkg/exp_data: treat bool true/false specially
+    // exp_sig/exp_err/exp_bkg/exp_data: treat bool true/false into a c_str
     auto resolve_exp = [&](const std::string &key) -> std::string {
         if (j_item.contains(key)) {
             auto &v = j_item[key];
@@ -71,6 +72,15 @@ DrawParams json_to_draw_params(const json &j_defaults, const json &j_item) {
         p.n_bin = j_defaults["n_bin"].get<size_t>();
     else
         p.n_bin = kNBin;
+
+    // bool normalize
+    if (j_item.contains("normalize"))
+        p.normalize = j_item["normalize"].get<bool>();
+    else if (j_defaults.contains("normalize"))
+        p.normalize = j_defaults["normalize"].get<bool>();
+    else
+        p.normalize = kNormalize;
+
     return p;
 }
 
@@ -132,6 +142,16 @@ void draw(const DrawParams &params)
     if (!params.data_list.empty())
         chain_data->Draw((params.target+">>"+"th1d_data").c_str(), params.exp_data.c_str());
     
+    if (params.normalize) {
+        double scale = th1d_data->Integral()
+            /(th1d_inmc[0]->Integral()
+                +th1d_inmc[1]->Integral()
+                +th1d_inmc[2]->Integral()
+            );
+        th1d_inmc[0]->Scale(scale);
+        th1d_inmc[1]->Scale(scale);
+        th1d_inmc[2]->Scale(scale);
+    }
     THStack st("stack", params.title.c_str());
     th1d_inmc[0]->SetFillColor(2);
     th1d_inmc[1]->SetFillColor(4);
@@ -144,7 +164,7 @@ void draw(const DrawParams &params)
         if (st.GetMaximum()<th1d_data->GetMaximum())
             st.SetMaximum(th1d_data->GetMaximum());
     }
-    if (!params.inmc_list.empty()) st.Draw();
+    if (!params.inmc_list.empty()) st.Draw("hist");
     if (!params.data_list.empty()) {
         th1d_data->SetMarkerStyle(20);
         th1d_data->Draw("same e1");

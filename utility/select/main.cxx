@@ -17,17 +17,20 @@ bool select(const std::string &file, const std::string &exp, const std::string &
 }
 int main()
 {
-    select("../../inmc.list",
-        "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
-    "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root");
-    select("../../data.list",
-        "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
-    "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/data/selected.root");
-    select("../../exmc_pipi.list",
-        "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
-    "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root");
-    select("../../exmc_pipigamma.list",
-        "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
-    "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root");
+    select("../../IB.list",
+            "1",
+        "/scratchfs/bes/cloudsail/JpsiToPiKKshort/generator/IB/run/mc_job/selected.root");
+    // select("../../inmc.list",
+    //     "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
+    // "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root");
+    // select("../../data.list",
+    //     "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
+    // "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/data/selected.root");
+    // select("../../exmc_pipi.list",
+    //     "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
+    // "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root");
+    // select("../../exmc_pipigamma.list",
+    //     "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
+    // "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root");
     return 0;
 }

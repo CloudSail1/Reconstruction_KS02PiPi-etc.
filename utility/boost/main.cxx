@@ -17,6 +17,8 @@ const std::string kP4Gamma        = "p_Gamma_Kshort";
 const std::string kP4Pip          = "p_Pip_Kshort";
 const std::string kP4Pin          = "p_Pin_Kshort";
 const std::string kTag            = "is_Gamma_PiPi";
+const std::string kNumGamma       = "nn";
+const std::string kDAng           = "dang";
 const std::string kSelection      = "chisq_kmfit<100&&ratio_Kshort>2&&m_Kshort>0.4&&m_Kshort<0.6";
 const std::string kOutD3GammaFrameKshort     = "d3_Gamma_frameKshort";
 const std::string kOutEGammaFrameKshort      = "e_Gamma_frameKshort";
@@ -27,11 +29,12 @@ const std::string kOutAngGammaFrameLab       = "ang_Gamma_Pi_frameLab";
 const std::string kOutD3GammaFramePiPi       = "d3_Gamma_framePiPi";
 const std::string kOutEGammaFramePiPi        = "e_Gamma_framePiPi";
 const std::string kOutAngGammaFramePiPi      = "ang_Gamma_Pi_framePiPi";
+const std::string kOutAngGammaTrack          = "ang_Gamma_track";
 std::string out_filename(const std::string& input)
 {
     return std::string(input+".friend");
 }
-bool foo(const std::string &filename)
+bool write_into(const std::string &filename)
 {
     auto tree = open_root(filename, kTreeName, "");
     TFile file_friend(out_filename(filename).c_str(),"recreate");
@@ -47,6 +50,7 @@ bool foo(const std::string &filename)
     double d3_Gamma_framePiPi = 0;
     double e_Gamma_framePiPi  = 0;
     double ang_Gamma_Pi_framePiPi[2] = {0,0};
+    double ang_Gamma_track  = 0;
     tree_friend->Branch(kOutD3GammaFrameKshort.c_str(),  &d3_Gamma_frameKshort,
         (kOutD3GammaFrameKshort  +"/D"   ).c_str());
     tree_friend->Branch(kOutEGammaFrameKshort.c_str(),   &e_Gamma_frameKshort,
@@ -65,16 +69,22 @@ bool foo(const std::string &filename)
         (kOutEGammaFramePiPi   +"/D"   ).c_str());
     tree_friend->Branch(kOutAngGammaFramePiPi.c_str(), &ang_Gamma_Pi_framePiPi,
         (kOutAngGammaFramePiPi +"[2]/D").c_str());
+    tree_friend->Branch(kOutAngGammaTrack.c_str(), &ang_Gamma_track,
+        (kOutAngGammaTrack +"/D").c_str());
 
     // those would be read from tree for caculating
     double raw_gamma[4];
     double raw_pip[4];
     double raw_pin[4];
     int    is_gamma_pipi;
+    int    num_gamma;
+    double dang[128];
     tree->SetBranchAddress(kP4Gamma.c_str(), &raw_gamma);
     tree->SetBranchAddress(kP4Pip.c_str(),   &raw_pip);
     tree->SetBranchAddress(kP4Pin.c_str(),   &raw_pin);
     tree->SetBranchAddress(kTag.c_str(),     &is_gamma_pipi);
+    tree->SetBranchAddress(kNumGamma.c_str(),&num_gamma);
+    tree->SetBranchAddress(kDAng.c_str(),    dang);
 
     // caculating and writing friend
     for(auto i : ROOT::TSeqI(tree->GetEntries())) {
@@ -133,13 +143,23 @@ bool foo(const std::string &filename)
             ang_Gamma_Pi_framePiPi[0] = 0;
             ang_Gamma_Pi_framePiPi[1] = 0;
         }
+        // select minimal dang as AngGammaTrack
+        if (num_gamma <= 0) {ang_Gamma_track=-99;}
+        else {
+            ang_Gamma_track=3600;
+            for (int i=0; i<num_gamma; i++) {
+                if (ang_Gamma_track>num_gamma) {
+                    ang_Gamma_track=num_gamma;
+                }
+            }
+        }
         tree_friend->Fill();
     }
     file_friend.Write();
     file_friend.Close();
     return true;
 }
-bool fish(const std::string &listname)
+bool process_file(const std::string &listname)
 {
     std::vector<std::string> lines;
     std::ifstream infile(listname);
@@ -152,7 +172,7 @@ bool fish(const std::string &listname)
     size_t num_done = 0;
     auto workItem = [num_line, &num_work, &num_done](std::string line) -> int {
         std::clog << "[INFO] " << ++num_work << "/" << num_line << " writing friend for " << line << std::endl;
-        foo(line);
+        write_into(line);
         std::clog << "[INFO] " << ++num_done << "/" << num_line << " writen friend " << out_filename(line) << std::endl;
         return 0;
     };
@@ -163,11 +183,12 @@ bool fish(const std::string &listname)
 int main()
 {
     // manual mkdir first
-    fish("../../inmc.list");
-    fish("../../data.list");
-    foo("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root");
-    foo("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/data/selected.root");
-    foo("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root");
-    foo("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root");
+    write_into("/scratchfs/bes/cloudsail/JpsiToPiKKshort/generator/IB/run/mc_job/selected.root");
+    // process_file("../../inmc.list");
+    // process_file("../../data.list");
+    // write_into("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root");
+    // write_into("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/data/selected.root");
+    // write_into("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root");
+    // write_into("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root");
     return 0;
 }
