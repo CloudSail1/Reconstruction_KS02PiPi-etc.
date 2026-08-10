@@ -12,14 +12,14 @@ using ROOT::Math::Boost;
 #include "func.h"
 const size_t      kNProcess       = 10;
 const double      kCmsEnergy      = 3.097;
-const std::string kTreeName       = "chi2omg";
-const std::string kFriendName     = "chi2omg";
-const std::string kP4Gamma        = "p_Gamma_Kshort";
-const std::string kP4Pip          = "p_Pip_Kshort";
-const std::string kP4Pin          = "p_Pin_Kshort";
-const std::string kP4Pi           = "p_Pi_Kstar";
-const std::string kP4K            = "p_K_Kstar";
-const std::string kTag            = "is_Gamma_PiPi";
+const std::string kTreeName       = "mctruth";
+const std::string kFriendName     = "mctruth";
+const std::string kP4Gamma        = "mctruth_P4_Gamma_Kshort";
+const std::string kP4Pip          = "mctruth_P4_Pip_Kshort";
+const std::string kP4Pin          = "mctruth_P4_Pin_Kshort";
+const std::string kP4Pi           = "mctruth_P4_Pi_Kstar";
+const std::string kP4K            = "mctruth_P4_K_Kstar";
+const std::string kTag            = "mctruth_is_Gamma_PiPi";
 const std::string kNumGamma       = "nn";
 const std::string kDAng           = "dang";
 const std::string kSelection      = "chisq_kmfit<100&&ratio_Kshort>2&&m_Kshort>0.4&&m_Kshort<0.6";
@@ -107,8 +107,8 @@ bool write_into(const std::string &filename)
     tree->SetBranchAddress(kP4Pi.c_str(),    &raw_pi);
     tree->SetBranchAddress(kP4K.c_str(),     &raw_k);
     tree->SetBranchAddress(kTag.c_str(),     &is_gamma_pipi);
-    tree->SetBranchAddress(kNumGamma.c_str(),&num_gamma);
-    tree->SetBranchAddress(kDAng.c_str(),    &dang);
+    // tree->SetBranchAddress(kNumGamma.c_str(),&num_gamma);
+    // tree->SetBranchAddress(kDAng.c_str(),    &dang);
 
     // caculating and writing friend
     for(auto i : ROOT::TSeqI(tree->GetEntries())) {
@@ -147,7 +147,7 @@ bool write_into(const std::string &filename)
         }
 
         // select minimal dang as AngGammaTrack
-        ang_Gamma_track = MinDAng(num_gamma, dang);
+        // ang_Gamma_track = MinDAng(num_gamma, dang);
         
         // calculate recoil
         RecoilData recoil_pip = CalRecoilPip(
@@ -197,7 +197,8 @@ bool process_file(const std::string &listname)
 int main()
 {
     // manual mkdir first
-    write_into("/scratchfs/bes/cloudsail/JpsiToPiKKshort/generator/IB/run/mc_job/selected.root");
+    process_file("boost.list");
+    // write_into("/scratchfs/bes/cloudsail/JpsiToPiKKshort/generator/IB/run/mc_job/selected.root");
     // process_file("../../inmc.list");
     // process_file("../../data.list");
     // write_into("/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root");

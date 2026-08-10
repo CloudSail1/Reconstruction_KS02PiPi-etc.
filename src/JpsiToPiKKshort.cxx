@@ -657,7 +657,7 @@ StatusCode JpsiToPiKKshort::execute()
 			}
 		}
 		m_idxmc = m_numParticle;
-		// m_tuple_angular->write();
+		m_tuple_angular->write();
 		log << MSG::DEBUG << __LINE__ << "" << endmsg;
 
 	}

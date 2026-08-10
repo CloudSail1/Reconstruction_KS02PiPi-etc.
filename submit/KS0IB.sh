@@ -11,7 +11,7 @@ output_level=6
 ##if want to use exist dst file list, change to 0, default 1
 is_search_dst=1
 ##path to search dst file
-path_data="/scratchfs/bes/cloudsail/JpsiToPiKKshort/generator/IB/rtraw/"
+path_data="/scratchfs2/bes/cloudsail/JpsiToPiKKshort/generator/IB/rtraw/"
 ##file number to searching, set 0 to include all dst
 fileNumber=0
 ##the data file number in one job
@@ -23,7 +23,7 @@ job_limit=500
 ##the job name with the format ${myjob}_${iJob}.txt
 myjob="KS0IB_test"
 ##output directory
-path_output="/scratchfs/bes/cloudsail/JpsiToPiKKshort/generator/IB/run/mc_job"
+path_output="/scratchfs2/bes/cloudsail/JpsiToPiKKshort/generator/IB/run/mc_job"
 
 
 ##change something below ONLY when you know what you are doing

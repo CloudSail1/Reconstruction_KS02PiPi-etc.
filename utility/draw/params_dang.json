@@ -1,0 +1,305 @@
+{
+  "defaults": {
+    "lo": 0,
+    "up": 0.2,
+    "target": "e_Gamma_frameKshort",
+    "title": "\\E_\\gamma in K^0_S frame",
+    "outname": "output/default.png",
+    "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root",
+    "data_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/data/selected.root",
+    "exp_sig": "is_Gamma_PiPi==1&&nSigDcyBr_0!=0&&nPDcyBr_pi0==0",
+    "exp_err": "is_Gamma_PiPi==1&&nSigDcyBr_1!=0&&nPDcyBr_pi0==0",
+    "exp_bkg": "is_Gamma_PiPi==1&&((nSigDcyBr_0==0&&nSigDcyBr_1==0)||nPDcyBr_pi0!=0)",
+    "exp_data": "is_Gamma_PiPi==1",
+    "n_bin": 100,
+    "kNProcess": 20,
+    "normalize": true
+  },
+  "items": [
+    {
+      "lo": 0.47,
+      "up": 0.51,
+      "target": "m_Kshort",
+      "title": "m_{\\\\pi \\\\pi \\\\gamma}\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma -like;GeV/c^2;Events",
+      "outname": "output/chisq-ratio-m_Kshort/m_Kshort_PiPiGamma_data.png"
+    },
+    {
+      "lo": 0.47,
+      "up": 0.51,
+      "target": "m_Kshort",
+      "title": "m_{\\\\pi \\\\pi}\\\\hbox{ in }\\\\pi\\\\pi -like;GeV/c^2;Events",
+      "outname": "output/chisq-ratio-m_Kshort/m_Kshort_PiPi_data.png",
+      "inmc_list": "is_Gamma_PiPi==0&&nSigDcyBr_0!=0",
+      "data_list": "is_Gamma_PiPi==0&&nSigDcyBr_1!=0",
+      "exp_sig": "is_Gamma_PiPi==0&&((nSigDcyBr_0==0&&nSigDcyBr_1==0)||nPDcyBr_pi0!=0)",
+      "exp_err": "is_Gamma_PiPi==0"
+    },
+    {
+      "lo": 0.47,
+      "up": 0.51,
+      "target": "m_Kshort",
+      "title": "m_{\\\\pi \\\\pi \\\\gamma}\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma -like;GeV/c^2;Events",
+      "outname": "output/chisq-ratio-m_Kshort/m_Kshort_PiPiGamma_data_noErr.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root",
+      "data_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/data/selected.root",
+      "exp_sig": "is_Gamma_PiPi==1&&nSigDcyBr_0!=0&&nPDcyBr_pi0==0",
+      "exp_err": false,
+      "exp_bkg": "is_Gamma_PiPi==1&&((nSigDcyBr_0==0&&nSigDcyBr_1==0)||nPDcyBr_pi0!=0)",
+      "exp_data": "is_Gamma_PiPi==1"
+    },
+    {
+      "lo": 0,
+      "up": 0.2,
+      "target": "e_Gamma_frameLab",
+      "title": "E_\\\\gamma\\\\hbox{ in lab frame};GeV;Events",
+      "outname": "output/chisq-ratio-m_Kshort/e_Gamma_frameLab_PiPiGamma_data.png"
+    },
+    {
+      "lo": 0,
+      "up": 0.2,
+      "target": "e_Gamma_frameKshort",
+      "title": "E_\\\\gamma\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame};GeV;Events",
+      "outname": "output/chisq-ratio-m_Kshort/e_Gamma_frameKshort_PiPiGamma_data.png"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameKshort[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameKshort_pip_PiPiGamma_data.png"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameKshort[1]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^-})\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameKshort_pin_PiPiGamma_data.png"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "TMath::Max(ang_Gamma_Pi_frameKshort[0],ang_Gamma_Pi_frameKshort[1])",
+      "title": "max[cos(\\\\theta_{\\\\gamma \\\\pi^+}),cos(\\\\theta_{\\\\gamma \\\\pi^-})]\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameKshort_max_PiPiGamma_data.png"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "TMath::Min(ang_Gamma_Pi_frameKshort[0],ang_Gamma_Pi_frameKshort[1])",
+      "title": "min[cos(\\\\theta_{\\\\gamma \\\\pi^+}),cos(\\\\theta_{\\\\gamma \\\\pi^-})]\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameKshort_min_PiPiGamma_data.png"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameLab[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in lab frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameLab_pip_PiPiGamma_data.png"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameLab[1]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^-})\\\\hbox{ in lab frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameLab_pin_PiPiGamma_data.png"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameLab[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in lab frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameLab_pip_PiPiGamma_data_noErr.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root",
+      "data_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/data/selected.root",
+      "exp_sig": "is_Gamma_PiPi==1&&nSigDcyBr_0!=0&&nPDcyBr_pi0==0",
+      "exp_err": false,
+      "exp_bkg": "is_Gamma_PiPi==1&&((nSigDcyBr_0==0&&nSigDcyBr_1==0)||nPDcyBr_pi0!=0)",
+      "exp_data": "is_Gamma_PiPi==1"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_framePiPi[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in }\\\\pi\\\\pi\\\\hbox{ frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_framePiPi_pip_PiPiGamma_data.png"
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_framePiPi[1]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^-})\\\\hbox{ in }\\\\pi\\\\pi\\\\hbox{ frame};cos(rad);Events",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_framePiPi_pin_PiPiGamma_data.png"
+    },
+    {
+      "lo": 0,
+      "up": 0.2,
+      "target": "e_Gamma_frameLab",
+      "title": "E_\\\\gamma\\\\hbox{ in lab frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-\\\\gamma;GeV;Events",
+      "outname": "output/chisq-ratio-m_Kshort/e_Gamma_frameLab_PiPiGamma_exPiPiGamma.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": 0,
+      "up": 0.2,
+      "target": "e_Gamma_frameKshort",
+      "title": "E_\\\\gamma\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-\\\\gamma;GeV;Events",
+      "outname": "output/chisq-ratio-m_Kshort/e_Gamma_frameKshort_PiPiGamma_exPiPiGamma.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameLab[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in lab frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-\\\\gamma",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameLab_pip_PiPiGamma_exPiPiGamma.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameLab[1]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^-})\\\\hbox{ in lab frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-\\\\gamma",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameLab_pin_PiPiGamma_exPiPiGamma.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameKshort[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-\\\\gamma",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameKshort_pip_PiPiGamma_exPiPiGamma.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameKshort[1]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^-})\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-\\\\gamma",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameKshort_pin_PiPiGamma_exPiPiGamma.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_framePiPi[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in }\\\\pi\\\\pi{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-\\\\gamma",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_framePiPi_pip_PiPiGamma_exPiPiGamma.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_framePiPi[1]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^-})\\\\hbox{ in }\\\\pi\\\\pi{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-\\\\gamma",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_framePiPi_pin_PiPiGamma_exPiPiGamma.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPiGamma/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": 0,
+      "up": 0.2,
+      "target": "e_Gamma_frameLab",
+      "title": "E_\\\\gamma\\\\hbox{ in lab frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-;GeV;Events",
+      "outname": "output/chisq-ratio-m_Kshort/e_Gamma_frameLab_PiPiGamma_exPiPi.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": 0,
+      "up": 0.2,
+      "target": "e_Gamma_frameKshort",
+      "title": "E_\\\\gamma\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-};GeV;Events",
+      "outname": "output/chisq-ratio-m_Kshort/e_Gamma_frameKshort_PiPiGamma_exPiPi.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameLab[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in lab frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameLab_pip_PiPiGamma_exPiPi.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameLab[1]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^-})\\\\hbox{ in lab frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameLab_pin_PiPiGamma_exPiPi.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameKshort[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameKshort_pip_PiPiGamma_exPiPi.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_frameKshort[1]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^-})\\\\hbox{ in }\\\\pi\\\\pi\\\\gamma\\\\hbox{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_frameKshort_pin_PiPiGamma_exPiPi.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "lo": -1,
+      "up": 1,
+      "target": "ang_Gamma_Pi_framePiPi[0]",
+      "title": "cos(\\\\theta_{\\\\gamma \\\\pi^+})\\\\hbox{ in }\\\\pi\\\\pi\\\\hbox{ frame in exclusive MC of }K_S^0\\\\rightarrow\\\\pi^+\\\\pi^-",
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_Pi_framePiPi_pip_PiPiGamma_exPiPi.png",
+      "inmc_list": "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma_only_PiPi/run/topo/selected.root",
+      "data_list": ""
+    },
+    {
+      "outname": "output/chisq-ratio-m_Kshort/ang_Gamma_track.png",
+      "lo": 0,
+      "up": 40,
+      "target": "ang_Gamma_track",
+      "title": "#hbox{angle beteew gamma and charged track}",
+      "n_bin": 40
+    },
+    {
+      "outname": "output/chisq-ratio-m_Kshort/m_recoil_pip.png",
+      "lo": 0,
+      "up": 1,
+      "target": "m_recoil_pip",
+      "title": "M_{rec#hbox{ }#pi^{+}}"
+    },
+    {
+      "outname": "output/chisq-ratio-m_Kshort/m_recoil_pip_pim.png",
+      "lo": 0,
+      "up": 1,
+      "target": "m_recoil_pip_pim",
+      "title": "M_{rec#hbox{ }#pi^{+}#pi^{-}}"
+    },
+    {
+      "outname": "output/chisq-ratio-m_Kshort/m_recoil_pi.png",
+      "lo": 0,
+      "up": 1,
+      "target": "m_recoil_pi",
+      "title": "M_{rec#hbox{ }#pi^{+}#hbox{ for }K^{*}#hbox{ decay}}"
+    },
+    {
+      "outname": "output/chisq-ratio-m_Kshort/m_recoil_k.png",
+      "lo": 0,
+      "up": 1,
+      "target": "m_recoil_k",
+      "title": "M_{rec#hbox{ }K^{+}#hbox{ for }K^{*}#hbox{ decay}}"
+    }
+  ]
+}

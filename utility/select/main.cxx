@@ -2,7 +2,7 @@
 #include <TFile.h>
 #include <memory>
 
-const std::string kTreeName   = "chi2omg";
+const std::string kTreeName   = "mctruth";
 const std::string kFriendName = "";
 
 bool select(const std::string &file, const std::string &exp, const std::string &outname)
@@ -17,11 +17,11 @@ bool select(const std::string &file, const std::string &exp, const std::string &
 }
 int main()
 {
-    select("../../IB.list",
+    select("select.list",
             "1",
-        "/scratchfs/bes/cloudsail/JpsiToPiKKshort/generator/IB/run/mc_job/selected.root");
+        "./selected.root");
     // select("../../inmc.list",
-    //     "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
+        // "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
     // "/scratchfs/bes/cloudsail/JpsiToPiKKshort/feat-PiPiandGamma/run/topo/selected.root");
     // select("../../data.list",
     //     "chisq_kmfit<=100&&ratio_Kshort>=2&&m_Kshort>=0.47&&m_Kshort<=0.51",
