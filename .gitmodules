@@ -1,3 +1,0 @@
-[submodule "utility/extern/json"]
-	path = utility/extern/json
-	url = git@github.com:nlohmann/json.git
