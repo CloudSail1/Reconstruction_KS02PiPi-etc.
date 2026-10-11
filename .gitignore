@@ -3,3 +3,4 @@
 /fit/*
 !/fit/fit.cxx
 /commit-msg
+/build
